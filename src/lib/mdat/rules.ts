@@ -3,7 +3,7 @@ import { type JsonValue } from 'type-fest'
 import type { Merge, MergeDeep, SetOptional, Simplify } from 'type-fest'
 import { z } from 'zod'
 
-// Note that more advanced rule loading is implemented in `/packages/mdat`
+// Note that more advanced rule loading is implemented in `mdat`
 
 // Type-fest's internal SimplifyDeep implementation is not exported
 // this isn't quite the same, but works for our purposes

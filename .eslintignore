@@ -24,5 +24,4 @@ vendor/
 
 # Customizations
 test/assets/
-bin/
 __snapshots__/
