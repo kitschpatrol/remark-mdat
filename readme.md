@@ -37,7 +37,7 @@
 - [Implementation notes](#implementation-notes)
 - [The future](#the-future)
 - [Maintainers](#maintainers)
-- [Acknowledgements](#acknowledgements)
+- [Acknowledgments](#acknowledgments)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -63,13 +63,13 @@ And replace it with dynamic data. In this case, from `package.json`:
 <!-- /title -->
 ```
 
-This plugin powers the higher-level [`mdat` package](https://github.com/kitschpatrol/mdat), which is a better better place to start if you just want to expand some comments and aren't working directly with remark processing pipelines.
+This plugin powers the higher-level [`mdat` package](https://github.com/kitschpatrol/mdat), which is a better place to start if you just want to expand some comments and aren't working directly with remark processing pipelines.
 
 ## Getting started
 
 ### Dependencies
 
-This library is ESM only and requires Node 18 or newer. It's designed to work with Remark 15. `remark-mdat` is implemented in TypeScript and bundles a complete set of type definitions.
+This library is ESM only and requires Node 18 (specifically `^18.19.0 || >=20.5.0`). It's designed to work with Remark 15. `remark-mdat` is implemented in TypeScript and bundles a complete set of type definitions.
 
 ### Installation
 
@@ -100,10 +100,10 @@ The plugin accepts an optional options object which exposes some configuration o
 
 ```ts
 export type Options = {
-  addMetaComment?: Boolean // default: false
-  closingPrefix?: String // default: '/',
-  keywordPrefix?: String // default: '',
-  metaCommentIdentifier?: String // default: '+',
+  addMetaComment?: boolean // default: false
+  closingPrefix?: string // default: '/',
+  keywordPrefix?: string // default: '',
+  metaCommentIdentifier?: string // default: '+',
   rules?: Rules // default: a single test rule for the 'mdat' keyword
 }
 ```
@@ -213,7 +213,7 @@ This project was split from a monorepo containing both `mdat` and `remark-mdat` 
 
 [@kitschpatrol](https://github.com/kitschpatrol)
 
-## Acknowledgements
+## Acknowledgments
 
 Thanks to the [unified team](https://github.com/orgs/unifiedjs/people) for their superb ecosystem of AST tools.
 
