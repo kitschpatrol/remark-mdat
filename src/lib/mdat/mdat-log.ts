@@ -1,9 +1,9 @@
-import log from './log'
+import type { Node } from 'unist'
 import chalk from 'chalk'
 import path from 'node:path'
-import type { Node } from 'unist'
 import { type VFile } from 'vfile'
 import { type Options, type VFileMessage } from 'vfile-message'
+import log from './log'
 
 // Tries to provide a simpler wrapper to vfile.message
 export type MdatMessage = {

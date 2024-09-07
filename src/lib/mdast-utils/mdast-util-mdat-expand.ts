@@ -1,11 +1,11 @@
-import { saveLog } from '../mdat/mdat-log'
-import { type CommentMarkerNode, parseCommentNode } from '../mdat/parse'
-import { type Rules, getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
 import type { Html, Root } from 'mdast'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { CONTINUE, visit } from 'unist-util-visit'
 import { type VFile } from 'vfile'
+import { saveLog } from '../mdat/mdat-log'
+import { type CommentMarkerNode, parseCommentNode } from '../mdat/parse'
+import { getRuleContent, normalizeRules, type Rules, validateRules } from '../mdat/rules'
 
 export type Options = {
 	addMetaComment: boolean

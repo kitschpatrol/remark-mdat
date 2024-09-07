@@ -1,6 +1,6 @@
-import { splitHtmlIntoMdastNodes } from '../src/lib/mdast-utils/mdast-util-mdat-split'
 import { type Html } from 'mdast'
 import { describe, expect, it } from 'vitest'
+import { splitHtmlIntoMdastNodes } from '../src/lib/mdast-utils/mdast-util-mdat-split'
 
 function stringToMdastNode(value: string): Html {
 	return {

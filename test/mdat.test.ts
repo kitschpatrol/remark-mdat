@@ -1,13 +1,13 @@
-import remarkMdat, { type MdatCleanOptions, type Options, mdatClean, mdatSplit } from '../src'
-import testRules from './assets/test-rules'
-// @ts-expect-error - Intentionally invalid for testing purposes
-import testRulesInvalid from './assets/test-rules-invalid'
 import { type Root } from 'mdast'
 import fs from 'node:fs/promises'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { type VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
+import remarkMdat, { mdatClean, type MdatCleanOptions, mdatSplit, type Options } from '../src'
+import testRules from './assets/test-rules'
+// @ts-expect-error - Intentionally invalid for testing purposes
+import testRulesInvalid from './assets/test-rules-invalid'
 
 async function expandStringToString(markdown: string, options: Options): Promise<string> {
 	const result = await remark().use(remarkGfm).use(remarkMdat, options).process(markdown)

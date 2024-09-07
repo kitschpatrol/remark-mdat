@@ -1,10 +1,10 @@
-import { saveLog } from '../mdat/mdat-log'
+import type { Root } from 'mdast'
 import { fromHtml } from 'hast-util-from-html'
 import { type Html, type Text } from 'mdast'
-import type { Root } from 'mdast'
 import { type Node, type Point, type Position } from 'unist'
 import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 import { type VFile } from 'vfile'
+import { saveLog } from '../mdat/mdat-log'
 
 /**
  * Mdast utility plugin to split any multi-comment nodes and their content into individual MDAST HTML

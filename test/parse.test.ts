@@ -1,5 +1,5 @@
-import { parseComment } from '../src/lib/mdat/parse'
 import { describe, expect, it } from 'vitest'
+import { parseComment } from '../src/lib/mdat/parse'
 
 describe('basic comment keyword parsing', () => {
 	const basicOptions = {

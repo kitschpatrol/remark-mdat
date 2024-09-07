@@ -1,6 +1,6 @@
+import type { JsonValue } from 'type-fest'
 import json5 from 'json5'
 import { type Html, type Parent } from 'mdast'
-import type { JsonValue } from 'type-fest'
 import { type Simplify } from 'type-fest'
 import { VFileMessage } from 'vfile-message'
 

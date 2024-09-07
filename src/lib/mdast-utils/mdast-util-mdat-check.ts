@@ -1,18 +1,18 @@
+import type { Root } from 'mdast'
+import type { VFile } from 'vfile'
+import chalk from 'chalk'
+import Table from 'cli-table3'
+import { CONTINUE, visit } from 'unist-util-visit'
 import { saveLog } from '../mdat/mdat-log'
 import { type CommentMarkerNode, parseCommentNode } from '../mdat/parse'
 import {
+	getRuleContent,
 	type NormalizedRule,
 	type NormalizedRules,
-	type Rules,
-	getRuleContent,
 	normalizeRules,
+	type Rules,
 	validateRules,
 } from '../mdat/rules'
-import chalk from 'chalk'
-import Table from 'cli-table3'
-import type { Root } from 'mdast'
-import { CONTINUE, visit } from 'unist-util-visit'
-import type { VFile } from 'vfile'
 
 export type Options = {
 	addMetaComment: boolean

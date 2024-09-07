@@ -1,34 +1,34 @@
 // Export utilities for advanced use cases
-export { type Options as MdatOptions, mdat } from './lib/mdast-utils/mdast-util-mdat'
+export { mdat, type Options as MdatOptions } from './lib/mdast-utils/mdast-util-mdat'
 export {
-	type Options as MdatCheckOptions,
 	mdatCheck,
+	type Options as MdatCheckOptions,
 } from './lib/mdast-utils/mdast-util-mdat-check'
 export {
-	type Options as MdatCleanOptions,
 	mdatClean,
+	type Options as MdatCleanOptions,
 } from './lib/mdast-utils/mdast-util-mdat-clean'
 export {
-	type Options as MdatExpandOptions,
 	mdatExpand,
+	type Options as MdatExpandOptions,
 } from './lib/mdast-utils/mdast-util-mdat-expand'
 export { mdatSplit } from './lib/mdast-utils/mdast-util-mdat-split'
 export { deepMergeDefined } from './lib/mdat/deep-merge-defined'
 export { default as log } from './lib/mdat/log'
 export {
+	getMdatReports,
 	type MdatFileReport,
 	type MdatMessage,
-	getMdatReports,
 	reporterMdat,
 } from './lib/mdat/mdat-log'
 export {
+	getSoleRule,
+	getSoleRuleKey,
 	type NormalizedRule,
 	type NormalizedRules,
 	type Rule,
 	type Rules,
-	type SimplifyDeep,
-	getSoleRule,
-	getSoleRuleKey,
 	rulesSchema,
+	type SimplifyDeep,
 } from './lib/mdat/rules'
-export { type Options, default, optionsSchema } from './lib/remark-mdat'
+export { default, type Options, optionsSchema } from './lib/remark-mdat'
