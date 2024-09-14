@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import type { Merge, MergeDeep, SetOptional, Simplify } from 'type-fest'
 import { type Root } from 'mdast'
 import { type JsonValue } from 'type-fest'

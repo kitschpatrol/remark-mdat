@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable perfectionist/sort-objects */
 // Staying basic, always log to stderr
 

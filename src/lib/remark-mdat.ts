@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import type { Root } from 'mdast'
 import type { Plugin } from 'unified'
 import { z } from 'zod'
