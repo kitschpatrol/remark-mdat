@@ -1,6 +1,6 @@
-import type { Merge, MergeDeep, SetOptional, Simplify } from 'type-fest'
+/* eslint-disable jsdoc/require-jsdoc */
+import type { JsonValue, Merge, MergeDeep, SetOptional, Simplify } from 'type-fest'
 import { type Root } from 'mdast'
-import { type JsonValue } from 'type-fest'
 import { z } from 'zod'
 
 // Note that more advanced rule loading is implemented in `mdat`
@@ -67,16 +67,13 @@ export type Rule =
 					 * Can be a simple string for direct replacement, a function that returns a string, or an async function that returns a string.
 					 *
 					 * If a function is provided, it will be passed the following arguments:
-					 *
 					 * @param options
 					 * JSON value of options parsed immediately after the comment keyword in the comment, e.g.:
 					 * `<!-- keyword({something: true}) -->` or
 					 * `<!-- keyword {something: true}-->`
 					 * Sets options to {something: true}
-					 *
 					 * @param tree
 					 * Markdown (mdast) abstract syntax tree containing the entire parsed document. Useful for expanders that need the entire document context, such as when generating a table of contents. Do not mutate the AST, instead return a new string.
-					 *
 					 * @returns A string with the generated content. The string will be parsed as Markdown and inserted into the document at the comment's location.
 					 */
 					content: ((options: JsonValue, tree: Root) => Promise<string> | string) | Rule[] | string
@@ -90,9 +87,6 @@ export type Rule =
  * Rules are record objects whose keys match strings inside a Markdown comment, and values explain what should be expanded at the comment site.
  *
  * The record value may be a string, or an object containing additional metadata, possibly with a function to invoke to generate content.
- *
- *
- *
  * @example
  * Most basic rule:
  * ```ts
@@ -125,7 +119,7 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 			// Rule is just a simple string replacement, no metadata provided
 			normalizedRules[keyword] = {
 				applicationOrder: 0,
-				// eslint-disable-next-line @typescript-eslint/require-await
+				// eslint-disable-next-line ts/require-await
 				content: async () => rule,
 				order: undefined,
 				required: false,
@@ -153,7 +147,7 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 			const ruleContent = rule.content // Needed for type narrowing
 			normalizedRules[keyword] = {
 				applicationOrder: rule.applicationOrder ?? 0,
-				// eslint-disable-next-line @typescript-eslint/require-await
+				// eslint-disable-next-line ts/require-await
 				content: async () => ruleContent,
 				order: rule.order ?? undefined,
 				required: rule.required ?? false,
@@ -259,11 +253,13 @@ const ruleSchema: z.ZodSchema = z.lazy(() =>
 // Z.array(z.lazy(() => ruleSchema)), // Correctly handle recursive arrays of Rule
 
 export const rulesSchema = z.record(ruleSchema).describe('MDAT Rules')
-export const normalizedRulesSchema = z.record(normalizedRuleSchema).describe('MDAT Rules')
+const normalizedRulesSchema = z.record(normalizedRuleSchema).describe('MDAT Rules')
 
 // ----------------------------------------------------------
 
-// Compound rule helpers, used in both "expand" and "check" utilities
+/**
+ * Compound rule helpers, used in both "expand" and "check" utilities
+ */
 export async function getRuleContent(
 	rule: NormalizedRule,
 	options: JsonValue,
@@ -328,7 +324,6 @@ export function getSoleRuleKey<T extends NormalizedRules | Rules>(rules: T): key
  *
  * Useful for working with Rules records
  * that are only supposed to contain a single rule.
- *
  * @param record The record to get the sole entry from
  * @returns The value of the sole entry in the record
  * @throws If there are no entries or more than one entry

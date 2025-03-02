@@ -1,3 +1,6 @@
+/* eslint-disable import/no-named-as-default */
+/* eslint-disable unicorn/prevent-abbreviations */
+
 import type { Root } from 'mdast'
 import type { VFile } from 'vfile'
 import chalk from 'chalk'
@@ -24,9 +27,9 @@ export type Options = {
 	rules: Rules
 }
 
-type CommentMarkerWithRule = {
+type CommentMarkerWithRule = CommentMarkerNode & {
 	rule: NormalizedRule | undefined
-} & CommentMarkerNode
+}
 
 /**
  * Mdast utility function to check mdat source document, and output.
@@ -207,9 +210,11 @@ function satisfiedByCompoundRule(
 	comments: CommentMarkerWithRule[],
 ): boolean {
 	// Reduce down single rule on comments that meets a test
+	// eslint-disable-next-line unicorn/no-array-reduce
 	return comments.reduce<boolean>((flag, comment) => {
 		if (Array.isArray(comment.rule?.content)) {
 			for (const rule of comment.rule.content) {
+				// eslint-disable-next-line ts/no-base-to-string
 				if (rule.content.toString() === possiblyMissingRule.content.toString()) {
 					flag = true
 				}

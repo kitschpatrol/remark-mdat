@@ -1,9 +1,12 @@
-import type { Root } from 'mdast'
+/* eslint-disable jsdoc/require-jsdoc */
+/* eslint-disable unicorn/prevent-abbreviations */
+// @case-police-ignore Html
+
+import type { Html, Root, Text } from 'mdast'
+import type { Node, Point, Position } from 'unist'
+import type { VFile } from 'vfile'
 import { fromHtml } from 'hast-util-from-html'
-import { type Html, type Text } from 'mdast'
-import { type Node, type Point, type Position } from 'unist'
 import { CONTINUE, SKIP, visit } from 'unist-util-visit'
-import { type VFile } from 'vfile'
 import { saveLog } from '../mdat/mdat-log'
 
 /**

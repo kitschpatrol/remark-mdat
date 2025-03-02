@@ -60,7 +60,7 @@ describe('deep merge of defined values only', () => {
 
 	it('should overwrite defined values with null', () => {
 		type Test = {
-			// eslint-disable-next-line @typescript-eslint/ban-types
+			// eslint-disable-next-line ts/no-restricted-types
 			baz: null | number
 			foo: string
 		}

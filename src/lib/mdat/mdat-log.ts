@@ -1,3 +1,6 @@
+/* eslint-disable ts/no-unnecessary-condition */
+/* eslint-disable jsdoc/require-jsdoc */
+
 import type { Node } from 'unist'
 import chalk from 'chalk'
 import path from 'node:path'
@@ -5,7 +8,9 @@ import { type VFile } from 'vfile'
 import { type Options, type VFileMessage } from 'vfile-message'
 import log from './log'
 
-// Tries to provide a simpler wrapper to vfile.message
+/**
+ * Tries to provide a simpler wrapper to vfile.message
+ */
 export type MdatMessage = {
 	column?: number
 	level: 'error' | 'info' | 'warn'
@@ -141,7 +146,7 @@ export function reporterMdat(files: VFile[]): void {
 		const mdatFileReport = getMdatReport(file)
 		const { destinationPath, errors, infos, sourcePath, warnings } = mdatFileReport
 
-		log.info(`${chalk.bold('MDAT Report:')}`)
+		log.info(chalk.bold('MDAT Report:'))
 		log.info(`\tFrom: ${chalk.blue.bold(sourcePath)}`)
 		log.info(`\tTo:   ${chalk.blue.bold(destinationPath)}`)
 

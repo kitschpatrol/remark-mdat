@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { type Root } from 'mdast'
 import fs from 'node:fs/promises'
 import { remark } from 'remark'
@@ -6,7 +7,6 @@ import { type VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
 import remarkMdat, { mdatClean, type MdatCleanOptions, mdatSplit, type Options } from '../src'
 import testRules from './assets/test-rules'
-// @ts-expect-error - Intentionally invalid for testing purposes
 import testRulesInvalid from './assets/test-rules-invalid'
 
 async function expandStringToString(markdown: string, options: Options): Promise<string> {
@@ -77,6 +77,7 @@ describe('comment expansion', () => {
 	it('should throw an error if rule set is invalid', async () => {
 		await expect(
 			expandFileToString('./test/assets/test-document.md', {
+				// @ts-expect-error - Intentionally invalid for testing purposes
 				rules: testRulesInvalid,
 			}),
 		).rejects.toThrow()
@@ -88,7 +89,7 @@ describe('keyword case sensitivity', () => {
 		const markdown = `<!-- KEYWORD -->\n<!-- kEyWoRd -->\n<!-- keyword -->\n`
 		const options: Options = {
 			rules: {
-				// eslint-disable-next-line @typescript-eslint/naming-convention
+				// eslint-disable-next-line ts/naming-convention
 				KEYWORD: "I'm yelling",
 				kEyWoRd: "I'm emotional",
 				keyword: "I'm basic",
@@ -146,9 +147,9 @@ describe('compound rule handling', () => {
 		const options: Options = {
 			rules: {
 				compound: [
-					(options) => `My option is: ${(options as { option: string })?.option}`,
-					(options) => `My option is: ${(options as { option: string })?.option}`,
-					(options) => `My option is: ${(options as { option: string })?.option}`,
+					(options) => `My option is: ${(options as { option: string }).option}`,
+					(options) => `My option is: ${(options as { option: string }).option}`,
+					(options) => `My option is: ${(options as { option: string }).option}`,
 				],
 			},
 		}

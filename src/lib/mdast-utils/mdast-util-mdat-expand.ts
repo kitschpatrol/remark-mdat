@@ -1,8 +1,12 @@
+/* eslint-disable jsdoc/require-jsdoc */
+/* eslint-disable unicorn/prevent-abbreviations */
+// @case-police-ignore Html
+
 import type { Html, Root } from 'mdast'
+import type { VFile } from 'vfile'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { CONTINUE, visit } from 'unist-util-visit'
-import { type VFile } from 'vfile'
 import { saveLog } from '../mdat/mdat-log'
 import { type CommentMarkerNode, parseCommentNode } from '../mdat/parse'
 import { getRuleContent, normalizeRules, type Rules, validateRules } from '../mdat/rules'
@@ -15,9 +19,9 @@ export type Options = {
 	rules: Rules
 }
 
-type ValidCommentMarker = {
+type ValidCommentMarker = CommentMarkerNode & {
 	type: 'close' | 'open'
-} & CommentMarkerNode
+}
 
 /*
  * Mdast utility plugin to collapse mdat comments and strip generated meta
@@ -52,6 +56,7 @@ export async function mdatExpand(tree: Root, file: VFile, options: Options) {
 		if (
 			commentMarker !== undefined &&
 			commentMarker.type === 'open' &&
+			// eslint-disable-next-line ts/no-unnecessary-condition
 			rules[commentMarker.keyword] !== undefined
 		)
 			commentMarkers.push(commentMarker)

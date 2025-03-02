@@ -1,14 +1,16 @@
-import type { JsonValue } from 'type-fest'
+/* eslint-disable import/no-named-as-default-member */
+// @case-police-ignore Html
+
+import type { Html, Parent } from 'mdast'
+import type { JsonValue, Simplify } from 'type-fest'
 import json5 from 'json5'
-import { type Html, type Parent } from 'mdast'
-import { type Simplify } from 'type-fest'
 import { VFileMessage } from 'vfile-message'
 
 /**
  * Structured data about a parsed comment.
  * Note that this is a discriminated union based on the `type` field.
  */
-export type CommentMarker = Simplify<
+type CommentMarker = Simplify<
 	{
 		// Shared field
 		/** The complete original comment, e.g. `<!-- keyword -->`  */
@@ -45,15 +47,15 @@ export type CommentMarker = Simplify<
  * Parsed comment with additional information about the Mdast Node and its Parent.
  */
 export type CommentMarkerNode = Simplify<
-	{
+	CommentMarker & {
 		/** Original Mdast HTML Node where the comment was found. */
 		node: Html
 		/** Parent of original Mdast HTML Node where the comment was found. */
 		parent: Parent
-	} & CommentMarker
+	}
 >
 
-export type CommentMarkerParseOptions = {
+type CommentMarkerParseOptions = {
 	/** Character to identify closing tags, e.g. the `/` in `<!-- /keyword -->`  */
 	closingPrefix: string
 	/** Prefix to require on all mdat comments, e.g. `mm-`  */
@@ -110,10 +112,10 @@ export function parseComment(
 	const { closingPrefix, keywordPrefix, metaCommentIdentifier } = options
 
 	const commentHtml = text.trim()
-	const commentBody = commentHtml.replace(/^\s*<!--+\s*/, '').replace(/\s*-*-->\s*$/, '')
+	const commentBody = commentHtml.replace(/^\s*<!-{2,}\s*/, '').replace(/\s*-{2,}>\s*$/, '')
 
 	// Splits without capturing
-	const [rawKeyword, ...argumentParts] = commentBody.split(/(\s+|\(|{)/)
+	const [rawKeyword, ...argumentParts] = commentBody.split(/(\s+|\(|\{)/)
 
 	const type = rawKeyword.startsWith(metaCommentIdentifier)
 		? 'meta'
@@ -147,6 +149,7 @@ export function parseComment(
 		.replace(new RegExp(`^${keywordPrefix}`), '')
 	const optionText = makeValidJson(argumentParts.join(''))
 
+	// eslint-disable-next-line ts/no-unnecessary-condition
 	if (type === 'open' || type === 'close') {
 		let options: JsonValue = {}
 

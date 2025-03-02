@@ -19,7 +19,8 @@
 
 <!-- /description -->
 
-> \[!NOTE]\
+> [!NOTE]
+>
 > **Please see The [`mdat` package](https://github.com/kitschpatrol/mdat) for a higher-level CLI tool and library with a collection of built-in expansion rules.**
 
 <!-- table-of-contents -->
@@ -100,11 +101,11 @@ The plugin accepts an optional options object which exposes some configuration o
 
 ```ts
 export type Options = {
-  addMetaComment?: boolean // default: false
-  closingPrefix?: string // default: '/',
-  keywordPrefix?: string // default: '',
-  metaCommentIdentifier?: string // default: '+',
-  rules?: Rules // default: a single test rule for the 'mdat' keyword
+  addMetaComment?: boolean // Default: false
+  closingPrefix?: string // Default: '/',
+  keywordPrefix?: string // Default: '',
+  metaCommentIdentifier?: string // Default: '+',
+  rules?: Rules // Default: a single test rule for the 'mdat' keyword
 }
 ```
 
@@ -137,7 +138,7 @@ If you wanted to replace `<!-- time -->` comments in your Markdown file with the
 
 ```ts
 import { remark } from 'remark'
-import { type Rules, default as remarkMdat } from 'remark-mdat'
+import remarkMdat, { type Rules } from 'remark-mdat'
 
 // Create the rule
 const rules: Rules = {

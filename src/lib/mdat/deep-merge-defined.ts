@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { deepmerge } from 'deepmerge-ts'
 
 // Discussion:
@@ -20,20 +21,23 @@ import { deepmerge } from 'deepmerge-ts'
 // }
 
 // Objects + Arrays
-export function stripUndefinedDeep<T>(object: T | T[]): T | T[] {
+function stripUndefinedDeep<T>(object: T | T[]): T | T[] {
 	if (Array.isArray(object)) {
 		return object
 			.map((v) => (v && typeof v === 'object' ? stripUndefinedDeep(v) : v))
 			.filter((v) => v !== undefined) as T[]
 	}
 
-	return Object.entries(object as Record<string, unknown>)
-		.map(([k, v]) => [k, v && typeof v === 'object' ? stripUndefinedDeep(v) : v])
-		.reduce(
-			(acc: Record<string, unknown>, [k, v]) =>
-				v === undefined ? acc : { ...acc, [k as string]: v },
-			{},
-		) as T
+	return (
+		Object.entries(object as Record<string, unknown>)
+			.map(([k, v]) => [k, v && typeof v === 'object' ? stripUndefinedDeep(v) : v])
+			// eslint-disable-next-line unicorn/no-array-reduce
+			.reduce(
+				(acc: Record<string, unknown>, [k, v]) =>
+					v === undefined ? acc : { ...acc, [k as string]: v },
+				{},
+			) as T
+	)
 }
 
 export function deepMergeDefined<T extends Record<string, unknown>>(...objects: T[]): T {

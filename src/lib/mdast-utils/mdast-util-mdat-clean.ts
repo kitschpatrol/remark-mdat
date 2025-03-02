@@ -1,3 +1,5 @@
+/* eslint-disable unicorn/prevent-abbreviations */
+
 import type { Root } from 'mdast'
 import { CONTINUE, visit } from 'unist-util-visit'
 import { type VFile } from 'vfile'
@@ -18,7 +20,7 @@ export type Options = {
 export function mdatClean(tree: Root, file: VFile, options: Options): void {
 	// Collapse expanded tags
 	// Find closing tags, then go back to last opening tag
-	let lastOpenMarker: ({ type: 'close' | 'open' } & CommentMarkerNode) | undefined
+	let lastOpenMarker: (CommentMarkerNode & { type: 'close' | 'open' }) | undefined
 	visit(tree, 'html', (node, index, parent) => {
 		if (parent === undefined || index === undefined) return CONTINUE
 
@@ -39,6 +41,7 @@ export function mdatClean(tree: Root, file: VFile, options: Options): void {
 			return CONTINUE
 		}
 
+		// eslint-disable-next-line ts/no-unnecessary-condition
 		if (marker.type === 'close') {
 			// Check the match
 			if (lastOpenMarker === undefined) {

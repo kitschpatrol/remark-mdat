@@ -1,3 +1,5 @@
+// @case-police-ignore Html
+
 import { type Html } from 'mdast'
 import { describe, expect, it } from 'vitest'
 import { splitHtmlIntoMdastNodes } from '../src/lib/mdast-utils/mdast-util-mdat-split'
