@@ -120,7 +120,7 @@ import { remark } from 'remark'
 import remarkMdat from 'remark-mdat'
 
 const markdownInput = '<!-- mdat -->'
-const markdownOutput = await remark().use(remarkMdat).process(markdown)
+const markdownOutput = await remark().use(remarkMdat).process(markdownInput)
 
 console.log(markdownOutput.toString())
 
@@ -148,7 +148,7 @@ const rules: Rules = {
 const markdownInput = '<!-- time -->'
 
 // Pass the time rule to remarkMdat
-const markdownOutput = await remark().use(remarkMdat, { rules }).process(markdown)
+const markdownOutput = await remark().use(remarkMdat, { rules }).process(markdownInput)
 
 console.log(markdownOutput.toString())
 
