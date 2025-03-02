@@ -1,7 +1,10 @@
 {
 	"extends": "./tsconfig.json",
-
-	// Skips project files for typescript-eslint integration
-	"include": ["**/*"],
-	"exclude": ["**/dist/", "**/bin/"]
+	"compilerOptions": {
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"noEmit": false,
+		"outDir": "./dist"
+	},
+	"include": ["src/**/*"]
 }
