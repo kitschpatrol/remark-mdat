@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/prevent-abbreviations */
-
 import type { Root } from 'mdast'
 import { CONTINUE, visit } from 'unist-util-visit'
 import { type VFile } from 'vfile'

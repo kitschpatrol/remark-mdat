@@ -1,5 +1,4 @@
 /* eslint-disable jsdoc/require-jsdoc */
-/* eslint-disable unicorn/prevent-abbreviations */
 
 import type { Root } from 'mdast'
 import { type VFile } from 'vfile'

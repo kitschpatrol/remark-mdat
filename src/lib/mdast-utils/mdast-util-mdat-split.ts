@@ -1,5 +1,5 @@
 /* eslint-disable jsdoc/require-jsdoc */
-/* eslint-disable unicorn/prevent-abbreviations */
+
 // @case-police-ignore Html
 
 import type { Html, Root, Text } from 'mdast'

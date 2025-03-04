@@ -18,7 +18,7 @@
 	"bugs": "https://github.com/kitschpatrol/remark-mdat/issues",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/github:kitschpatrol/remark-mdat"
+		"url": "git+https://github.com/kitschpatrol/remark-mdat.git"
 	},
 	"license": "MIT",
 	"author": {
@@ -44,7 +44,7 @@
 	},
 	"dependencies": {
 		"@types/mdast": "^4.0.4",
-		"@types/node": "18.19.0",
+		"@types/node": "^18.19.79",
 		"@types/unist": "^3.0.3",
 		"type-fest": "^4.36.0",
 		"unified": "^11.0.5",
@@ -52,7 +52,7 @@
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^5.0.6",
+		"@kitschpatrol/shared-config": "^5.2.0",
 		"@microsoft/api-extractor": "^7.51.1",
 		"bumpp": "^10.0.3",
 		"chalk": "^5.4.1",
@@ -70,8 +70,7 @@
 	},
 	"packageManager": "pnpm@10.5.2",
 	"engines": {
-		"node": "^18.19.0 || >=20.5.0",
-		"pnpm": ">=10.0.0"
+		"node": "^18.19.0 || >=20.5.0"
 	},
 	"publishConfig": {
 		"access": "public"

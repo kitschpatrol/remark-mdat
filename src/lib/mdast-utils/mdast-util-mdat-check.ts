@@ -1,5 +1,4 @@
 /* eslint-disable import/no-named-as-default */
-/* eslint-disable unicorn/prevent-abbreviations */
 
 import type { Root } from 'mdast'
 import type { VFile } from 'vfile'
