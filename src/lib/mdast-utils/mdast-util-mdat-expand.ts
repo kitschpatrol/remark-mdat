@@ -7,9 +7,11 @@ import type { VFile } from 'vfile'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { CONTINUE, visit } from 'unist-util-visit'
+import type { CommentMarkerNode } from '../mdat/parse'
+import type { Rules } from '../mdat/rules'
 import { saveLog } from '../mdat/mdat-log'
-import { type CommentMarkerNode, parseCommentNode } from '../mdat/parse'
-import { getRuleContent, normalizeRules, type Rules, validateRules } from '../mdat/rules'
+import { parseCommentNode } from '../mdat/parse'
+import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
 
 export type Options = {
 	addMetaComment: boolean

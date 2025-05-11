@@ -1,15 +1,15 @@
 // @case-police-ignore Html
 
-import { type Html } from 'mdast'
+import type { Html } from 'mdast'
 import { describe, expect, it } from 'vitest'
 import { splitHtmlIntoMdastNodes } from '../src/lib/mdast-utils/mdast-util-mdat-split'
 
 function stringToMdastNode(value: string): Html {
 	return {
 		position: {
+			start: { column: 1, line: 1, offset: 0 },
 			// Might be off by one...
 			end: { column: value.length + 1, line: 1, offset: value.length },
-			start: { column: 1, line: 1, offset: 0 },
 		},
 		type: 'html',
 		value,

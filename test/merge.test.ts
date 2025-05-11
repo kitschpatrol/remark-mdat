@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import type { Options as MdatOptions } from '../src/lib/remark-mdat'
 import { deepMergeDefined } from '../src/lib/mdat/deep-merge-defined'
-import { type Options as MdatOptions } from '../src/lib/remark-mdat'
 
 describe('deep merge of defined values only', () => {
 	it('should not overwrite defined values with undefined in simple objects', () => {

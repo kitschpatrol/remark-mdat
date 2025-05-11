@@ -1,4 +1,3 @@
-/* eslint-disable import/no-named-as-default-member */
 // @case-police-ignore Html
 
 import type { Html, Parent } from 'mdast'

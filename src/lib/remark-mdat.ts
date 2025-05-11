@@ -1,7 +1,8 @@
 import type { Root } from 'mdast'
 import type { Plugin } from 'unified'
 import { z } from 'zod'
-import { mdat, type Options as MdatOptions } from './mdast-utils/mdast-util-mdat'
+import type { Options as MdatOptions } from './mdast-utils/mdast-util-mdat'
+import { mdat } from './mdast-utils/mdast-util-mdat'
 import { deepMergeDefined } from './mdat/deep-merge-defined'
 import { rulesSchema } from './mdat/rules'
 

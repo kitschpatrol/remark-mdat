@@ -1,8 +1,9 @@
 import type { Root } from 'mdast'
+import type { VFile } from 'vfile'
 import { CONTINUE, visit } from 'unist-util-visit'
-import { type VFile } from 'vfile'
+import type { CommentMarkerNode } from '../mdat/parse'
 import { saveLog } from '../mdat/mdat-log'
-import { type CommentMarkerNode, parseCommentNode } from '../mdat/parse'
+import { parseCommentNode } from '../mdat/parse'
 
 export type Options = {
 	closingPrefix: string

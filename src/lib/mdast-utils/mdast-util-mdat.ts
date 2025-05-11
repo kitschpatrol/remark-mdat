@@ -1,8 +1,8 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
 import type { Root } from 'mdast'
-import { type VFile } from 'vfile'
-import { type Rules } from '../mdat/rules'
+import type { VFile } from 'vfile'
+import type { Rules } from '../mdat/rules'
 import { mdatCheck } from './mdast-util-mdat-check'
 import { mdatClean } from './mdast-util-mdat-clean'
 import { mdatExpand } from './mdast-util-mdat-expand'

@@ -1,6 +1,6 @@
 /* eslint-disable jsdoc/require-jsdoc */
+import type { Root } from 'mdast'
 import type { JsonValue, Merge, MergeDeep, SetOptional, Simplify } from 'type-fest'
-import { type Root } from 'mdast'
 import { z } from 'zod'
 
 // Note that more advanced rule loading is implemented in `mdat`

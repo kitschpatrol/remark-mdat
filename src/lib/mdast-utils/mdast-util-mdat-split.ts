@@ -75,20 +75,20 @@ function addStartPoint(
 	if (position === undefined || start === undefined) return undefined
 
 	return {
-		end: {
-			column: position.end.column - 1 + start.column,
-			line: position.end.line - 1 + start.line,
-			offset:
-				position.end.offset !== undefined && start.offset !== undefined
-					? position.end.offset + start.offset
-					: undefined,
-		},
 		start: {
 			column: position.start.column - 1 + start.column,
 			line: position.start.line - 1 + start.line,
 			offset:
 				position.start.offset !== undefined && start.offset !== undefined
 					? position.start.offset + start.offset
+					: undefined,
+		},
+		end: {
+			column: position.end.column - 1 + start.column,
+			line: position.end.line - 1 + start.line,
+			offset:
+				position.end.offset !== undefined && start.offset !== undefined
+					? position.end.offset + start.offset
 					: undefined,
 		},
 	}

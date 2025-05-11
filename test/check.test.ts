@@ -1,9 +1,10 @@
-import { type Root } from 'mdast'
+import type { Root } from 'mdast'
+import type { VFile } from 'vfile'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
-import { type VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
-import remarkMdat, { mdatCheck, type MdatCheckOptions, type Options } from '../src'
+import type { MdatCheckOptions, Options } from '../src'
+import remarkMdat, { mdatCheck } from '../src'
 
 async function expandStringToVfile(markdown: string, options: Options): Promise<VFile> {
 	return remark().use(remarkGfm).use(remarkMdat, options).process(markdown)

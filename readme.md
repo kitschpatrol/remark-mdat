@@ -137,8 +137,9 @@ console.log(markdownOutput.toString())
 If you wanted to replace `<!-- time -->` comments in your Markdown file with the current time, you could pass in a rule:
 
 ```ts
+import type { Rules } from 'remark-mdat'
 import { remark } from 'remark'
-import remarkMdat, { type Rules } from 'remark-mdat'
+import remarkMdat from 'remark-mdat'
 
 // Create the rule
 const rules: Rules = {

@@ -1,11 +1,12 @@
 /* eslint-disable jsdoc/require-jsdoc */
-import { type Root } from 'mdast'
+import type { Root } from 'mdast'
+import type { VFile } from 'vfile'
 import fs from 'node:fs/promises'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
-import { type VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
-import remarkMdat, { mdatClean, type MdatCleanOptions, mdatSplit, type Options } from '../src'
+import type { MdatCleanOptions, Options } from '../src'
+import remarkMdat, { mdatClean, mdatSplit } from '../src'
 import testRules from './assets/test-rules'
 import testRulesInvalid from './assets/test-rules-invalid'
 

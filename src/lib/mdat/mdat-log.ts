@@ -2,10 +2,10 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
 import type { Node } from 'unist'
+import type { VFile } from 'vfile'
+import type { Options, VFileMessage } from 'vfile-message'
 import chalk from 'chalk'
 import path from 'node:path'
-import { type VFile } from 'vfile'
-import { type Options, type VFileMessage } from 'vfile-message'
 import log from './log'
 
 /**
@@ -81,11 +81,11 @@ export function saveLog(
 
 	const options: Options = {
 		place: {
-			end: {
+			start: {
 				column,
 				line,
 			},
-			start: {
+			end: {
 				column,
 				line,
 			},

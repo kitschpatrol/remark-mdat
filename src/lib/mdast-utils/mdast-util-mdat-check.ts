@@ -5,16 +5,11 @@ import type { VFile } from 'vfile'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import { CONTINUE, visit } from 'unist-util-visit'
+import type { CommentMarkerNode } from '../mdat/parse'
+import type { NormalizedRule, NormalizedRules, Rules } from '../mdat/rules'
 import { saveLog } from '../mdat/mdat-log'
-import { type CommentMarkerNode, parseCommentNode } from '../mdat/parse'
-import {
-	getRuleContent,
-	type NormalizedRule,
-	type NormalizedRules,
-	normalizeRules,
-	type Rules,
-	validateRules,
-} from '../mdat/rules'
+import { parseCommentNode } from '../mdat/parse'
+import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
 
 export type Options = {
 	addMetaComment: boolean
