@@ -4,8 +4,8 @@
 import type { Node } from 'unist'
 import type { VFile } from 'vfile'
 import type { Options, VFileMessage } from 'vfile-message'
-import chalk from 'chalk'
 import path from 'node:path'
+import picocolors from 'picocolors'
 import log from './log'
 
 /**
@@ -146,9 +146,9 @@ export function reporterMdat(files: VFile[]): void {
 		const mdatFileReport = getMdatReport(file)
 		const { destinationPath, errors, infos, sourcePath, warnings } = mdatFileReport
 
-		log.info(chalk.bold('MDAT Report:'))
-		log.info(`\tFrom: ${chalk.blue.bold(sourcePath)}`)
-		log.info(`\tTo:   ${chalk.blue.bold(destinationPath)}`)
+		log.info(picocolors.bold('MDAT Report:'))
+		log.info(`\tFrom: ${picocolors.blue(picocolors.bold(sourcePath))}`)
+		log.info(`\tTo:   ${picocolors.blue(picocolors.bold(destinationPath))}`)
 
 		for (const message of errors) {
 			log.error(mdatMessageToLogString(sourcePath, message))
@@ -173,19 +173,19 @@ export function reporterMdat(files: VFile[]): void {
 function mdatMessageToLogString(sourcePath: string, mdatMessage: MdatMessage): string {
 	const { column, level, line, message, source } = mdatMessage
 
-	const resolvedSource = source ? chalk.gray(`[${source}] `) : ''
+	const resolvedSource = source ? picocolors.gray(`[${source}] `) : ''
 	const lineColumn = line && column ? `:${line}:${column}` : ''
 	const highlightedMessage = highlightComments(message, level)
 
-	return `${resolvedSource}${highlightedMessage} ${chalk.whiteBright(sourcePath + lineColumn)}`
+	return `${resolvedSource}${highlightedMessage} ${picocolors.whiteBright(sourcePath + lineColumn)}`
 }
 
 function highlightComments(text: string, level: 'error' | 'info' | 'warn'): string {
 	return text.replaceAll(/<!--.+-->/g, (match) =>
 		level === 'info'
-			? chalk.green(match)
+			? picocolors.green(match)
 			: level === 'warn'
-				? chalk.yellow(match)
-				: chalk.red(match),
+				? picocolors.yellow(match)
+				: picocolors.red(match),
 	)
 }

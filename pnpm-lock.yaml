@@ -20,6 +20,9 @@ importers:
       '@types/unist':
         specifier: ^3.0.3
         version: 3.0.3
+      picocolors:
+        specifier: ^1.1.1
+        version: 1.1.1
       type-fest:
         specifier: ^4.41.0
         version: 4.41.0
@@ -42,9 +45,6 @@ importers:
       bumpp:
         specifier: ^10.1.0
         version: 10.1.0
-      chalk:
-        specifier: ^5.4.1
-        version: 5.4.1
       cli-table3:
         specifier: ^0.6.5
         version: 0.6.5
@@ -4109,8 +4109,8 @@ packages:
   remark-lint@10.0.1:
     resolution: {integrity: sha512-1+PYGFziOg4pH7DDf1uMd4AR3YuO2EMnds/SdIWMPGT7CAfDRSnAmpxPsJD0Ds3IKpn97h3d5KPGf1WFOg6hXQ==}
 
-  remark-mdat@1.0.2:
-    resolution: {integrity: sha512-6zLU3rrRDY9cSNe4mdO1Is1THvhthc2So35f457mOlycL2V6HD4pNQiZgj1Iu7o33gyGTeI1YhQG6U0Axqd+8A==}
+  remark-mdat@1.0.3:
+    resolution: {integrity: sha512-Wm03NGJP/GBPhmqta1aLcx3edzM8uy8znP8XGjMcbLjZYhxaKXCPd/T/ynJxk2mnYTmRrfsWnIVvN1w6eudoYg==}
     engines: {node: ^18.19.0 || >=20.5.0}
 
   remark-mdx@3.1.0:
@@ -8966,7 +8966,7 @@ snapshots:
       execa: 9.5.3
       globby: 14.1.0
       read-pkg: 9.0.1
-      remark-mdat: 1.0.2
+      remark-mdat: 1.0.3
       type-fest: 4.41.0
       unified-engine: 11.2.2
       vfile: 6.0.3
@@ -10192,7 +10192,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  remark-mdat@1.0.2:
+  remark-mdat@1.0.3:
     dependencies:
       '@types/mdast': 4.0.4
       '@types/node': 18.19.100

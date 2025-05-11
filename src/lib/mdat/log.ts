@@ -2,7 +2,7 @@
 
 // Staying basic, always log to stderr
 
-import chalk from 'chalk'
+import picocolors from 'picocolors'
 
 // eslint-disable-next-line ts/no-unnecessary-condition
 const isNode = process?.versions?.node !== undefined
@@ -13,7 +13,7 @@ const log = {
 	// Intended for temporary logging
 	log(...data: unknown[]): void {
 		if (!this.verbose) return
-		const levelPrefix = chalk.gray('[Log]')
+		const levelPrefix = picocolors.gray('[Log]')
 		if (isNode) {
 			// Log to stderr in node for ease of redirection
 			console.warn(levelPrefix, ...data)
@@ -22,12 +22,12 @@ const log = {
 		}
 	},
 	logPrefixed(prefix: string, ...data: unknown[]): void {
-		this.info(chalk.blue(`[${prefix}]`), ...data)
+		this.info(picocolors.blue(`[${prefix}]`), ...data)
 	},
 
 	info(...data: unknown[]): void {
 		if (!this.verbose) return
-		const levelPrefix = chalk.green('[Info]')
+		const levelPrefix = picocolors.green('[Info]')
 		if (isNode) {
 			// Log info to stderr in node for ease of redirection
 			console.warn(levelPrefix, ...data)
@@ -36,21 +36,21 @@ const log = {
 		}
 	},
 	infoPrefixed(prefix: string, ...data: unknown[]): void {
-		this.info(chalk.blue(`[${prefix}]`), ...data)
+		this.info(picocolors.blue(`[${prefix}]`), ...data)
 	},
 
 	warn(...data: unknown[]): void {
-		console.warn(chalk.yellow('[Warning]'), ...data)
+		console.warn(picocolors.yellow('[Warning]'), ...data)
 	},
 	warnPrefixed(prefix: string, ...data: unknown[]): void {
-		this.warn(chalk.blue(`[${prefix}]`), ...data)
+		this.warn(picocolors.blue(`[${prefix}]`), ...data)
 	},
 
 	error(...data: unknown[]): void {
-		console.error(chalk.red('[Error]'), ...data)
+		console.error(picocolors.red('[Error]'), ...data)
 	},
 	errorPrefixed(prefix: string, ...data: unknown[]): void {
-		this.error(chalk.blue(`[${prefix}]`), ...data)
+		this.error(picocolors.blue(`[${prefix}]`), ...data)
 	},
 }
 

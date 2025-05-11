@@ -2,8 +2,8 @@
 
 import type { Root } from 'mdast'
 import type { VFile } from 'vfile'
-import chalk from 'chalk'
 import Table from 'cli-table3'
+import picocolors from 'picocolors'
 import { CONTINUE, visit } from 'unist-util-visit'
 import type { CommentMarkerNode } from '../mdat/parse'
 import type { NormalizedRule, NormalizedRules, Rules } from '../mdat/rules'
@@ -242,7 +242,10 @@ function checkCommentOrder(file: VFile, comments: CommentMarkerWithRule[]): void
 	const correctOrderList = commentOrderList(commentsInCorrectOrder)
 
 	const table = new Table({
-		head: [chalk.bold.red('Current Order'), chalk.bold.green('Required Order')],
+		head: [
+			picocolors.red(picocolors.bold('Current Order')),
+			picocolors.green(picocolors.bold('Required Order')),
+		],
 		style: {
 			compact: true,
 		},
