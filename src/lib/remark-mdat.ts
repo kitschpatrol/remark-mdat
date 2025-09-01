@@ -36,6 +36,7 @@ export const optionsSchema = z
  * A remark plugin that expands HTML comments in Markdown files.
  */
 const remarkMdat: Plugin<[Options], Root> = function (options) {
+	// eslint-disable-next-line ts/no-unsafe-type-assertion
 	const resolvedOptions = deepMergeDefined(defaultOptions, options) as Required<MdatOptions>
 
 	return async function (tree, file) {

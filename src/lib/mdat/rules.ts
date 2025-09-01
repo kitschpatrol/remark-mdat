@@ -301,6 +301,7 @@ export async function getRuleContent(
  * Throws if there are no entries or more than one entry.
  */
 export function getSoleRule<T extends NormalizedRules | Rules>(rules: T): T[keyof T] {
+	// eslint-disable-next-line ts/no-unsafe-type-assertion
 	return getSoleRecord<T[keyof T]>(rules as Record<string, T[keyof T]>)
 }
 

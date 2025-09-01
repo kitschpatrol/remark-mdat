@@ -148,8 +148,11 @@ describe('compound rule handling', () => {
 		const options: Options = {
 			rules: {
 				compound: [
+					// eslint-disable-next-line ts/no-unsafe-type-assertion
 					(options) => `My option is: ${(options as { option: string }).option}`,
+					// eslint-disable-next-line ts/no-unsafe-type-assertion
 					(options) => `My option is: ${(options as { option: string }).option}`,
+					// eslint-disable-next-line ts/no-unsafe-type-assertion
 					(options) => `My option is: ${(options as { option: string }).option}`,
 				],
 			},

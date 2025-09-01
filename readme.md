@@ -176,7 +176,6 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
   _Exported as `mdat`_
 
   Utilities wrapped by `mdast-util-mdat`:
-
   - [**`mdast-util-mdat-split`**](./src/lib/mdast-utils/mdast-util-mdat-split.ts)
 
     Transformer function that allows inline mdat expansion comments.

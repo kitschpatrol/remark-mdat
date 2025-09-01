@@ -17,6 +17,7 @@ async function checkMarkdown(markdown: string, options: MdatCheckOptions): Promi
 			() =>
 				// eslint-disable-next-line unicorn/consistent-function-scoping
 				async function (tree, file) {
+					// eslint-disable-next-line ts/no-unsafe-type-assertion
 					await mdatCheck(tree as Root, file, options)
 				},
 		)

@@ -1,3 +1,4 @@
+/* eslint-disable ts/no-unsafe-type-assertion */
 /* eslint-disable jsdoc/require-jsdoc */
 import { deepmerge } from 'deepmerge-ts'
 

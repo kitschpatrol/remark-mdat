@@ -44,45 +44,35 @@
 	},
 	"dependencies": {
 		"@types/mdast": "^4.0.4",
-		"@types/node": "^18.19.100",
+		"@types/node": "^18.19.123",
 		"@types/unist": "^3.0.3",
 		"picocolors": "^1.1.1",
 		"type-fest": "^4.41.0",
 		"unified": "^11.0.5",
 		"vfile": "^6.0.3",
-		"zod": "^3.24.4"
+		"zod": "^3.25.76"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^5.4.0",
-		"@microsoft/api-extractor": "^7.52.7",
-		"bumpp": "^10.1.0",
+		"@kitschpatrol/shared-config": "^5.5.0",
+		"@microsoft/api-extractor": "^7.52.11",
+		"bumpp": "^10.2.3",
 		"cli-table3": "^0.6.5",
 		"deepmerge-ts": "^7.1.5",
 		"hast-util-from-html": "^2.0.3",
 		"json5": "^2.2.3",
 		"remark": "^15.0.1",
 		"remark-gfm": "^4.0.1",
-		"tsup": "^8.4.0",
+		"tsup": "^8.5.0",
 		"typescript": "~5.8.3",
 		"unist-util-visit": "^5.0.0",
-		"vfile-message": "^4.0.2",
-		"vitest": "^3.1.3"
+		"vfile-message": "^4.0.3",
+		"vitest": "^3.2.4"
 	},
-	"packageManager": "pnpm@10.10.0",
+	"packageManager": "pnpm@10.15.0",
 	"engines": {
 		"node": "^18.19.0 || >=20.5.0"
 	},
 	"publishConfig": {
 		"access": "public"
-	},
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"esbuild",
-			"puppeteer",
-			"unrs-resolver"
-		],
-		"overrides": {
-			"eslint-plugin-markdown": "^5.1.0"
-		}
 	}
 }
