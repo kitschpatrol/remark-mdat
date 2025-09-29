@@ -37,24 +37,24 @@
 		"build": "tsup && tsc -p tsconfig.build.json",
 		"clean": "git rm -f pnpm-lock.yaml ; git clean -fdX",
 		"dev": "pnpm run test",
-		"fix": "kpi fix",
-		"lint": "kpi lint",
+		"fix": "ksc fix",
+		"lint": "ksc lint",
 		"release": "bumpp --commit 'Release: %s' && pnpm run build && pnpm publish --otp $(op read 'op://Personal/Npmjs/one-time password?attribute=otp')",
 		"test": "vitest"
 	},
 	"dependencies": {
 		"@types/mdast": "^4.0.4",
-		"@types/node": "^18.19.123",
+		"@types/node": "^20.19.17",
 		"@types/unist": "^3.0.3",
 		"picocolors": "^1.1.1",
-		"type-fest": "^4.41.0",
+		"type-fest": "^5.0.1",
 		"unified": "^11.0.5",
 		"vfile": "^6.0.3",
 		"zod": "^3.25.76"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^5.5.0",
-		"@microsoft/api-extractor": "^7.52.11",
+		"@kitschpatrol/shared-config": "^5.7.0",
+		"@microsoft/api-extractor": "^7.52.13",
 		"bumpp": "^10.2.3",
 		"cli-table3": "^0.6.5",
 		"deepmerge-ts": "^7.1.5",
@@ -63,14 +63,14 @@
 		"remark": "^15.0.1",
 		"remark-gfm": "^4.0.1",
 		"tsup": "^8.5.0",
-		"typescript": "~5.8.3",
+		"typescript": "~5.9.2",
 		"unist-util-visit": "^5.0.0",
 		"vfile-message": "^4.0.3",
 		"vitest": "^3.2.4"
 	},
-	"packageManager": "pnpm@10.15.0",
+	"packageManager": "pnpm@10.17.1",
 	"engines": {
-		"node": "^18.19.0 || >=20.5.0"
+		"node": ">=20.19.0"
 	},
 	"publishConfig": {
 		"access": "public"
