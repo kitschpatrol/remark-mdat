@@ -70,7 +70,7 @@ This plugin powers the higher-level [`mdat` package](https://github.com/kitschpa
 
 ### Dependencies
 
-This library is ESM only and requires Node 18 (specifically `^18.19.0 || >=20.5.0`). It's designed to work with Remark 15. `remark-mdat` is implemented in TypeScript and bundles a complete set of type definitions.
+This library is ESM only and requires Node 20+. It's designed to work with Remark 15. `remark-mdat` is implemented in TypeScript and bundles a complete set of type definitions.
 
 ### Installation
 
