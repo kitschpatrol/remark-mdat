@@ -42,7 +42,7 @@ describe('comment expansion', () => {
 		const expandedString = await expandFileToString('./test/assets/test-document.md', {
 			rules: testRules,
 		})
-		expect(expandedString.toString()).toMatchSnapshot()
+		expect(expandedString).toMatchSnapshot()
 	})
 
 	it('should be idempotent', async () => {
@@ -54,7 +54,7 @@ describe('comment expansion', () => {
 			rules: testRules,
 		})
 
-		expect(firstPass.toString()).toEqual(secondPass.toString())
+		expect(firstPass).toEqual(secondPass)
 	})
 
 	it('should expand prefixed comments only', async () => {
@@ -63,7 +63,7 @@ describe('comment expansion', () => {
 			rules: testRules,
 		})
 
-		expect(expandedString.toString()).toMatchSnapshot()
+		expect(expandedString).toMatchSnapshot()
 	})
 
 	it('should include the meta tag if asked', async () => {
@@ -72,7 +72,7 @@ describe('comment expansion', () => {
 			rules: testRules,
 		})
 
-		expect(expandedString.toString()).toMatchSnapshot()
+		expect(expandedString).toMatchSnapshot()
 	})
 
 	it('should throw an error if rule set is invalid', async () => {
@@ -97,7 +97,7 @@ describe('keyword case sensitivity', () => {
 			},
 		}
 		const expandedString = await expandStringToString(markdown, options)
-		expect(expandedString.toString()).toMatchInlineSnapshot(`
+		expect(expandedString).toMatchInlineSnapshot(`
 			"<!-- KEYWORD -->
 
 			I'm yelling
@@ -129,7 +129,7 @@ describe('compound rule handling', () => {
 			},
 		}
 		const expandedString = await expandStringToString(markdown, options)
-		expect(expandedString.toString()).toMatchInlineSnapshot(`
+		expect(expandedString).toMatchInlineSnapshot(`
 			"<!-- compoundKeyword -->
 
 			one
@@ -158,7 +158,7 @@ describe('compound rule handling', () => {
 			},
 		}
 		const expandedString = await expandStringToString(markdown, options)
-		expect(expandedString.toString()).toMatchInlineSnapshot(`
+		expect(expandedString).toMatchInlineSnapshot(`
 			"<!-- compound [{option: 'yes'}, {option: 'it'}, {option: 'can'}] -->
 
 			My option is: yes

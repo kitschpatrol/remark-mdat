@@ -227,7 +227,7 @@ function checkCommentOrder(file: VFile, comments: CommentMarkerWithRule[]): void
 		(commentMarker) => commentMarker.type === 'open' && commentMarker.rule?.order !== undefined,
 	)
 
-	const commentsInCorrectOrder = [...commentsInOrderOfAppearance].sort((a, b) => {
+	const commentsInCorrectOrder = [...commentsInOrderOfAppearance].toSorted((a, b) => {
 		const orderA = a.rule?.order
 		const orderB = b.rule?.order
 
