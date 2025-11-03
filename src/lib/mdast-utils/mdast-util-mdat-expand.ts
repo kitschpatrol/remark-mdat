@@ -56,8 +56,7 @@ export async function mdatExpand(tree: Root, file: VFile, options: Options) {
 
 		// Save the marker if it meets all criteria
 		if (
-			commentMarker !== undefined &&
-			commentMarker.type === 'open' &&
+			commentMarker?.type === 'open' &&
 			// eslint-disable-next-line ts/no-unnecessary-condition
 			rules[commentMarker.keyword] !== undefined
 		)

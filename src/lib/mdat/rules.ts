@@ -327,7 +327,7 @@ export function getSoleRuleKey<T extends NormalizedRules | Rules>(rules: T): key
  * that are only supposed to contain a single rule.
  * @param record The record to get the sole entry from
  * @returns The value of the sole entry in the record
- * @throws If there are no entries or more than one entry
+ * @throws {Error} If there are no entries or more than one entry
  */
 function getSoleRecord<V>(record: Record<string, V>): V {
 	const recordValues = Object.values(record)

@@ -39,35 +39,35 @@
 		"dev": "pnpm run test",
 		"fix": "ksc fix",
 		"lint": "ksc lint",
-		"release": "bumpp --commit 'Release: %s' && pnpm run build && pnpm publish --otp $(op read 'op://Personal/Npmjs/one-time password?attribute=otp')",
+		"release": "bumpp --commit 'Release: %s' && pnpm run build && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') && pnpm publish",
 		"test": "vitest"
 	},
 	"dependencies": {
 		"@types/mdast": "^4.0.4",
-		"@types/node": "^20.19.17",
+		"@types/node": "^20.19.24",
 		"@types/unist": "^3.0.3",
 		"picocolors": "^1.1.1",
-		"type-fest": "^5.0.1",
+		"type-fest": "^5.2.0",
 		"unified": "^11.0.5",
 		"vfile": "^6.0.3",
 		"zod": "^3.25.76"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^5.7.0",
-		"bumpp": "^10.2.3",
+		"@kitschpatrol/shared-config": "^5.7.4",
+		"bumpp": "^10.3.1",
 		"cli-table3": "^0.6.5",
 		"deepmerge-ts": "^7.1.5",
 		"hast-util-from-html": "^2.0.3",
 		"json5": "^2.2.3",
 		"remark": "^15.0.1",
 		"remark-gfm": "^4.0.1",
-		"tsdown": "^0.15.5",
-		"typescript": "~5.9.2",
+		"tsdown": "^0.15.12",
+		"typescript": "~5.9.3",
 		"unist-util-visit": "^5.0.0",
 		"vfile-message": "^4.0.3",
-		"vitest": "^3.2.4"
+		"vitest": "^4.0.6"
 	},
-	"packageManager": "pnpm@10.17.1",
+	"packageManager": "pnpm@10.20.0",
 	"engines": {
 		"node": ">=20.19.0"
 	},
