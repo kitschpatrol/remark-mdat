@@ -34,7 +34,7 @@
 		"dist/*"
 	],
 	"scripts": {
-		"build": "tsdown --dts false && tsc -p tsconfig.build.json",
+		"build": "tsdown --no-fixed-extension --dts false && tsc -p tsconfig.build.json",
 		"clean": "git rm -f pnpm-lock.yaml ; git clean -fdX",
 		"dev": "pnpm run test",
 		"fix": "ksc fix",
@@ -53,7 +53,7 @@
 		"zod": "^3.25.76"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^5.7.4",
+		"@kitschpatrol/shared-config": "^5.8.1",
 		"bumpp": "^10.3.1",
 		"cli-table3": "^0.6.5",
 		"deepmerge-ts": "^7.1.5",
@@ -61,11 +61,11 @@
 		"json5": "^2.2.3",
 		"remark": "^15.0.1",
 		"remark-gfm": "^4.0.1",
-		"tsdown": "^0.15.12",
+		"tsdown": "^0.16.0",
 		"typescript": "~5.9.3",
 		"unist-util-visit": "^5.0.0",
 		"vfile-message": "^4.0.3",
-		"vitest": "^4.0.6"
+		"vitest": "^4.0.7"
 	},
 	"packageManager": "pnpm@10.20.0",
 	"engines": {
