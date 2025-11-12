@@ -12,7 +12,7 @@ import { parseCommentNode } from '../mdat/parse'
 import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
 
 export type Options = {
-	addMetaComment: boolean
+	addMetaComment: boolean | string
 	closingPrefix: string
 	keywordPrefix: string
 	metaCommentIdentifier: string
@@ -271,12 +271,13 @@ function checkMetaCommentPresence(
 	const { addMetaComment } = options
 
 	const metaCommentCount = comments.filter((comment) => comment.type === 'meta').length
+	const shouldHaveMetaComment = typeof addMetaComment === 'string' ? true : addMetaComment
 
-	if (addMetaComment && metaCommentCount !== 1) {
+	if (shouldHaveMetaComment && metaCommentCount !== 1) {
 		saveLog(file, 'error', 'check', `Missing meta comment`)
 	}
 
-	if (!addMetaComment && metaCommentCount !== 0) {
+	if (!shouldHaveMetaComment && metaCommentCount !== 0) {
 		saveLog(file, 'error', 'check', `Unexpected meta comment`)
 	}
 

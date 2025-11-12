@@ -243,4 +243,40 @@ describe('check validation', () => {
 
 		expect(errorMessage).not.toBeDefined()
 	})
+
+	it('should require meta comment when addMetaComment is a string', async () => {
+		const metaOptions: MdatCheckOptions = {
+			addMetaComment: 'Custom meta comment message',
+			closingPrefix: '/',
+			keywordPrefix: '',
+			metaCommentIdentifier: '+',
+			paranoid: false,
+			rules: { placeholder: 'This is a placeholder' },
+		}
+		const markdown = `<!-- placeholder -->\nThis is a placeholder\n<!-- /placeholder -->\n`
+		const result = await checkMarkdown(markdown, metaOptions)
+		const errorMessage = result.messages.find((message) => message.fatal === true)
+
+		expect(errorMessage).toBeDefined()
+		expect(stripAnsiEscapeCodes(errorMessage!.message)).toMatchInlineSnapshot(
+			`"Missing meta comment"`,
+		)
+	})
+
+	it('should not report errors when custom meta comment is present', async () => {
+		const customMessage = 'Custom meta comment message'
+		const metaOptions: MdatCheckOptions = {
+			addMetaComment: customMessage,
+			closingPrefix: '/',
+			keywordPrefix: '',
+			metaCommentIdentifier: '+',
+			paranoid: false,
+			rules: { placeholder: 'This is a placeholder' },
+		}
+		const markdown = `<!--+ ${customMessage} +-->\n<!-- placeholder -->\nThis is a placeholder\n<!-- /placeholder -->\n`
+		const result = await checkMarkdown(markdown, metaOptions)
+		const foundError = result.messages.some((message) => message.fatal === true)
+
+		expect(foundError).toBeFalsy()
+	})
 })

@@ -24,7 +24,7 @@ const defaultOptions: Options = {
 // Schema is exported for validation in other packages
 export const optionsSchema = z
 	.object({
-		addMetaComment: z.boolean().optional(),
+		addMetaComment: z.union([z.boolean(), z.string()]).optional(),
 		closingPrefix: z.string().optional(),
 		keywordPrefix: z.string().optional(),
 		metaCommentIdentifier: z.string().optional(),

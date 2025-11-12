@@ -101,7 +101,7 @@ The plugin accepts an optional options object which exposes some configuration o
 
 ```ts
 export type Options = {
-  addMetaComment?: boolean // Default: false
+  addMetaComment?: boolean | string // Default: false
   closingPrefix?: string // Default: '/',
   keywordPrefix?: string // Default: '',
   metaCommentIdentifier?: string // Default: '+',

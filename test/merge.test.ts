@@ -58,6 +58,62 @@ describe('deep merge of defined values only', () => {
 		`)
 	})
 
+	it('should merge addMetaComment when it is a string', () => {
+		const a: MdatOptions = {
+			addMetaComment: 'Default message',
+			rules: {
+				one: 'bla',
+			},
+		}
+
+		const b: MdatOptions = {
+			addMetaComment: 'Custom message',
+			rules: {
+				two: 'hmm',
+			},
+		}
+
+		const result = deepMergeDefined(a, b)
+
+		expect(result).toMatchInlineSnapshot(`
+			{
+			  "addMetaComment": "Custom message",
+			  "rules": {
+			    "one": "bla",
+			    "two": "hmm",
+			  },
+			}
+		`)
+	})
+
+	it('should not overwrite string addMetaComment with undefined', () => {
+		const a: MdatOptions = {
+			addMetaComment: 'Custom message',
+			rules: {
+				one: 'bla',
+			},
+		}
+
+		const b: MdatOptions = {
+			addMetaComment: undefined,
+			rules: {
+				two: 'hmm',
+			},
+		}
+
+		const result = deepMergeDefined(a, b)
+
+		expect(result).toMatchInlineSnapshot(`
+			{
+			  "addMetaComment": "Custom message",
+			  "rules": {
+			    "one": "bla",
+			    "two": "hmm",
+			  },
+			}
+		`)
+	})
+
 	it('should overwrite defined values with null', () => {
 		type Test = {
 			// eslint-disable-next-line ts/no-restricted-types

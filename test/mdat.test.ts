@@ -75,6 +75,39 @@ describe('comment expansion', () => {
 		expect(expandedString).toMatchSnapshot()
 	})
 
+	it('should include a custom meta comment when provided as a string', async () => {
+		const customMessage = 'This is a custom warning message.'
+		const expandedString = await expandFileToString('./test/assets/test-document.md', {
+			addMetaComment: customMessage,
+			rules: testRules,
+		})
+
+		expect(expandedString).toContain(`<!--+ ${customMessage} +-->`)
+		expect(expandedString).toMatchSnapshot()
+	})
+
+	it('should use custom meta comment with different identifier', async () => {
+		const customMessage = 'Custom meta identifier test'
+		const expandedString = await expandFileToString('./test/assets/test-document.md', {
+			addMetaComment: customMessage,
+			metaCommentIdentifier: '***',
+			rules: testRules,
+		})
+
+		expect(expandedString).toContain(`<!--*** ${customMessage} ***-->`)
+		expect(expandedString).toMatchSnapshot()
+	})
+
+	it('should not include meta comment when addMetaComment is false', async () => {
+		const expandedString = await expandFileToString('./test/assets/test-document.md', {
+			addMetaComment: false,
+			rules: testRules,
+		})
+
+		expect(expandedString).not.toContain('<!--+')
+		expect(expandedString).not.toContain('Warning: Content inside HTML comment blocks')
+	})
+
 	it('should throw an error if rule set is invalid', async () => {
 		await expect(
 			expandFileToString('./test/assets/test-document.md', {

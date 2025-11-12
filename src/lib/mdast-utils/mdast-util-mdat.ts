@@ -9,7 +9,7 @@ import { mdatExpand } from './mdast-util-mdat-expand'
 import { mdatSplit } from './mdast-util-mdat-split'
 
 export type Options = {
-	addMetaComment: boolean
+	addMetaComment: boolean | string
 	closingPrefix: string
 	keywordPrefix: string
 	metaCommentIdentifier: string
