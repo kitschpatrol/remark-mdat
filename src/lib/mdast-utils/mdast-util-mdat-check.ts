@@ -29,13 +29,7 @@ type CommentMarkerWithRule = CommentMarkerNode & {
  * Mdast utility function to check mdat source document, and output.
  */
 export async function mdatCheck(tree: Root, file: VFile, options: Options) {
-	const {
-		closingPrefix,
-		keywordPrefix,
-		metaCommentIdentifier,
-		paranoid = false,
-		rules: rawRules,
-	} = options
+	const { closingPrefix, keywordPrefix, metaCommentIdentifier, paranoid, rules: rawRules } = options
 
 	validateRules(rawRules)
 	const rules = normalizeRules(rawRules)

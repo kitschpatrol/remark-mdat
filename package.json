@@ -44,30 +44,30 @@
 	},
 	"dependencies": {
 		"@types/mdast": "^4.0.4",
-		"@types/node": "^20.19.25",
+		"@types/node": "^20.19.30",
 		"@types/unist": "^3.0.3",
 		"picocolors": "^1.1.1",
-		"type-fest": "^5.3.1",
+		"type-fest": "^5.4.1",
 		"unified": "^11.0.5",
 		"vfile": "^6.0.3",
 		"zod": "^3.25.76"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^5.10.0",
-		"bumpp": "^10.3.2",
+		"@kitschpatrol/shared-config": "^5.12.0",
+		"bumpp": "^10.4.0",
 		"cli-table3": "^0.6.5",
 		"deepmerge-ts": "^7.1.5",
 		"hast-util-from-html": "^2.0.3",
 		"json5": "^2.2.3",
 		"remark": "^15.0.1",
 		"remark-gfm": "^4.0.1",
-		"tsdown": "^0.17.1",
+		"tsdown": "^0.19.0",
 		"typescript": "~5.9.3",
 		"unist-util-visit": "^5.0.0",
 		"vfile-message": "^4.0.3",
-		"vitest": "^4.0.15"
+		"vitest": "^4.0.17"
 	},
-	"packageManager": "pnpm@10.25.0",
+	"packageManager": "pnpm@10.28.1",
 	"engines": {
 		"node": ">=20.19.0"
 	}
