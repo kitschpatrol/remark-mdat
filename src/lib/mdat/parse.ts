@@ -10,11 +10,7 @@ import { VFileMessage } from 'vfile-message'
  * Note that this is a discriminated union based on the `type` field.
  */
 type CommentMarker = Simplify<
-	{
-		// Shared field
-		/** The complete original comment, e.g. `<!-- keyword -->`  */
-		html: string
-	} & (
+	(
 		| {
 				/** Character used to delimit closing tags, e.g. the `/` in `<!-- /keyword -->`  */
 				closingPrefix: string
@@ -39,7 +35,11 @@ type CommentMarker = Simplify<
 				 */
 				type: 'meta' | 'native'
 		  }
-	)
+	) & {
+		// Shared field
+		/** The complete original comment, e.g. `<!-- keyword -->`  */
+		html: string
+	}
 >
 
 /**

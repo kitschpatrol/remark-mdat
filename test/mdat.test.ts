@@ -111,7 +111,6 @@ describe('comment expansion', () => {
 	it('should throw an error if rule set is invalid', async () => {
 		await expect(
 			expandFileToString('./test/assets/test-document.md', {
-				// @ts-expect-error - Intentionally invalid for testing purposes
 				rules: testRulesInvalid,
 			}),
 		).rejects.toThrow()
