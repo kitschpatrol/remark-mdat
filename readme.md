@@ -97,15 +97,42 @@ remark().use(remarkMdat)
 
 #### Options
 
-The plugin accepts an optional options object which exposes some configuration options and, most importantly, determines how comments in the source Markdown file will be expanded via the `rules` field:
+The plugin accepts an optional options object. All fields are optional:
+
+| Option                  | Type                | Default | Description                                                                                                                                           |
+| ----------------------- | ------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rules`                 | `Rules`             | `{}`    | A record mapping comment keywords to rules that determine what content is expanded at each comment site. See [Rules](#rules) below.                   |
+| `addMetaComment`        | `boolean \| string` | `false` | If `true`, prepends a warning comment to the document noting that content was auto-generated. If a `string`, uses that string as the warning message. |
+| `closingPrefix`         | `string`            | `'/'`   | The prefix used to identify closing comment tags, e.g. the `/` in `<!-- /keyword -->`.                                                                |
+| `keywordPrefix`         | `string`            | `''`    | A prefix required on all mdat comments. Useful for namespacing, e.g. setting `'mm-'` means only `<!-- mm-keyword -->` comments are processed.         |
+| `metaCommentIdentifier` | `string`            | `'+'`   | The character used to identify auto-generated meta comments, e.g. `<!--+ ... +-->`.                                                                   |
+
+#### Rules
+
+Rules are defined as a `Record<string, Rule>` where each key is a keyword matching an HTML comment in the Markdown file (e.g. `title` matches `<!-- title -->`).
+
+A `Rule` value can take several forms:
 
 ```ts
-export type Options = {
-  addMetaComment?: boolean | string // Default: false
-  closingPrefix?: string // Default: '/',
-  keywordPrefix?: string // Default: '',
-  metaCommentIdentifier?: string // Default: '+',
-  rules?: Rules // Default: a single test rule for the 'mdat' keyword
+const rules: Rules = {
+  // String: direct replacement
+  greeting: 'Hello, world!',
+  // Array: compound rule combining multiple sub-rules
+  header: ['# My Project', () => getDescription()],
+  // Function with arguments: receives parsed options from the comment
+  // e.g. <!-- greeting({name: "Alice"}) --> or <!-- greeting {name: "Alice"} -->
+  personalGreeting: (options) => `Hello, ${options.name}!`,
+  // Function: dynamic content (sync or async)
+  time: () => new Date().toDateString(),
+  // Object: rule with validation metadata
+  title: {
+    applicationOrder: 0, // Processing priority (default: 0)
+    content: () => getTitle(), // String, function, or array
+    order: 1, // Expected position relative to other comments
+    required: true, // Error if comment is missing (default: false)
+  },
+  // Function with document access: receives the full mdast tree
+  toc: (_options, tree) => generateTocFromTree(tree),
 }
 ```
 
@@ -173,34 +200,43 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
 
   Composite transformer function performing end-to-end mdat comment expansion and validation on Markdown ASTs by chaining the other utility functions described below.
 
-  _Exported as `mdat`_
+  _Exported as `mdat(tree: Root, file: VFile, options: MdatOptions): Promise<void>`_
+
+  `MdatOptions` includes `addMetaComment`, `closingPrefix`, `keywordPrefix`, `metaCommentIdentifier`, and `rules` (all required, unlike the plugin's `Options` where they are optional with defaults).
 
   Utilities wrapped by `mdast-util-mdat`:
+
   - [**`mdast-util-mdat-split`**](./src/lib/mdast-utils/mdast-util-mdat-split.ts)
 
-    Transformer function that allows inline mdat expansion comments.
+    Transformer function that splits multi-comment HTML nodes into individual mdast nodes, allowing inline mdat expansion comments.
 
-    _Exported as `mdatSplit`_
+    _Exported as `mdatSplit(tree: Root, file: VFile): void`_
 
   - [**`mdast-util-mdat-clean`**](./src/lib/mdast-utils/mdast-util-mdat-clean.ts)
 
     Transformer function that "resets" all mdat comment expansions in a file, collapsing expanded comments back into single-line placeholders.
 
-    _Exported as `mdatClean`_
+    _Exported as `mdatClean(tree: Root, file: VFile, options: MdatCleanOptions): void`_
+
+    `MdatCleanOptions` includes `closingPrefix`, `keywordPrefix`, and `metaCommentIdentifier`.
 
   - [**`mdast-util-mdat-expand`**](./src/lib/mdast-utils/mdast-util-mdat-expand.ts)
 
-    Transformer function that expands mdat comments (e.g. `<!-- title -->`) in a Markdown file according to the rule set passed in to the `MdatExpandOptions` argument.
+    Transformer function that expands mdat comments (e.g. `<!-- title -->`) in a Markdown file according to the rule set passed in to the options argument.
 
-    _Exported as `mdatExpand`_
+    _Exported as `mdatExpand(tree: Root, file: VFile, options: MdatExpandOptions): Promise<void>`_
+
+    `MdatExpandOptions` includes `addMetaComment`, `closingPrefix`, `keywordPrefix`, `metaCommentIdentifier`, and `rules`.
 
   - [**`mdast-util-mdat-check`**](./src/lib/mdast-utils/mdast-util-mdat-check.ts)
 
-    Transformer function that validates an expanded Markdown document against the requirements defined in the rules passed in to the `MdatCheckOptions` argument.
+    Transformer function that validates an expanded Markdown document against the requirements defined in the rules passed in to the options argument. Does not modify the tree, it only appends messages to the VFile.
 
-    See `reporterMdat` to extract, format, and log results from VFile messages written by `mdatCheck`. This function does not modify the tree, it only appends messages to the VFiles passed through it.
+    _Exported as `mdatCheck(tree: Root, file: VFile, options: MdatCheckOptions): Promise<void>`_
 
-    _Exported as `mdatCheck`_
+    `MdatCheckOptions` extends `MdatExpandOptions` with a `paranoid` boolean for extra validation checks.
+
+    See `reporterMdat` to extract, format, and log results from VFile messages written by `mdatCheck`.
 
 ## Implementation notes
 
