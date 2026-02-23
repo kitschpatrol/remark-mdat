@@ -13,7 +13,7 @@ import { saveLog } from '../mdat/mdat-log'
 import { parseCommentNode } from '../mdat/parse'
 import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
 
-export type Options = {
+export type MdatExpandOptions = {
 	addMetaComment: boolean | string
 	closingPrefix: string
 	keywordPrefix: string
@@ -29,7 +29,7 @@ type ValidCommentMarker = CommentMarkerNode & {
  * Mdast utility plugin to collapse mdat comments and strip generated meta
  * comments, effectively resetting the document to its original state.
  */
-export async function mdatExpand(tree: Root, file: VFile, options: Options) {
+export async function mdatExpand(tree: Root, file: VFile, options: MdatExpandOptions) {
 	const {
 		addMetaComment,
 		closingPrefix,

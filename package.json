@@ -40,7 +40,7 @@
 		"dist/*"
 	],
 	"scripts": {
-		"build": "tsdown --no-fixed-extension --dts false && tsc -p tsconfig.build.json",
+		"build": "tsdown",
 		"clean": "git rm -f pnpm-lock.yaml ; git clean -fdX",
 		"dev": "pnpm run test",
 		"fix": "ksc fix",
@@ -66,9 +66,11 @@
 		"zod": "^3.25.76"
 	},
 	"devDependencies": {
+		"@arethetypeswrong/core": "^0.18.2",
 		"@kitschpatrol/shared-config": "^6.0.0",
 		"@types/node": "~20.19.33",
 		"bumpp": "^10.4.1",
+		"publint": "^0.3.17",
 		"tsdown": "^0.20.3",
 		"typescript": "~5.9.3",
 		"vitest": "^4.0.18"

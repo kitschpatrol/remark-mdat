@@ -5,7 +5,7 @@ import type { CommentMarkerNode } from '../mdat/parse'
 import { saveLog } from '../mdat/mdat-log'
 import { parseCommentNode } from '../mdat/parse'
 
-export type Options = {
+export type MdatCleanOptions = {
 	closingPrefix: string
 	keywordPrefix: string
 	metaCommentIdentifier: string
@@ -16,7 +16,7 @@ export type Options = {
  * effectively resetting the document to its pre-expansion state. No-op if no
  * mdat comments are found.
  */
-export function mdatClean(tree: Root, file: VFile, options: Options): void {
+export function mdatClean(tree: Root, file: VFile, options: MdatCleanOptions): void {
 	// Collapse expanded tags
 	// Find closing tags, then go back to last opening tag
 	let lastOpenMarker: (CommentMarkerNode & { type: 'close' | 'open' }) | undefined

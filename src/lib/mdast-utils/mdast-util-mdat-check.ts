@@ -11,7 +11,7 @@ import { saveLog } from '../mdat/mdat-log'
 import { parseCommentNode } from '../mdat/parse'
 import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
 
-export type Options = {
+export type MdatCheckOptions = {
 	addMetaComment: boolean | string
 	closingPrefix: string
 	keywordPrefix: string
@@ -28,7 +28,7 @@ type CommentMarkerWithRule = CommentMarkerNode & {
 /**
  * Mdast utility function to check mdat source document, and output.
  */
-export async function mdatCheck(tree: Root, file: VFile, options: Options) {
+export async function mdatCheck(tree: Root, file: VFile, options: MdatCheckOptions) {
 	const { closingPrefix, keywordPrefix, metaCommentIdentifier, paranoid, rules: rawRules } = options
 
 	validateRules(rawRules)
@@ -124,7 +124,7 @@ function checkMissingPrefix(
 	file: VFile,
 	comments: CommentMarkerWithRule[],
 	rules: NormalizedRules,
-	options: Options,
+	options: MdatCheckOptions,
 ): void {
 	if (options.keywordPrefix === '') return
 	const ruleKeywords = Object.keys(rules)
@@ -282,7 +282,7 @@ function checkCommentOrder(file: VFile, comments: CommentMarkerWithRule[]): void
 function checkMetaCommentPresence(
 	file: VFile,
 	comments: CommentMarkerWithRule[],
-	options: Options,
+	options: MdatCheckOptions,
 ): void {
 	const { addMetaComment } = options
 
