@@ -148,7 +148,9 @@ export function reporterMdat(files: VFile[]): void {
 
 		log.info(picocolors.bold('MDAT Report:'))
 		log.info(`\tFrom: ${picocolors.blue(picocolors.bold(sourcePath))}`)
-		log.info(`\tTo:   ${picocolors.blue(picocolors.bold(destinationPath))}`)
+		if (destinationPath !== undefined) {
+			log.info(`\tTo:   ${picocolors.blue(picocolors.bold(destinationPath))}`)
+		}
 
 		for (const message of errors) {
 			log.error(mdatMessageToLogString(sourcePath, message))
