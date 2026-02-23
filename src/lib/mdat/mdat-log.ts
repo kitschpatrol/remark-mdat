@@ -120,11 +120,8 @@ function getMdatReport(file: VFile): MdatFileReport {
 		warnings: [],
 	}
 
-	if (mdatFileReport.sourcePath?.startsWith('.')) {
-		mdatFileReport.sourcePath = path.relative(
-			process.cwd(),
-			path.join(process.cwd(), mdatFileReport.sourcePath),
-		)
+	if (mdatFileReport.sourcePath !== undefined) {
+		mdatFileReport.sourcePath = path.normalize(mdatFileReport.sourcePath)
 	}
 
 	for (const message of file.messages) {
