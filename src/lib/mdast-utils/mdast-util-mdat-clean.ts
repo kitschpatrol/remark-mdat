@@ -35,7 +35,6 @@ export function mdatClean(tree: Root, file: VFile, options: Options): void {
 		}
 
 		if (marker.type === 'open') {
-			// Opening marker
 			lastOpenMarker = marker
 			return CONTINUE
 		}

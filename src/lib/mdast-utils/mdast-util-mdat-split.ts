@@ -74,18 +74,26 @@ function addStartPoint(
 ): Position | undefined {
 	if (position === undefined || start === undefined) return undefined
 
+	const startLine = position.start.line - 1 + start.line
+	const endLine = position.end.line - 1 + start.line
+
 	return {
 		start: {
 			column: position.start.column - 1 + start.column,
-			line: position.start.line - 1 + start.line,
+			line: startLine,
 			offset:
 				position.start.offset !== undefined && start.offset !== undefined
 					? position.start.offset + start.offset
 					: undefined,
 		},
 		end: {
-			column: position.end.column - 1 + start.column,
-			line: position.end.line - 1 + start.line,
+			// Only adjust end column if the node starts and ends on the same line
+			// of the fragment; otherwise the end column is already correct as-is
+			column:
+				position.end.line === position.start.line
+					? position.end.column - 1 + start.column
+					: position.end.column,
+			line: endLine,
 			offset:
 				position.end.offset !== undefined && start.offset !== undefined
 					? position.end.offset + start.offset
