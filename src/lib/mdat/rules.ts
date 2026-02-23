@@ -304,9 +304,9 @@ export async function getRuleContent(
 		if (check) {
 			throw error
 		}
-	}
 
-	throw new Error('Failed to expand content')
+		throw new Error('Failed to expand content', { cause: error })
+	}
 }
 
 /**
