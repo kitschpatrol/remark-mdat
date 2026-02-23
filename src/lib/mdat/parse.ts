@@ -110,6 +110,10 @@ export function parseComment(
 
 	const { closingPrefix, keywordPrefix, metaCommentIdentifier } = options
 
+	if (closingPrefix === '') {
+		throw new VFileMessage('closingPrefix must not be an empty string')
+	}
+
 	const commentHtml = text.trim()
 	const commentBody = commentHtml.replace(/^\s*<!-{2,}\s*/, '').replace(/\s*-{2,}>\s*$/, '')
 

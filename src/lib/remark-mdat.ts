@@ -25,7 +25,7 @@ const defaultOptions: Options = {
 export const optionsSchema = z
 	.object({
 		addMetaComment: z.union([z.boolean(), z.string()]).optional(),
-		closingPrefix: z.string().optional(),
+		closingPrefix: z.string().min(1).optional(),
 		keywordPrefix: z.string().optional(),
 		metaCommentIdentifier: z.string().optional(),
 		rules: rulesSchema.optional(),
