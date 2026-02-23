@@ -1,6 +1,6 @@
 /* eslint-disable jsdoc/require-jsdoc */
 import type { Root } from 'mdast'
-import type { JsonValue, Merge, MergeDeep, SetOptional, Simplify } from 'type-fest'
+import type { JsonValue, MergeDeep, Simplify } from 'type-fest'
 import { z } from 'zod'
 
 // Note that more advanced rule loading is implemented in `mdat`
@@ -58,30 +58,45 @@ export type Rule =
 	/**
 	 * The Markdown string to expand at the comment site.
 	 */
-	| SetOptional<
-			Merge<
-				NormalizedRule,
-				{
-					/**
-					 * Gets content to expand into the comment.
-					 * Can be a simple string for direct replacement, a function that returns a string, or an async function that returns a string.
-					 *
-					 * If a function is provided, it will be passed the following arguments:
-					 * @param options
-					 * JSON value of options parsed immediately after the comment keyword in the comment, e.g.:
-					 * `<!-- keyword({something: true}) -->` or
-					 * `<!-- keyword {something: true}-->`
-					 * Sets options to {something: true}
-					 * @param tree
-					 * Markdown (mdast) abstract syntax tree containing the entire parsed document. Useful for expanders that need the entire document context, such as when generating a table of contents. Do not mutate the AST, instead return a new string.
-					 * @returns A string with the generated content. The string will be parsed as Markdown and inserted into the document at the comment's location.
-					 */
-					content: ((options: JsonValue, tree: Root) => Promise<string> | string) | Rule[] | string
-				}
-			>,
-			'applicationOrder' | 'order' | 'required'
-	  >
 	| string
+	// This was previously implemented as on next line, but was replaced with expanded duplicate to avoid
+	// circular type reference issues introduced in in recent typescript versions
+	// SetOptional<Merge<NormalizedRule, { content: ((options: JsonValue, tree: Root) => Promise<string> | string) | Rule[] | string }>, 'applicationOrder' | 'order' | 'required'>
+	/**
+	 * Rule object with optional validation metadata.
+	 */
+	| {
+			/**
+			 * The order in which the rule should be applied during processing.
+			 * Defaults to 0.
+			 */
+			applicationOrder?: number
+			/**
+			 * Gets content to expand into the comment.
+			 * Can be a simple string for direct replacement, a function that returns a string, or an async function that returns a string.
+			 *
+			 * If a function is provided, it will be passed the following arguments:
+			 * @param options
+			 * JSON value of options parsed immediately after the comment keyword in the comment, e.g.:
+			 * `<!-- keyword({something: true}) -->` or
+			 * `<!-- keyword {something: true}-->`
+			 * Sets options to {something: true}
+			 * @param tree
+			 * Markdown (mdast) abstract syntax tree containing the entire parsed document. Useful for expanders that need the entire document context, such as when generating a table of contents. Do not mutate the AST, instead return a new string.
+			 * @returns A string with the generated content. The string will be parsed as Markdown and inserted into the document at the comment's location.
+			 */
+			content: ((options: JsonValue, tree: Root) => Promise<string> | string) | Rule[] | string
+			/**
+			 * The expected order of the keyword in the document relative to other expander comments.
+			 * Defaults to undefined, which means order is not enforced.
+			 */
+			order?: number | undefined
+			/**
+			 * Whether the presence of the keyword comment in the document is required.
+			 * Defaults to false.
+			 */
+			required?: boolean
+	  }
 
 /**
  * Rules are record objects whose keys match strings inside a Markdown comment, and values explain what should be expanded at the comment site.
