@@ -279,4 +279,70 @@ describe('check validation', () => {
 
 		expect(foundError).toBeFalsy()
 	})
+
+	it('should not report missing required rule when satisfied by a compound rule', async () => {
+		const sharedRule = () => 'shared content'
+		const compoundOptions: Options = {
+			rules: {
+				'individual-rule': {
+					content: sharedRule,
+					required: true,
+				},
+				'compound-rule': [sharedRule, 'other content'],
+			},
+		}
+		// Only the compound rule comment is present, not the individual one
+		const markdown = `<!-- compound-rule -->`
+		const result = await expandStringToVfile(markdown, compoundOptions)
+		const missingRequired = result.messages.find(
+			(message) =>
+				message.fatal === true && message.reason.includes('Missing required'),
+		)
+
+		expect(missingRequired).toBeUndefined()
+	})
+
+	it('should report missing required rule when not satisfied by any compound rule', async () => {
+		const compoundOptions: Options = {
+			rules: {
+				'individual-rule': {
+					content: () => 'individual content',
+					required: true,
+				},
+				'compound-rule': [() => 'different content', 'other content'],
+			},
+		}
+		const markdown = `<!-- compound-rule -->`
+		const result = await expandStringToVfile(markdown, compoundOptions)
+		const missingRequired = result.messages.find(
+			(message) =>
+				message.fatal === true && message.reason.includes('Missing required'),
+		)
+
+		expect(missingRequired).toBeDefined()
+		expect(missingRequired!.reason).toContain('individual-rule')
+	})
+
+	it('should not report missing required rule when satisfied by object-form compound rule', async () => {
+		const sharedRule = () => 'shared content'
+		const compoundOptions: Options = {
+			rules: {
+				'individual-rule': {
+					content: sharedRule,
+					required: true,
+				},
+				'compound-rule': {
+					content: [sharedRule, 'other content'],
+				},
+			},
+		}
+		const markdown = `<!-- compound-rule -->`
+		const result = await expandStringToVfile(markdown, compoundOptions)
+		const missingRequired = result.messages.find(
+			(message) =>
+				message.fatal === true && message.reason.includes('Missing required'),
+		)
+
+		expect(missingRequired).toBeUndefined()
+	})
 })

@@ -6,7 +6,7 @@ import Table from 'cli-table3'
 import picocolors from 'picocolors'
 import { CONTINUE, visit } from 'unist-util-visit'
 import type { CommentMarkerNode } from '../mdat/parse'
-import type { NormalizedRule, NormalizedRules, Rules } from '../mdat/rules'
+import type { NormalizedRule, NormalizedRules, Rule, Rules } from '../mdat/rules'
 import { saveLog } from '../mdat/mdat-log'
 import { parseCommentNode } from '../mdat/parse'
 import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
@@ -64,14 +64,14 @@ export async function mdatCheck(tree: Root, file: VFile, options: Options) {
 	// Now run some validations
 
 	// Error level checks
-	checkMissingRequiredComments(file, commentMarkers, rules)
+	checkMissingRequiredComments(file, commentMarkers, rules, rawRules)
 	checkCommentOrder(file, commentMarkers)
 	checkMetaCommentPresence(file, commentMarkers, options)
 	await checkRulesReturnedContent(file, commentMarkers, tree)
 
 	// Warning level checks
 	if (paranoid) {
-		checkMissingOptionalComments(file, commentMarkers, rules) // Too annoying
+		checkMissingOptionalComments(file, commentMarkers, rules, rawRules) // Too annoying
 	}
 
 	checkMissingRules(file, commentMarkers)
@@ -154,12 +154,13 @@ function checkMissingOptionalComments(
 	file: VFile,
 	comments: CommentMarkerWithRule[],
 	rules: NormalizedRules,
+	rawRules: Rules,
 ): void {
 	for (const [keyword, rule] of Object.entries(rules)) {
 		if (
 			!rule.required &&
 			!comments.some((comment) => comment.type === 'open' && comment.keyword === keyword) &&
-			!satisfiedByCompoundRule(rule, comments)
+			!satisfiedByCompoundRule(keyword, rawRules)
 		) {
 			saveLog(file, 'warn', 'check', `Missing optional: <!-- ${keyword} -->`)
 		}
@@ -174,13 +175,14 @@ function checkMissingRequiredComments(
 	file: VFile,
 	comments: CommentMarkerWithRule[],
 	rules: NormalizedRules,
+	rawRules: Rules,
 ): void {
 	for (const [keyword, rule] of Object.entries(rules)) {
 		// Compound rules don't get comments
 		if (
 			rule.required &&
 			!comments.some((comment) => comment.type === 'open' && comment.keyword === keyword) &&
-			!satisfiedByCompoundRule(rule, comments)
+			!satisfiedByCompoundRule(keyword, rawRules)
 		) {
 			saveLog(file, 'error', 'check', `Missing required: <!-- ${keyword} -->`)
 		}
@@ -188,29 +190,51 @@ function checkMissingRequiredComments(
 }
 
 /**
- * Helper to see if a required rule from the rule set was in fact called by a
- * compound rule Tests equality of function string, not equality of output, so
- * this only makes sense if the sub-rule was imported directly in the compound
- * rule.
+ * Extract the content value from a raw rule, unwrapping object-form rules.
  */
-function satisfiedByCompoundRule(
-	possiblyMissingRule: NormalizedRule,
-	comments: CommentMarkerWithRule[],
-): boolean {
-	// Reduce down single rule on comments that meets a test
-	// eslint-disable-next-line unicorn/no-array-reduce
-	return comments.reduce<boolean>((flag, comment) => {
-		if (Array.isArray(comment.rule?.content)) {
-			for (const rule of comment.rule.content) {
-				// eslint-disable-next-line ts/no-base-to-string
-				if (rule.content.toString() === possiblyMissingRule.content.toString()) {
-					flag = true
-				}
-			}
-		}
+function getRawRuleContent(rule: Rule): Rule {
+	if (typeof rule === 'object' && !Array.isArray(rule)) {
+		return rule.content
+	}
 
-		return flag
-	}, false)
+	return rule
+}
+
+/**
+ * Get the sub-rule array from a compound rule, if it is one.
+ */
+function getCompoundSubRules(rule: Rule): Rule[] | undefined {
+	if (Array.isArray(rule)) return rule
+	if (typeof rule === 'object' && !Array.isArray(rule) && Array.isArray(rule.content)) {
+		return rule.content
+	}
+
+	return undefined
+}
+
+/**
+ * Helper to see if a rule keyword is covered by a compound rule in the rule set.
+ * Checks whether any compound rule contains the same raw content value (by reference)
+ * as the rule for the given keyword. This works when the sub-rule was imported
+ * directly into the compound rule definition.
+ */
+function satisfiedByCompoundRule(keyword: string, rawRules: Rules): boolean {
+	const rawRule = rawRules[keyword]
+	if (rawRule === undefined) return false
+
+	const ruleContent = getRawRuleContent(rawRule)
+
+	for (const otherRule of Object.values(rawRules)) {
+		const subRules = getCompoundSubRules(otherRule)
+		if (subRules === undefined) continue
+
+		// Check if any sub-rule matches the content by reference
+		if (subRules.some((subRule) => getRawRuleContent(subRule) === ruleContent)) {
+			return true
+		}
+	}
+
+	return false
 }
 
 /**
