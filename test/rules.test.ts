@@ -1,11 +1,9 @@
+/* eslint-disable ts/no-unsafe-function-type */
+/* eslint-disable ts/no-unsafe-call */
+/* eslint-disable ts/no-unsafe-type-assertion */
 import { describe, expect, it } from 'vitest'
 import type { NormalizedRules, Rules } from '../src/lib/mdat/rules'
-import {
-	getSoleRule,
-	getSoleRuleKey,
-	normalizeRules,
-	validateRules,
-} from '../src/lib/mdat/rules'
+import { getSoleRule, getSoleRuleKey, normalizeRules, validateRules } from '../src/lib/mdat/rules'
 
 describe('normalizeRules', () => {
 	it('should normalize a string rule', async () => {
@@ -29,6 +27,7 @@ describe('normalizeRules', () => {
 	})
 
 	it('should normalize an async function rule', async () => {
+		// eslint-disable-next-line ts/require-await
 		const rules: Rules = { time: async () => 'later' }
 		const normalized = normalizeRules(rules)
 
@@ -73,7 +72,7 @@ describe('normalizeRules', () => {
 		expect(normalized.header.applicationOrder).toBe(0)
 		expect(normalized.header.required).toBe(false)
 		expect(Array.isArray(normalized.header.content)).toBe(true)
-		expect((normalized.header.content as Array<unknown>).length).toBe(2)
+		expect((normalized.header.content as unknown[]).length).toBe(2)
 	})
 
 	it('should normalize an object-form compound rule with metadata', () => {
@@ -114,13 +113,16 @@ describe('validateRules', () => {
 			d: ['compound', 'rule'],
 		}
 
-		expect(() => validateRules(rules)).not.toThrow()
+		expect(() => {
+			validateRules(rules)
+		}).not.toThrow()
 	})
 
 	it('should reject invalid rules', () => {
-		// eslint-disable-next-line ts/no-unsafe-type-assertion
 		const rules = { bad: 123 } as unknown as Rules
-		expect(() => validateRules(rules)).toThrow('Error validating rules')
+		expect(() => {
+			validateRules(rules)
+		}).toThrow('Error validating rules')
 	})
 })
 

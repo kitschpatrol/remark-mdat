@@ -220,8 +220,6 @@ function getCompoundSubRules(rule: Rule): Rule[] | undefined {
  */
 function satisfiedByCompoundRule(keyword: string, rawRules: Rules): boolean {
 	const rawRule = rawRules[keyword]
-	if (rawRule === undefined) return false
-
 	const ruleContent = getRawRuleContent(rawRule)
 
 	for (const otherRule of Object.values(rawRules)) {

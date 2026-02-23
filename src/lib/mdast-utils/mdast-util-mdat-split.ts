@@ -94,9 +94,7 @@ function addStartPoint(
 		},
 		end: {
 			column:
-				position.end.line === 1
-					? position.end.column - 1 + start.column
-					: position.end.column,
+				position.end.line === 1 ? position.end.column - 1 + start.column : position.end.column,
 			line: endLine,
 			offset:
 				position.end.offset !== undefined && start.offset !== undefined

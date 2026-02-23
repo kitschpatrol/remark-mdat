@@ -84,8 +84,7 @@ export async function mdatExpand(tree: Root, file: VFile, options: Options) {
 			}
 		} catch (error) {
 			if (error instanceof Error) {
-				const causeMessage =
-					error.cause instanceof Error ? `: ${error.cause.message}` : ''
+				const causeMessage = error.cause instanceof Error ? `: ${error.cause.message}` : ''
 				saveLog(
 					file,
 					'error',

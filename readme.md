@@ -205,7 +205,6 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
   `MdatOptions` includes `addMetaComment`, `closingPrefix`, `keywordPrefix`, `metaCommentIdentifier`, and `rules` (all required, unlike the plugin's `Options` where they are optional with defaults).
 
   Utilities wrapped by `mdast-util-mdat`:
-
   - [**`mdast-util-mdat-split`**](./src/lib/mdast-utils/mdast-util-mdat-split.ts)
 
     Transformer function that splits multi-comment HTML nodes into individual mdast nodes, allowing inline mdat expansion comments.
