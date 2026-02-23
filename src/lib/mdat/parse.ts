@@ -142,10 +142,15 @@ export function parseComment(
 		}
 	}
 
-	// Must be open or closing tag, continue parsing
-	const keyword = rawKeyword
-		.replace(new RegExp(`^${closingPrefix}`), '')
-		.replace(new RegExp(`^${keywordPrefix}`), '')
+	// Must be open or closing tag, strip literal prefixes
+	let keyword = rawKeyword
+	if (keyword.startsWith(closingPrefix)) {
+		keyword = keyword.slice(closingPrefix.length)
+	}
+	if (keyword.startsWith(keywordPrefix)) {
+		keyword = keyword.slice(keywordPrefix.length)
+	}
+
 	const optionText = makeValidJson(argumentParts.join(''))
 
 	// eslint-disable-next-line ts/no-unnecessary-condition
