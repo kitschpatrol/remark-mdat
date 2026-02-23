@@ -74,12 +74,18 @@ function addStartPoint(
 ): Position | undefined {
 	if (position === undefined || start === undefined) return undefined
 
+	// The column offset from the parent mdast node only applies to hast
+	// positions on line 1 of the fragment; positions on subsequent lines
+	// are already at correct columns within their own line.
 	const startLine = position.start.line - 1 + start.line
 	const endLine = position.end.line - 1 + start.line
 
 	return {
 		start: {
-			column: position.start.column - 1 + start.column,
+			column:
+				position.start.line === 1
+					? position.start.column - 1 + start.column
+					: position.start.column,
 			line: startLine,
 			offset:
 				position.start.offset !== undefined && start.offset !== undefined
@@ -87,10 +93,8 @@ function addStartPoint(
 					: undefined,
 		},
 		end: {
-			// Only adjust end column if the node starts and ends on the same line
-			// of the fragment; otherwise the end column is already correct as-is
 			column:
-				position.end.line === position.start.line
+				position.end.line === 1
 					? position.end.column - 1 + start.column
 					: position.end.column,
 			line: endLine,

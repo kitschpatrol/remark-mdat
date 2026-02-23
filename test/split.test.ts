@@ -4,12 +4,18 @@ import type { Html } from 'mdast'
 import { describe, expect, it } from 'vitest'
 import { splitHtmlIntoMdastNodes } from '../src/lib/mdast-utils/mdast-util-mdat-split'
 
-function stringToMdastNode(value: string): Html {
+function stringToMdastNode(value: string, startColumn = 1, startLine = 1): Html {
+	const lines = value.split('\n')
+	const lastLine = lines.at(-1)!
+	const endLine = startLine + lines.length - 1
+	const endColumn = lines.length === 1 ? startColumn + value.length : lastLine.length + 1
+	const startOffset = 0
+	const endOffset = value.length
+
 	return {
 		position: {
-			start: { column: 1, line: 1, offset: 0 },
-			// Might be off by one...
-			end: { column: value.length + 1, line: 1, offset: value.length },
+			start: { column: startColumn, line: startLine, offset: startOffset },
+			end: { column: endColumn, line: endLine, offset: endOffset },
 		},
 		type: 'html',
 		value,
@@ -389,5 +395,23 @@ describe('multi comment parsing', () => {
 				  },
 				]
 			`)
+	})
+
+	it('should calculate correct end column for multi-line html nodes', () => {
+		// Simulate a multi-line HTML node starting at column 5, line 3
+		const multiLineValue = '<!-- a -->\n<!-- b -->'
+		const result = splitHtmlIntoMdastNodes(stringToMdastNode(multiLineValue, 5, 3))
+
+		// First node: <!-- a --> on fragment line 1, column offset applies
+		expect(result[0].position?.start).toEqual({ column: 5, line: 3, offset: 0 })
+		expect(result[0].position?.end).toEqual({ column: 15, line: 3, offset: 10 })
+
+		// Middle node: newline text, starts on fragment line 1, ends on line 2
+		expect(result[1].position?.start).toEqual({ column: 15, line: 3, offset: 10 })
+		expect(result[1].position?.end).toEqual({ column: 1, line: 4, offset: 11 })
+
+		// Third node: <!-- b --> on fragment line 2, column should NOT be offset
+		expect(result[2].position?.start).toEqual({ column: 1, line: 4, offset: 11 })
+		expect(result[2].position?.end).toEqual({ column: 11, line: 4, offset: 21 })
 	})
 })
