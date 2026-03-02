@@ -26,6 +26,7 @@
 		"email": "eric@ericmika.com",
 		"url": "https://ericmika.com"
 	},
+	"sideEffects": false,
 	"type": "module",
 	"exports": {
 		".": {
@@ -67,15 +68,15 @@
 	},
 	"devDependencies": {
 		"@arethetypeswrong/core": "^0.18.2",
-		"@kitschpatrol/shared-config": "^6.0.0",
-		"@types/node": "~20.19.33",
+		"@kitschpatrol/shared-config": "^6.0.2",
+		"@types/node": "~20.19.35",
 		"bumpp": "^10.4.1",
-		"publint": "^0.3.17",
+		"publint": "^0.3.18",
 		"tsdown": "^0.20.3",
 		"typescript": "~5.9.3",
 		"vitest": "^4.0.18"
 	},
-	"packageManager": "pnpm@10.30.1",
+	"packageManager": "pnpm@10.30.3",
 	"engines": {
 		"node": ">=20.0.0"
 	},

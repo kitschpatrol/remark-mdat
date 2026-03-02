@@ -5,7 +5,6 @@ export default defineConfig({
 		profile: 'esm-only',
 	},
 	fixedExtension: false,
-	minify: true,
 	publint: true,
 	tsconfig: 'tsconfig.build.json',
 })
