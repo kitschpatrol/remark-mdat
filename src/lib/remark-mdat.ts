@@ -1,43 +1,27 @@
 import type { Root } from 'mdast'
 import type { Plugin } from 'unified'
-import { z } from 'zod'
-import type { MdatOptions } from './mdast-utils/mdast-util-mdat'
+import type { Rules } from './mdat/rules'
 import { mdat } from './mdast-utils/mdast-util-mdat'
-import { deepMergeDefined } from './mdat/deep-merge-defined'
-import { rulesSchema } from './mdat/rules'
 
-// Remark-mdat provides sensible default options
-// for the lower-level mdat utility functions
-export type Options = Partial<MdatOptions>
+export type Options = Rules
 
-const defaultOptions: Options = {
-	addMetaComment: false,
-	metaCommentIdentifier: '+',
-	// One default rule out of the box
-	rules: {
-		mdat: `Powered by the Markdown Autophagic Template system: [mdat](https://github.com/kitschpatrol/mdat).`,
-	},
+const defaultRules: Rules = {
+	mdat: `Powered by the Markdown Autophagic Template system: [mdat](https://github.com/kitschpatrol/mdat).`,
 }
 
 // Schema is exported for validation in other packages
-export const optionsSchema = z
-	.object({
-		addMetaComment: z.union([z.boolean(), z.string()]).optional(),
-		metaCommentIdentifier: z.string().optional(),
-		rules: rulesSchema.optional(),
-	})
-	.describe('MDAT Options')
 
 /**
  * A remark plugin that expands HTML comments in Markdown files.
  */
-const remarkMdat: Plugin<[Options], Root> = function (options) {
-	// eslint-disable-next-line ts/no-unsafe-type-assertion
-	const resolvedOptions = deepMergeDefined(defaultOptions, options) as Required<MdatOptions>
+const remarkMdat: Plugin<[Options], Root> = function (rules) {
+	const resolvedRules: Rules = { ...defaultRules, ...rules }
 
 	return async function (tree, file) {
-		await mdat(tree, file, resolvedOptions)
+		await mdat(tree, file, resolvedRules)
 	}
 }
 
 export default remarkMdat
+
+export { rulesSchema as optionsSchema } from './mdat/rules'

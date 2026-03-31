@@ -5,18 +5,18 @@ import fs from 'node:fs/promises'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { describe, expect, it } from 'vitest'
-import type { MdatCleanOptions, Options } from '../src'
+import type { Rules } from '../src'
 import remarkMdat, { mdatClean, mdatSplit } from '../src'
 import testRules from './assets/test-rules'
 import testRulesInvalid from './assets/test-rules-invalid'
 
-async function expandStringToString(markdown: string, options: Options): Promise<string> {
-	const result = await remark().use(remarkGfm).use(remarkMdat, options).process(markdown)
+async function expandStringToString(markdown: string, rules: Rules): Promise<string> {
+	const result = await remark().use(remarkGfm).use(remarkMdat, rules).process(markdown)
 	return result.toString()
 }
 
 // Export for linter
-export async function cleanString(markdown: string, options: MdatCleanOptions): Promise<string> {
+export async function cleanString(markdown: string): Promise<string> {
 	const result = await remark()
 		.use(remarkGfm)
 		.use(
@@ -24,94 +24,43 @@ export async function cleanString(markdown: string, options: MdatCleanOptions): 
 				// eslint-disable-next-line unicorn/consistent-function-scoping
 				function (tree: Root, file: VFile) {
 					mdatSplit(tree, file)
-					mdatClean(tree, file, options)
+					mdatClean(tree, file)
 				},
 		)
 		.process(markdown)
 	return result.toString()
 }
 
-async function expandFileToString(file: string, options: Options): Promise<string> {
+async function expandFileToString(file: string, rules: Rules): Promise<string> {
 	const buffer = await fs.readFile(file)
-	const result = await remark().use(remarkGfm).use(remarkMdat, options).process(buffer)
+	const result = await remark().use(remarkGfm).use(remarkMdat, rules).process(buffer)
 	return result.toString()
 }
 
 describe('comment expansion', () => {
 	it('should expand comments', async () => {
-		const expandedString = await expandFileToString('./test/assets/test-document.md', {
-			rules: testRules,
-		})
+		const expandedString = await expandFileToString('./test/assets/test-document.md', testRules)
 		expect(expandedString).toMatchSnapshot()
 	})
 
 	it('should be idempotent', async () => {
-		const firstPass = await expandFileToString('./test/assets/test-document.md', {
-			rules: testRules,
-		})
-
-		const secondPass = await expandStringToString(firstPass, {
-			rules: testRules,
-		})
-
+		const firstPass = await expandFileToString('./test/assets/test-document.md', testRules)
+		const secondPass = await expandStringToString(firstPass, testRules)
 		expect(firstPass).toEqual(secondPass)
-	})
-
-	it('should include the meta tag if asked', async () => {
-		const expandedString = await expandFileToString('./test/assets/test-document.md', {
-			addMetaComment: true,
-			rules: testRules,
-		})
-
-		expect(expandedString).toMatchSnapshot()
-	})
-
-	it('should include a custom meta comment when provided as a string', async () => {
-		const customMessage = 'This is a custom warning message.'
-		const expandedString = await expandFileToString('./test/assets/test-document.md', {
-			addMetaComment: customMessage,
-			rules: testRules,
-		})
-
-		expect(expandedString).toContain(`<!--+ ${customMessage} +-->`)
-		expect(expandedString).toMatchSnapshot()
-	})
-
-	it('should use custom meta comment with different identifier', async () => {
-		const customMessage = 'Custom meta identifier test'
-		const expandedString = await expandFileToString('./test/assets/test-document.md', {
-			addMetaComment: customMessage,
-			metaCommentIdentifier: '***',
-			rules: testRules,
-		})
-
-		expect(expandedString).toContain(`<!--*** ${customMessage} ***-->`)
-		expect(expandedString).toMatchSnapshot()
-	})
-
-	it('should not include meta comment when addMetaComment is false', async () => {
-		const expandedString = await expandFileToString('./test/assets/test-document.md', {
-			addMetaComment: false,
-			rules: testRules,
-		})
-
-		expect(expandedString).not.toContain('<!--+')
-		expect(expandedString).not.toContain('Warning: Content inside HTML comment blocks')
 	})
 
 	it('should throw an error if rule set is invalid', async () => {
 		await expect(
-			expandFileToString('./test/assets/test-document.md', {
-				// @ts-expect-error intentionally invalid rules for runtime validation test
-				rules: testRulesInvalid,
-			}),
+			// @ts-expect-error intentionally invalid rules for runtime validation test
+			expandFileToString('./test/assets/test-document.md', testRulesInvalid),
 		).rejects.toThrow()
 	})
 
 	it('should expand keywords while ignoring code-style comments', async () => {
-		const expandedString = await expandFileToString('./test/assets/test-document-comments.md', {
-			rules: testRules,
-		})
+		const expandedString = await expandFileToString(
+			'./test/assets/test-document-comments.md',
+			testRules,
+		)
 		expect(expandedString).toMatchSnapshot()
 	})
 })
@@ -119,10 +68,7 @@ describe('comment expansion', () => {
 describe('code-style comment handling', () => {
 	it('should leave code-style comments untouched during expansion', async () => {
 		const markdown = `<!-- // developer note -->\n<!-- # todo -->\n<!-- /* block */ -->\n<!-- keyword -->\n`
-		const options: Options = {
-			rules: { keyword: 'expanded' },
-		}
-		const result = await expandStringToString(markdown, options)
+		const result = await expandStringToString(markdown, { keyword: 'expanded' })
 		expect(result).toContain('<!-- // developer note -->')
 		expect(result).toContain('<!-- # todo -->')
 		expect(result).toContain('<!-- /* block */ -->')
@@ -131,46 +77,41 @@ describe('code-style comment handling', () => {
 
 	it('should not confuse closing tags with line comments', async () => {
 		const markdown = `<!-- keyword -->\n`
-		const options: Options = {
-			rules: { keyword: 'content' },
-		}
-		const result = await expandStringToString(markdown, options)
+		const result = await expandStringToString(markdown, { keyword: 'content' })
 		expect(result).toContain('<!-- /keyword -->')
 	})
 })
 
 describe('keyword validation', () => {
 	it('should reject keywords starting with /', async () => {
-		await expect(
-			expandStringToString('<!-- test -->', { rules: { '/bad': 'nope' } }),
-		).rejects.toThrow('Rule keywords must not start with')
+		await expect(expandStringToString('<!-- test -->', { '/bad': 'nope' })).rejects.toThrow(
+			'Rule keywords must not start with',
+		)
 	})
 
 	it('should reject keywords starting with #', async () => {
-		await expect(
-			expandStringToString('<!-- test -->', { rules: { '#bad': 'nope' } }),
-		).rejects.toThrow('Rule keywords must not start with')
+		await expect(expandStringToString('<!-- test -->', { '#bad': 'nope' })).rejects.toThrow(
+			'Rule keywords must not start with',
+		)
 	})
 
 	it('should reject keywords starting with *', async () => {
-		await expect(
-			expandStringToString('<!-- test -->', { rules: { '*bad': 'nope' } }),
-		).rejects.toThrow('Rule keywords must not start with')
+		await expect(expandStringToString('<!-- test -->', { '*bad': 'nope' })).rejects.toThrow(
+			'Rule keywords must not start with',
+		)
 	})
 })
 
 describe('keyword case sensitivity', () => {
 	it('should treat comment expansion keywords as case sensitive', async () => {
 		const markdown = `<!-- KEYWORD -->\n<!-- kEyWoRd -->\n<!-- keyword -->\n`
-		const options: Options = {
-			rules: {
-				// eslint-disable-next-line ts/naming-convention
-				KEYWORD: "I'm yelling",
-				kEyWoRd: "I'm emotional",
-				keyword: "I'm basic",
-			},
+		const rules: Rules = {
+			// eslint-disable-next-line ts/naming-convention
+			KEYWORD: "I'm yelling",
+			kEyWoRd: "I'm emotional",
+			keyword: "I'm basic",
 		}
-		const expandedString = await expandStringToString(markdown, options)
+		const expandedString = await expandStringToString(markdown, rules)
 		expect(expandedString).toMatchInlineSnapshot(`
 			"<!-- KEYWORD -->
 
@@ -197,12 +138,9 @@ describe('keyword case sensitivity', () => {
 describe('compound rule handling', () => {
 	it('should expand compound rules', async () => {
 		const markdown = `<!-- compoundKeyword -->\n`
-		const options: Options = {
-			rules: {
-				compoundKeyword: ['one', 'two', 'three'],
-			},
-		}
-		const expandedString = await expandStringToString(markdown, options)
+		const expandedString = await expandStringToString(markdown, {
+			compoundKeyword: ['one', 'two', 'three'],
+		})
 		expect(expandedString).toMatchInlineSnapshot(`
 			"<!-- compoundKeyword -->
 
@@ -219,19 +157,16 @@ describe('compound rule handling', () => {
 
 	it('should pass option arrays to compound rules', async () => {
 		const markdown = `<!-- compound [{option: 'yes'}, {option: 'it'}, {option: 'can'}] -->\n`
-		const options: Options = {
-			rules: {
-				compound: [
-					// eslint-disable-next-line ts/no-unsafe-type-assertion
-					(options) => `My option is: ${(options as { option: string }).option}`,
-					// eslint-disable-next-line ts/no-unsafe-type-assertion
-					(options) => `My option is: ${(options as { option: string }).option}`,
-					// eslint-disable-next-line ts/no-unsafe-type-assertion
-					(options) => `My option is: ${(options as { option: string }).option}`,
-				],
-			},
-		}
-		const expandedString = await expandStringToString(markdown, options)
+		const expandedString = await expandStringToString(markdown, {
+			compound: [
+				// eslint-disable-next-line ts/no-unsafe-type-assertion
+				(options) => `My option is: ${(options as { option: string }).option}`,
+				// eslint-disable-next-line ts/no-unsafe-type-assertion
+				(options) => `My option is: ${(options as { option: string }).option}`,
+				// eslint-disable-next-line ts/no-unsafe-type-assertion
+				(options) => `My option is: ${(options as { option: string }).option}`,
+			],
+		})
 		expect(expandedString).toMatchInlineSnapshot(`
 			"<!-- compound [{option: 'yes'}, {option: 'it'}, {option: 'can'}] -->
 
