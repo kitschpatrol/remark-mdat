@@ -185,40 +185,24 @@ function validateNormalizedRules(rules: NormalizedRules) {
 // Some duplication here, but less painful than inferring the TS types
 // _from_ the Zod schemas because of the JsonValue and Root types.
 
-// TODO maybe narrow these, or use unknown...
-const jsonValueSchema = z.any()
-const rootSchema = z.any()
+// eslint-disable-next-line ts/no-unsafe-function-type
+const functionSchema = z.custom<Function>((value) => typeof value === 'function')
 
-// Declaration of normalizedRuleSchema for recursion within ruleSchema
-const normalizedRuleSchema: z.ZodSchema = z.lazy(() =>
+const normalizedRuleSchema: z.ZodType = z.lazy(() =>
 	z.object({
-		content: z.union([
-			z
-				.function()
-				.args(jsonValueSchema.optional(), rootSchema.optional())
-				.returns(z.promise(z.string())),
-			z.array(normalizedRuleSchema),
-		]),
+		content: z.union([functionSchema, z.array(normalizedRuleSchema)]),
 		order: z.number(),
 	}),
 )
 
-// Declaration of ruleSchema to include all possible types for Rule
-
-const ruleContentFunctionSchema = z
-	.function()
-	.args(jsonValueSchema.optional(), rootSchema.optional())
-	.returns(z.union([z.string(), z.promise(z.string())]))
-
-const ruleSchema: z.ZodSchema = z.lazy(() =>
+const ruleSchema: z.ZodType = z.lazy(() =>
 	z.union([
-		// Extra top level options
-		ruleContentFunctionSchema, // Content function
+		functionSchema, // Content function
 		z.array(ruleSchema), // Array of rules (compound rule)
 		z.string(), // Just a keyword
 		z.object({
 			content: z.union([
-				ruleContentFunctionSchema, // Content function
+				functionSchema, // Content function
 				z.array(ruleSchema), // Array of rules (compound rule)
 				z.string(), // Just a keyword
 			]),
@@ -226,12 +210,13 @@ const ruleSchema: z.ZodSchema = z.lazy(() =>
 		}),
 	]),
 )
-// Z.array(z.lazy(() => ruleSchema)), // Correctly handle recursive arrays of Rule
 
-const keywordSchema = z.string().refine((key) => !/^[/*#]/.test(key), {
-	message:
-		'Rule keywords must not start with "/", "*", or "#" — these prefixes are reserved for comment syntax',
-})
+const keywordSchema = z.string().check(
+	z.refine((key: string) => !/^[/*#]/.test(key), {
+		message:
+			'Rule keywords must not start with "/", "*", or "#" — these prefixes are reserved for comment syntax',
+	}),
+)
 
 export const rulesSchema = z.record(keywordSchema, ruleSchema).describe('MDAT Rules')
 const normalizedRulesSchema = z.record(keywordSchema, normalizedRuleSchema).describe('MDAT Rules')
