@@ -1,57 +1,22 @@
-/* eslint-disable perfectionist/sort-objects */
+import type { ILogBasic, ILogLayer } from 'lognow'
+import { createLogger, injectionHelper } from 'lognow'
+import { name } from '../../../package.json' with { type: 'json' }
 
-// Staying basic, always log to stderr
+/**
+ * The default logger instance for the library.
+ */
+export let log = createLogger({
+	logToConsole: {
+		showTime: false,
+	},
+	name,
+})
 
-import picocolors from 'picocolors'
-
-// eslint-disable-next-line ts/no-unnecessary-condition
-const isNode = process?.versions?.node !== undefined
-
-const log = {
-	verbose: false,
-
-	// Intended for temporary logging
-	log(...data: unknown[]): void {
-		if (!this.verbose) return
-		const levelPrefix = picocolors.gray('[Log]')
-		if (isNode) {
-			// Log to stderr in node for ease of redirection
-			console.warn(levelPrefix, ...data)
-		} else {
-			console.log(levelPrefix, ...data)
-		}
-	},
-	logPrefixed(prefix: string, ...data: unknown[]): void {
-		this.info(picocolors.blue(`[${prefix}]`), ...data)
-	},
-
-	info(...data: unknown[]): void {
-		if (!this.verbose) return
-		const levelPrefix = picocolors.green('[Info]')
-		if (isNode) {
-			// Log info to stderr in node for ease of redirection
-			console.warn(levelPrefix, ...data)
-		} else {
-			console.info(levelPrefix, ...data)
-		}
-	},
-	infoPrefixed(prefix: string, ...data: unknown[]): void {
-		this.info(picocolors.blue(`[${prefix}]`), ...data)
-	},
-
-	warn(...data: unknown[]): void {
-		console.warn(picocolors.yellow('[Warning]'), ...data)
-	},
-	warnPrefixed(prefix: string, ...data: unknown[]): void {
-		this.warn(picocolors.blue(`[${prefix}]`), ...data)
-	},
-
-	error(...data: unknown[]): void {
-		console.error(picocolors.red('[Error]'), ...data)
-	},
-	errorPrefixed(prefix: string, ...data: unknown[]): void {
-		this.error(picocolors.blue(`[${prefix}]`), ...data)
-	},
+/**
+ * Set the logger instance for the module.
+ * Export this for library consumers to inject their own logger.
+ * @param logger - Accepts either a LogLayer instance or a Console- or Stream-like log target
+ */
+export function setLogger(logger?: ILogBasic | ILogLayer) {
+	log = injectionHelper(logger)
 }
-
-export default log

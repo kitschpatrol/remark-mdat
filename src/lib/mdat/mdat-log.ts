@@ -6,7 +6,7 @@ import type { VFile } from 'vfile'
 import type { Options, VFileMessage } from 'vfile-message'
 import path from 'node:path'
 import picocolors from 'picocolors'
-import log from './log'
+import { log } from './log'
 
 /**
  * Tries to provide a simpler wrapper to vfile.message
