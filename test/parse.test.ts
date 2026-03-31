@@ -3,7 +3,6 @@ import { parseComment } from '../src/lib/mdat/parse'
 
 describe('basic comment keyword parsing', () => {
 	const basicOptions = {
-		closingPrefix: '/',
 		keywordPrefix: '',
 		metaCommentIdentifier: '+',
 	}
@@ -17,7 +16,6 @@ describe('basic comment keyword parsing', () => {
 	it('should parse basic comments', () => {
 		expect(parseComment('<!-- title -->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -27,7 +25,6 @@ describe('basic comment keyword parsing', () => {
 		`)
 		expect(parseComment('<!-- title() -->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title() -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -40,7 +37,6 @@ describe('basic comment keyword parsing', () => {
 	it('should forgive spacing variations', () => {
 		expect(parseComment('<!--     title -->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!--     title -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -50,7 +46,6 @@ describe('basic comment keyword parsing', () => {
 		`)
 		expect(parseComment('<!-- title-->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -60,7 +55,6 @@ describe('basic comment keyword parsing', () => {
 		`)
 		expect(parseComment('<!--title -->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!--title -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -70,7 +64,6 @@ describe('basic comment keyword parsing', () => {
 		`)
 		expect(parseComment('<!--title-->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!--title-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -80,7 +73,6 @@ describe('basic comment keyword parsing', () => {
 		`)
 		expect(parseComment('<!--title()-->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!--title()-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -90,7 +82,6 @@ describe('basic comment keyword parsing', () => {
 		`)
 		expect(parseComment('<!--title (  )-->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!--title (  )-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -100,7 +91,6 @@ describe('basic comment keyword parsing', () => {
 		`)
 		expect(parseComment('<!-- title (  )  -->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title (  )  -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -110,7 +100,6 @@ describe('basic comment keyword parsing', () => {
 		`)
 		expect(parseComment('<!--     title-->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!--     title-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -120,7 +109,6 @@ describe('basic comment keyword parsing', () => {
 		`)
 		expect(parseComment('<!--title-->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!--title-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -133,7 +121,6 @@ describe('basic comment keyword parsing', () => {
 	it('should forgive extra garbage in basic comments', () => {
 		expect(parseComment('<!------ title -->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!------ title -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -143,7 +130,6 @@ describe('basic comment keyword parsing', () => {
 		`)
 		expect(parseComment('<!---- title ----->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!---- title ----->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -153,7 +139,6 @@ describe('basic comment keyword parsing', () => {
 		`)
 		expect(parseComment('<!---title--->', basicOptions)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!---title--->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -164,7 +149,6 @@ describe('basic comment keyword parsing', () => {
 	})
 
 	const basicOptionsPrefixed = {
-		closingPrefix: '/',
 		keywordPrefix: 'tp.',
 		metaCommentIdentifier: '+',
 	}
@@ -172,7 +156,6 @@ describe('basic comment keyword parsing', () => {
 	it('should parse prefixed comments', () => {
 		expect(parseComment('<!-- tp.title -->', basicOptionsPrefixed)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- tp.title -->",
 			  "keyword": "title",
 			  "keywordPrefix": "tp.",
@@ -185,7 +168,6 @@ describe('basic comment keyword parsing', () => {
 
 describe('keyword option argument parsing', () => {
 	const options = {
-		closingPrefix: '/',
 		keywordPrefix: '',
 		metaCommentIdentifier: '+',
 	}
@@ -193,7 +175,6 @@ describe('keyword option argument parsing', () => {
 	it('should parse basic options', () => {
 		expect(parseComment('<!-- title({prefix: "😬"}) -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title({prefix: "😬"}) -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -206,7 +187,6 @@ describe('keyword option argument parsing', () => {
 
 		expect(parseComment('<!-- title({prefix: 1}) -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title({prefix: 1}) -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -218,7 +198,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!-- title({prefix: true}) -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title({prefix: true}) -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -233,7 +212,6 @@ describe('keyword option argument parsing', () => {
 	it('should parse without parentheses', () => {
 		expect(parseComment('<!-- title{prefix: "😬"} -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title{prefix: "😬"} -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -246,7 +224,6 @@ describe('keyword option argument parsing', () => {
 
 		expect(parseComment('<!-- title{prefix: 1} -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title{prefix: 1} -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -258,7 +235,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!-- title{prefix: true} -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title{prefix: true} -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -273,7 +249,6 @@ describe('keyword option argument parsing', () => {
 	it('should parse bare json into an object', () => {
 		expect(parseComment('<!-- title prefix: "😬" -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title prefix: "😬" -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -285,7 +260,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!-- title prefix: 1 -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title prefix: 1 -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -297,7 +271,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!-- title prefix: true -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title prefix: true -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -312,7 +285,6 @@ describe('keyword option argument parsing', () => {
 	it('should parse bare json with wonky spacing', () => {
 		expect(parseComment('<!-- title prefix:   "😬"-->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title prefix:   "😬"-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -324,7 +296,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!-- title  prefix  : 1-->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title  prefix  : 1-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -336,7 +307,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!-- title   prefix :     true    -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title   prefix :     true    -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -351,7 +321,6 @@ describe('keyword option argument parsing', () => {
 	it('should forgive spacing variations', () => {
 		expect(parseComment('<!-- title{prefix: "😬"} -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title{prefix: "😬"} -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -363,7 +332,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!--title{  prefix:   "😬" }-->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!--title{  prefix:   "😬" }-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -376,7 +344,6 @@ describe('keyword option argument parsing', () => {
 
 		expect(parseComment('<!-- title {prefix: 1}-->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title {prefix: 1}-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -388,7 +355,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!--title   {prefix: true} -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!--title   {prefix: true} -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -400,7 +366,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!-- title({prefix: "😬"}) -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title({prefix: "😬"}) -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -412,7 +377,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!--title({  prefix:   "😬" })-->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!--title({  prefix:   "😬" })-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -424,7 +388,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!-- title ({prefix: 1})-->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!-- title ({prefix: 1})-->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -436,7 +399,6 @@ describe('keyword option argument parsing', () => {
 		`)
 		expect(parseComment('<!--title   ({prefix: true}) -->', options)).toMatchInlineSnapshot(`
 			{
-			  "closingPrefix": "/",
 			  "html": "<!--title   ({prefix: true}) -->",
 			  "keyword": "title",
 			  "keywordPrefix": "",
@@ -451,14 +413,12 @@ describe('keyword option argument parsing', () => {
 
 describe('comment type detection', () => {
 	const options = {
-		closingPrefix: '/',
 		keywordPrefix: '',
 		metaCommentIdentifier: '+',
 	}
 
 	it('should identify opening comments', () => {
 		expect(parseComment('<!-- some-keyword -->', options)).toEqual({
-			closingPrefix: '/',
 			html: '<!-- some-keyword -->',
 			keyword: 'some-keyword',
 			keywordPrefix: '',
@@ -469,7 +429,6 @@ describe('comment type detection', () => {
 
 	it('should identify snug opening comments', () => {
 		expect(parseComment('<!--some-keyword-->', options)).toEqual({
-			closingPrefix: '/',
 			html: '<!--some-keyword-->',
 			keyword: 'some-keyword',
 			keywordPrefix: '',
@@ -480,7 +439,6 @@ describe('comment type detection', () => {
 
 	it('should identify closing comments', () => {
 		expect(parseComment('<!-- /some-keyword -->', options)).toEqual({
-			closingPrefix: '/',
 			html: '<!-- /some-keyword -->',
 			keyword: 'some-keyword',
 			keywordPrefix: '',
@@ -491,7 +449,6 @@ describe('comment type detection', () => {
 
 	it('should identify snug closing comments', () => {
 		expect(parseComment('<!--/some-keyword-->', options)).toEqual({
-			closingPrefix: '/',
 			html: '<!--/some-keyword-->',
 			keyword: 'some-keyword',
 			keywordPrefix: '',
@@ -509,7 +466,6 @@ describe('comment type detection', () => {
 	})
 
 	const nativeOptions = {
-		closingPrefix: '/',
 		keywordPrefix: 'tp.',
 		metaCommentIdentifier: '+',
 	}

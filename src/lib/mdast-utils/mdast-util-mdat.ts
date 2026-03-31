@@ -10,26 +10,23 @@ import { mdatSplit } from './mdast-util-mdat-split'
 
 export type MdatOptions = {
 	addMetaComment: boolean | string
-	closingPrefix: string
 	keywordPrefix: string
 	metaCommentIdentifier: string
 	rules: Rules
 }
 
 export async function mdat(tree: Root, file: VFile, options: MdatOptions): Promise<void> {
-	const { addMetaComment, closingPrefix, keywordPrefix, metaCommentIdentifier, rules } = options
+	const { addMetaComment, keywordPrefix, metaCommentIdentifier, rules } = options
 
 	mdatSplit(tree, file)
 
 	mdatClean(tree, file, {
-		closingPrefix,
 		keywordPrefix,
 		metaCommentIdentifier,
 	})
 
 	await mdatExpand(tree, file, {
 		addMetaComment,
-		closingPrefix,
 		keywordPrefix,
 		metaCommentIdentifier,
 		rules,
@@ -37,7 +34,6 @@ export async function mdat(tree: Root, file: VFile, options: MdatOptions): Promi
 
 	await mdatCheck(tree, file, {
 		addMetaComment,
-		closingPrefix,
 		keywordPrefix,
 		metaCommentIdentifier,
 		rules,

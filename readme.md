@@ -44,7 +44,6 @@
   - [Examples](#examples)
 - [Utilities](#utilities)
 - [Implementation notes](#implementation-notes)
-- [The future](#the-future)
 - [Maintainers](#maintainers)
 - [Acknowledgments](#acknowledgments)
 - [Contributing](#contributing)
@@ -136,8 +135,6 @@ const rules: Rules = {
   title: {
     applicationOrder: 0, // Processing priority (default: 0)
     content: () => getTitle(), // String, function, or array
-    order: 1, // Expected position relative to other comments
-    required: true, // Error if comment is missing (default: false)
   },
   // Function with document access: receives the full mdast tree
   toc: (_options, tree) => generateTocFromTree(tree),
@@ -249,9 +246,7 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
 
 This project was split from a monorepo containing both `mdat` and `remark-mdat` into separate repos in July 2024.
 
-## The future
-
-- Consider making remark a peer dependency? Though perhaps not [strip-markdown/issues/24](https://github.com/remarkjs/strip-markdown/issues/24)...
+Remark is not a peer dependency on account of this discussion: [strip-markdown/issues/24](https://github.com/remarkjs/strip-markdown/issues/24)
 
 ## Maintainers
 

@@ -86,7 +86,6 @@ describe('check validation', () => {
 	it('should report missing meta comments', async () => {
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: true,
-			closingPrefix: '/',
 			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },
@@ -104,7 +103,6 @@ describe('check validation', () => {
 	it('should report unwelcome meta comments', async () => {
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: false,
-			closingPrefix: '/',
 			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },
@@ -122,7 +120,6 @@ describe('check validation', () => {
 	it('should report multiple meta comments when none are wanted', async () => {
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: false,
-			closingPrefix: '/',
 			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },
@@ -142,7 +139,6 @@ describe('check validation', () => {
 	it('should report multiple meta comments when a single one is wanted', async () => {
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: true,
-			closingPrefix: '/',
 			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },
@@ -200,7 +196,6 @@ describe('check validation', () => {
 	it('should require meta comment when addMetaComment is a string', async () => {
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: 'Custom meta comment message',
-			closingPrefix: '/',
 			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },
@@ -219,7 +214,6 @@ describe('check validation', () => {
 		const customMessage = 'Custom meta comment message'
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: customMessage,
-			closingPrefix: '/',
 			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },

@@ -9,7 +9,6 @@ import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
 
 export type MdatCheckOptions = {
 	addMetaComment: boolean | string
-	closingPrefix: string
 	keywordPrefix: string
 	metaCommentIdentifier: string
 	rules: Rules
@@ -23,7 +22,7 @@ type CommentMarkerWithRule = CommentMarkerNode & {
  * Mdast utility function to check mdat source document, and output.
  */
 export async function mdatCheck(tree: Root, file: VFile, options: MdatCheckOptions) {
-	const { closingPrefix, keywordPrefix, metaCommentIdentifier, rules: rawRules } = options
+	const { keywordPrefix, metaCommentIdentifier, rules: rawRules } = options
 
 	validateRules(rawRules)
 	const rules = normalizeRules(rawRules)
@@ -35,7 +34,6 @@ export async function mdatCheck(tree: Root, file: VFile, options: MdatCheckOptio
 		if (parent === undefined || index === undefined) return CONTINUE
 		// Find all comments
 		const commentMarker = parseCommentNode(node, parent, {
-			closingPrefix,
 			keywordPrefix,
 			metaCommentIdentifier,
 		})

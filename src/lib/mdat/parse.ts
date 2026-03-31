@@ -12,8 +12,6 @@ import { VFileMessage } from 'vfile-message'
 type CommentMarker = Simplify<
 	(
 		| {
-				/** Character used to delimit closing tags, e.g. the `/` in `<!-- /keyword -->`  */
-				closingPrefix: string
 				/** The first complete word in the comment  */
 				keyword: string
 				/** The unique keyword prefix  */
@@ -55,8 +53,6 @@ export type CommentMarkerNode = Simplify<
 >
 
 type CommentMarkerParseOptions = {
-	/** Character to identify closing tags, e.g. the `/` in `<!-- /keyword -->`  */
-	closingPrefix: string
 	/** Prefix to require on all mdat comments, e.g. `mm-`  */
 	keywordPrefix: string
 	/** Means of identifying mdat generated meta comments, e.g. `+`  */
@@ -108,11 +104,8 @@ export function parseComment(
 ): CommentMarker | undefined {
 	if (!isComment(text)) return
 
-	const { closingPrefix, keywordPrefix, metaCommentIdentifier } = options
-
-	if (closingPrefix === '') {
-		throw new VFileMessage('closingPrefix must not be an empty string')
-	}
+	const { keywordPrefix, metaCommentIdentifier } = options
+	const closingPrefix = '/'
 
 	const commentHtml = text.trim()
 	const commentBody = commentHtml.replace(/^\s*<!-{2,}\s*/, '').replace(/\s*-{2,}>\s*$/, '')
@@ -172,7 +165,6 @@ export function parseComment(
 		}
 
 		return {
-			closingPrefix,
 			html: commentHtml,
 			keyword,
 			keywordPrefix,

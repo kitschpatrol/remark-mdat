@@ -6,7 +6,6 @@ import { saveLog } from '../mdat/mdat-log'
 import { parseCommentNode } from '../mdat/parse'
 
 export type MdatCleanOptions = {
-	closingPrefix: string
 	keywordPrefix: string
 	metaCommentIdentifier: string
 }
