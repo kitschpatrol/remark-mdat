@@ -6,10 +6,18 @@
 
 <!-- /title -->
 
-<!-- badges -->
+<!-- badges { custom: {
+    "CI": {
+      image: "https://github.com/kitschpatrol/remark-mdat/actions/workflows/ci.yml/badge.svg",
+      link: "https://github.com/kitschpatrol/remark-mdat/actions/workflows/ci.yml",
+    },
+  }
+}
+-->
 
 [![NPM Package remark-mdat](https://img.shields.io/npm/v/remark-mdat.svg)](https://npmjs.com/package/remark-mdat)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/kitschpatrol/remark-mdat/actions/workflows/ci.yml/badge.svg)](https://github.com/kitschpatrol/remark-mdat/actions/workflows/ci.yml)
 
 <!-- /badges -->
 
