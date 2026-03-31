@@ -191,6 +191,109 @@ describe('compound rule handling', () => {
 	})
 })
 
+describe('idempotency', () => {
+	it('should be idempotent with option arguments', async () => {
+		const markdown = `<!-- greet({name: "Alice"}) -->\n`
+		const rules: Rules = {
+			// eslint-disable-next-line ts/no-unsafe-type-assertion
+			greet: (options) => `Hello, ${(options as { name: string }).name}!`,
+		}
+		const firstPass = await expandStringToString(markdown, rules)
+		const secondPass = await expandStringToString(firstPass, rules)
+		expect(firstPass).toEqual(secondPass)
+	})
+
+	it('should be idempotent with compound rules', async () => {
+		const markdown = `<!-- compound -->\n`
+		const rules: Rules = { compound: ['Line 1', 'Line 2'] }
+		const firstPass = await expandStringToString(markdown, rules)
+		const secondPass = await expandStringToString(firstPass, rules)
+		expect(firstPass).toEqual(secondPass)
+	})
+
+	it('should be idempotent with mixed rule types', async () => {
+		const markdown = `<!-- str -->\n<!-- func -->\n<!-- comp -->\n`
+		const rules: Rules = {
+			comp: ['a', 'b'],
+			func: () => 'dynamic',
+			str: 'static',
+		}
+		const firstPass = await expandStringToString(markdown, rules)
+		const secondPass = await expandStringToString(firstPass, rules)
+		expect(firstPass).toEqual(secondPass)
+	})
+})
+
+describe('clean round-trip', () => {
+	it('should clean expanded comments back to placeholders', async () => {
+		const original = `<!-- keyword -->\n`
+		const expanded = await expandStringToString(original, { keyword: 'expanded content' })
+		const cleaned = await cleanString(expanded)
+		expect(cleaned.trim()).toBe(original.trim())
+	})
+
+	it('should preserve surrounding content through expand and clean', async () => {
+		const original = `# Header\n\nSome content\n\n<!-- keyword -->\n\nMore content\n`
+		const expanded = await expandStringToString(original, { keyword: 'expanded' })
+		const cleaned = await cleanString(expanded)
+		expect(cleaned).toContain('# Header')
+		expect(cleaned).toContain('Some content')
+		expect(cleaned).toContain('More content')
+		expect(cleaned).toContain('<!-- keyword -->')
+		expect(cleaned).not.toContain('<!-- /keyword -->')
+	})
+})
+
+describe('same keyword with different options', () => {
+	it('should expand multiple instances with distinct options', async () => {
+		const markdown = `<!-- greet({name: "Alice"}) -->\n\n<!-- greet({name: "Bob"}) -->\n`
+		const rules: Rules = {
+			// eslint-disable-next-line ts/no-unsafe-type-assertion
+			greet: (options) => `Hello, ${(options as { name: string }).name}!`,
+		}
+		const result = await expandStringToString(markdown, rules)
+		expect(result).toContain('Hello, Alice!')
+		expect(result).toContain('Hello, Bob!')
+	})
+})
+
+describe('argument edge cases', () => {
+	it('should parse string arguments containing parentheses', async () => {
+		const markdown = `<!-- keyword({pattern: "func(arg)"}) -->\n`
+		const rules: Rules = {
+			// eslint-disable-next-line ts/no-unsafe-type-assertion
+			keyword: (options) => `Pattern: ${(options as { pattern: string }).pattern}`,
+		}
+		const result = await expandStringToString(markdown, rules)
+		expect(result).toContain('Pattern: func(arg)')
+	})
+
+	it('should handle null argument', async () => {
+		const markdown = `<!-- keyword(null) -->\n`
+		const rules: Rules = {
+			keyword: (options) => `Got: ${options === null ? 'null' : 'not null'}`,
+		}
+		const result = await expandStringToString(markdown, rules)
+		expect(result).toContain('Got: null')
+	})
+})
+
+describe('async error handling', () => {
+	it('should report errors when async rules reject', async () => {
+		const rules: Rules = {
+			// eslint-disable-next-line ts/require-await
+			async rejecter() {
+				throw new Error('Async failure')
+			},
+		}
+		const markdown = `<!-- rejecter -->\n`
+		const result = await expandStringToVfile(markdown, rules)
+		const errorMessage = result.messages.find((message) => message.fatal === true)
+		expect(errorMessage).toBeDefined()
+		expect(stripAnsiEscapeCodes(errorMessage!.message)).toContain('Async failure')
+	})
+})
+
 describe('VFile message reporting', () => {
 	const validRules: Rules = {
 		'first-expansion': 'This is first',
