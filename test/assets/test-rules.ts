@@ -19,7 +19,7 @@ export default {
 		},
 	},
 	'basic-list': {
-		applicationOrder: 1,
+		order: 1,
 		content: `- I\n- am\n- a\n- list`,
 	},
 	'basic-multiple-paragraphs': 'I am a paragraph 1\n\nI am a paragraph 2\n\nI am a paragraph 3',

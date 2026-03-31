@@ -10,7 +10,7 @@ describe('normalizeRules', () => {
 		const rules: Rules = { greeting: 'hello' }
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.greeting.applicationOrder).toBe(0)
+		expect(normalized.greeting.order).toBe(0)
 		expect(typeof normalized.greeting.content).toBe('function')
 		// Content function should return the string
 		expect(await (normalized.greeting.content as Function)({}, {})).toBe('hello')
@@ -35,13 +35,13 @@ describe('normalizeRules', () => {
 	it('should normalize a string-content object rule with metadata', async () => {
 		const rules: Rules = {
 			title: {
-				applicationOrder: 5,
 				content: 'My Title',
+				order: 5,
 			},
 		}
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.title.applicationOrder).toBe(5)
+		expect(normalized.title.order).toBe(5)
 		expect(await (normalized.title.content as Function)({}, {})).toBe('My Title')
 	})
 
@@ -53,7 +53,7 @@ describe('normalizeRules', () => {
 		}
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.title.applicationOrder).toBe(0)
+		expect(normalized.title.order).toBe(0)
 		expect(await (normalized.title.content as Function)({}, {})).toBe('dynamic')
 	})
 
@@ -61,7 +61,7 @@ describe('normalizeRules', () => {
 		const rules: Rules = { header: ['one', 'two'] }
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.header.applicationOrder).toBe(0)
+		expect(normalized.header.order).toBe(0)
 		expect(Array.isArray(normalized.header.content)).toBe(true)
 		expect((normalized.header.content as unknown[]).length).toBe(2)
 	})
@@ -69,13 +69,13 @@ describe('normalizeRules', () => {
 	it('should normalize an object-form compound rule with metadata', () => {
 		const rules: Rules = {
 			header: {
-				applicationOrder: 3,
 				content: ['one', 'two'],
+				order: 3,
 			},
 		}
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.header.applicationOrder).toBe(3)
+		expect(normalized.header.order).toBe(3)
 		expect(Array.isArray(normalized.header.content)).toBe(true)
 	})
 
@@ -87,7 +87,7 @@ describe('normalizeRules', () => {
 		}
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.minimal.applicationOrder).toBe(0)
+		expect(normalized.minimal.order).toBe(0)
 	})
 })
 

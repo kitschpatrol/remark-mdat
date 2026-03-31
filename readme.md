@@ -121,7 +121,7 @@ const rules: Rules = {
 
   // Object: rule with validation metadata
   title: {
-    applicationOrder: 0, // Processing priority (default: 0)
+    order: 0, // Processing priority (default: 0)
     content: () => getTitle(), // String, function, or array
   },
 

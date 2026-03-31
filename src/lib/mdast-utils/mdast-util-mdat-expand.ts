@@ -36,11 +36,8 @@ export async function mdatExpand(tree: Root, file: VFile, rules: Rules) {
 			commentMarkers.push(commentMarker)
 	})
 
-	// Sort by application order
-	commentMarkers.sort(
-		(a, b) =>
-			normalizedRules[a.keyword].applicationOrder - normalizedRules[b.keyword].applicationOrder,
-	)
+	// Sort by order
+	commentMarkers.sort((a, b) => normalizedRules[a.keyword].order - normalizedRules[b.keyword].order)
 
 	// Expand the rules
 	for (const comment of commentMarkers) {
