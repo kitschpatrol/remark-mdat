@@ -27,13 +27,15 @@ export async function mdatExpand(tree: Root, file: VFile, rules: Rules) {
 		// Find all <!-- mdat --> comments
 		const commentMarker = parseCommentNode(node, parent)
 
-		// Save the marker if it meets all criteria
-		if (
-			commentMarker?.type === 'open' &&
-			// eslint-disable-next-line ts/no-unnecessary-condition
-			normalizedRules[commentMarker.keyword] !== undefined
-		)
-			commentMarkers.push(commentMarker)
+		if (commentMarker?.type !== 'open') return CONTINUE
+
+		// eslint-disable-next-line ts/no-unnecessary-condition
+		if (normalizedRules[commentMarker.keyword] === undefined) {
+			saveLog(file, 'warn', 'expand', `Missing rule for: ${commentMarker.html}`, node)
+			return CONTINUE
+		}
+
+		commentMarkers.push(commentMarker)
 	})
 
 	// Sort by order
@@ -49,7 +51,6 @@ export async function mdatExpand(tree: Root, file: VFile, rules: Rules) {
 			// Handle compound rules
 			newMarkdownString = await getRuleContent(rule, options, tree)
 
-			// TODO just let check get this?
 			if (newMarkdownString.trim() === '') {
 				saveLog(file, 'error', 'expand', `Got empty content when expanding ${html}`, node)
 			}

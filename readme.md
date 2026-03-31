@@ -215,11 +215,13 @@ See the [`mdat`](https://github.com/kitschpatrol/mdat) package for a higher-leve
 
 The plugin bundles a number of [mdast](https://github.com/syntax-tree/mdast) utilities designed to operate directly on syntax trees. These are exported to support customized Unified.js processors and enforce modularity and separation of concerns in mdat's internal implementation, but you do not need to use them directly — all functionality is encapsulated in the single `remarkMdat` plugin export.
 
-The remark-mdat plugin chains these utilities together to accommodate the typical use case of end-to-end expansion and validation of mdat comments. For now, the individual utility transformers are not published individually to NPM, and are instead bundled with `remark-mdat`.
+The remark-mdat plugin chains these utilities together to accommodate the typical use case of end-to-end expansion of mdat comments. For now, the individual utility transformers are not published individually to NPM, and are instead bundled with `remark-mdat`.
+
+Errors and warnings are reported inline during expansion via [VFile messages](https://github.com/vfile/vfile-message), following remark ecosystem conventions. Use `reporterMdat` to extract and format these messages for console output.
 
 - [**`mdast-util-mdat`**](./src/lib/mdast-utils/mdast-util-mdat.ts)
 
-  Composite transformer function performing end-to-end mdat comment expansion and validation on Markdown ASTs by chaining the other utility functions described below.
+  Composite transformer function performing end-to-end mdat comment expansion on Markdown ASTs by chaining the other utility functions described below.
 
   _Exported as `mdat(tree: Root, file: VFile, rules: Rules): Promise<void>`_
 
@@ -232,23 +234,15 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
 
   - [**`mdast-util-mdat-clean`**](./src/lib/mdast-utils/mdast-util-mdat-clean.ts)
 
-    Transformer function that "resets" all mdat comment expansions in a file, collapsing expanded comments back into single-line placeholders.
+    Transformer function that resets all mdat comment expansions in a file, collapsing expanded comments back into single-line placeholders.
 
     _Exported as `mdatClean(tree: Root, file: VFile): void`_
 
   - [**`mdast-util-mdat-expand`**](./src/lib/mdast-utils/mdast-util-mdat-expand.ts)
 
-    Transformer function that expands mdat comments (e.g. `<!-- title -->`) in a Markdown file according to the provided rules.
+    Transformer function that expands mdat comments (e.g. `<!-- title -->`) in a Markdown file according to the provided rules. Reports errors for rules that throw or return empty content, and warnings for comments with no matching rule.
 
     _Exported as `mdatExpand(tree: Root, file: VFile, rules: Rules): Promise<void>`_
-
-  - [**`mdast-util-mdat-check`**](./src/lib/mdast-utils/mdast-util-mdat-check.ts)
-
-    Transformer function that validates an expanded Markdown document against the provided rules. Does not modify the tree, it only appends messages to the VFile.
-
-    _Exported as `mdatCheck(tree: Root, file: VFile, rules: Rules): Promise<void>`_
-
-    See `reporterMdat` to extract, format, and log results from VFile messages written by `mdatCheck`.
 
 ## Implementation notes
 

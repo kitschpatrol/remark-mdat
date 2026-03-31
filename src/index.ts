@@ -1,6 +1,5 @@
 // Export utilities for advanced use cases
 export { mdat } from './lib/mdast-utils/mdast-util-mdat'
-export { mdatCheck } from './lib/mdast-utils/mdast-util-mdat-check'
 export { mdatClean } from './lib/mdast-utils/mdast-util-mdat-clean'
 export { mdatExpand } from './lib/mdast-utils/mdast-util-mdat-expand'
 export { mdatSplit } from './lib/mdast-utils/mdast-util-mdat-split'

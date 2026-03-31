@@ -15,6 +15,15 @@ async function expandStringToString(markdown: string, rules: Rules): Promise<str
 	return result.toString()
 }
 
+async function expandStringToVfile(markdown: string, rules: Rules): Promise<VFile> {
+	return remark().use(remarkGfm).use(remarkMdat, rules).process(markdown)
+}
+
+function stripAnsiEscapeCodes(text: string): string {
+	// eslint-disable-next-line no-control-regex
+	return text.replaceAll(/\u001B\[[\d;]*m/g, '')
+}
+
 // Export for linter
 export async function cleanString(markdown: string): Promise<string> {
 	const result = await remark()
@@ -179,5 +188,60 @@ describe('compound rule handling', () => {
 			<!-- /compound -->
 			"
 		`)
+	})
+})
+
+describe('VFile message reporting', () => {
+	const validRules: Rules = {
+		'first-expansion': 'This is first',
+		'optional-expansion': 'This is optional',
+		'second-expansion': 'This is second',
+	}
+
+	it('should not report errors when valid', async () => {
+		const markdown = `<!-- first-expansion -->\n<!-- optional-expansion -->\n<!-- second-expansion -->`
+		const result = await expandStringToVfile(markdown, validRules)
+		const foundError = result.messages.some((message) => message.fatal === true)
+		expect(foundError).toBeFalsy()
+	})
+
+	it('should report errors when rules return nothing', async () => {
+		const badRules: Rules = {
+			...validRules,
+			'rule-that-returns-nothing': '',
+		}
+		const markdown = `<!-- first-expansion -->\n<!-- rule-that-returns-nothing -->\n<!-- optional-expansion -->\n<!-- second-expansion -->`
+		const result = await expandStringToVfile(markdown, badRules)
+		const errorMessage = result.messages.find((message) => message.fatal === true)
+		expect(errorMessage).toBeDefined()
+		expect(stripAnsiEscapeCodes(errorMessage!.message)).toMatchInlineSnapshot(
+			`"Got empty content when expanding <!-- rule-that-returns-nothing -->"`,
+		)
+	})
+
+	it('should report errors when rules throw', async () => {
+		const badRules: Rules = {
+			...validRules,
+			'rule-that-throws'() {
+				throw new Error('This rule throws')
+			},
+		}
+		const markdown = `<!-- rule-that-throws -->\n<!-- first-expansion -->\n<!-- optional-expansion -->\n<!-- second-expansion -->`
+		const result = await expandStringToVfile(markdown, badRules)
+		const errorMessage = result.messages.find((message) => message.fatal === true)
+		expect(errorMessage).toBeDefined()
+		expect(stripAnsiEscapeCodes(errorMessage!.message)).toMatchInlineSnapshot(
+			`"Caught error expanding <!-- rule-that-throws -->, Error message: "Failed to expand content: This rule throws""`,
+		)
+	})
+
+	it('should warn about missing rules', async () => {
+		const markdown = `<!-- mystery-comment -->\n<!-- first-expansion -->\n<!-- optional-expansion -->\n<!-- second-expansion -->`
+		const result = await expandStringToVfile(markdown, validRules)
+		const warnMessage = result.messages.find((message) => message.fatal === false)
+		expect(warnMessage).toBeDefined()
+		expect(stripAnsiEscapeCodes(warnMessage!.message)).toMatchInlineSnapshot(
+			`"Missing rule for: <!-- mystery-comment -->"`,
+		)
 	})
 })
