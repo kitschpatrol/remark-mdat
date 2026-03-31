@@ -40,7 +40,6 @@ export async function mdat(tree: Root, file: VFile, options: MdatOptions): Promi
 		closingPrefix,
 		keywordPrefix,
 		metaCommentIdentifier,
-		paranoid: false,
 		rules,
 	})
 }

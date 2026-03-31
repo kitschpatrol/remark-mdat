@@ -35,22 +35,16 @@ I was generated from test-rules.ts
 
 <!-- /basic-dynamic -->
 
-## Required expansion
+## List expansion
 
-Inclusion is validated via \`--check\` option
-
-<!-- basic-list-required -->
+<!-- basic-list -->
 
 * I
 * am
 * a
 * list
-* that
-* must
-* be
-* here
 
-<!-- /basic-list-required -->
+<!-- /basic-list -->
 
 ## Expansions with options argument, canonical syntax
 
@@ -211,11 +205,9 @@ Shows the name of the rules file:
 
 <!-- basic-dynamic -->
 
-## Required expansion
+## List expansion
 
-Inclusion is validated via \`--check\` option
-
-<!-- basic-list-required -->
+<!-- basic-list -->
 
 ## Expansions with options argument, canonical syntax
 
@@ -344,22 +336,16 @@ I was generated from test-rules.ts
 
 <!-- /basic-dynamic -->
 
-## Required expansion
+## List expansion
 
-Inclusion is validated via \`--check\` option
-
-<!-- basic-list-required -->
+<!-- basic-list -->
 
 * I
 * am
 * a
 * list
-* that
-* must
-* be
-* here
 
-<!-- /basic-list-required -->
+<!-- /basic-list -->
 
 ## Expansions with options argument, canonical syntax
 
@@ -526,22 +512,16 @@ I was generated from test-rules.ts
 
 <!-- /basic-dynamic -->
 
-## Required expansion
+## List expansion
 
-Inclusion is validated via \`--check\` option
-
-<!-- basic-list-required -->
+<!-- basic-list -->
 
 * I
 * am
 * a
 * list
-* that
-* must
-* be
-* here
 
-<!-- /basic-list-required -->
+<!-- /basic-list -->
 
 ## Expansions with options argument, canonical syntax
 
@@ -708,22 +688,16 @@ I was generated from test-rules.ts
 
 <!-- /basic-dynamic -->
 
-## Required expansion
+## List expansion
 
-Inclusion is validated via \`--check\` option
-
-<!-- basic-list-required -->
+<!-- basic-list -->
 
 * I
 * am
 * a
 * list
-* that
-* must
-* be
-* here
 
-<!-- /basic-list-required -->
+<!-- /basic-list -->
 
 ## Expansions with options argument, canonical syntax
 

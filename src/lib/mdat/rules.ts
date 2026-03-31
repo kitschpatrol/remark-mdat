@@ -28,12 +28,6 @@ export type NormalizedRule = {
 	 * For 'compound' rules, this can be an array of rules (without keywords).
 	 */
 	content: ((options: JsonValue, tree: Root) => Promise<string>) | NormalizedRule[]
-	/**
-	 * Whether the presence of the keyword comment in the document is required.
-	 * Used for validation purposes.
-	 * Defaults to false.
-	 */
-	required: boolean
 }
 
 // More flexible rules used in the public interface
@@ -54,9 +48,9 @@ export type Rule =
 	| string
 	// This was previously implemented as on next line, but was replaced with expanded duplicate to avoid
 	// circular type reference issues introduced in in recent typescript versions
-	// SetOptional<Merge<NormalizedRule, { content: ((options: JsonValue, tree: Root) => Promise<string> | string) | Rule[] | string }>, 'applicationOrder' | 'order' | 'required'>
+	// SetOptional<Merge<NormalizedRule, { content: ((options: JsonValue, tree: Root) => Promise<string> | string) | Rule[] | string }>, 'applicationOrder'>
 	/**
-	 * Rule object with optional validation metadata.
+	 * Rule object with optional metadata.
 	 */
 	| {
 			/**
@@ -79,11 +73,6 @@ export type Rule =
 			 * @returns A string with the generated content. The string will be parsed as Markdown and inserted into the document at the comment's location.
 			 */
 			content: ((options: JsonValue, tree: Root) => Promise<string> | string) | Rule[] | string
-			/**
-			 * Whether the presence of the keyword comment in the document is required.
-			 * Defaults to false.
-			 */
-			required?: boolean
 	  }
 
 /**
@@ -103,11 +92,11 @@ export type Rule =
  *
  * Rule with metadata:
  * ```ts
- * { basic-meta: { required: true, content: 'content'} }
+ * { basic-meta: { applicationOrder: 1, content: 'content'} }
  * ```
  *
  * Rule with dynamic content and metadata:
- * { basic-date: { required: true, content: () => `${new Date().toISOString()}` } }
+ * { basic-date: { applicationOrder: 1, content: () => `${new Date().toISOString()}` } }
  */
 export type Rules = SimplifyDeep<Record<string, Rule>>
 
@@ -124,7 +113,6 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 				applicationOrder: 0,
 				// eslint-disable-next-line ts/require-await
 				content: async () => rule,
-				required: false,
 			}
 		} else if (typeof rule === 'function') {
 			// Rule is a function that returns a string
@@ -132,14 +120,12 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 			normalizedRules[keyword] = {
 				applicationOrder: 0,
 				content: async (options: JsonValue, tree: Root) => rule(options, tree),
-				required: false,
 			}
 		} else if (Array.isArray(rule)) {
 			// Top-level compound rule, gets wrapped in a normal rule
 			normalizedRules[keyword] = {
 				applicationOrder: 0,
 				content: Object.values(normalizeRules(Object.fromEntries(rule.entries()))),
-				required: false,
 			}
 		} else if (typeof rule.content === 'string') {
 			// String replacement with metadata
@@ -149,7 +135,6 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 				applicationOrder: rule.applicationOrder ?? 0,
 				// eslint-disable-next-line ts/require-await
 				content: async () => ruleContent,
-				required: rule.required ?? false,
 			}
 		} else if (Array.isArray(rule.content)) {
 			// Compound rule with metadata
@@ -157,7 +142,6 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 			normalizedRules[keyword] = {
 				applicationOrder: rule.applicationOrder ?? 0,
 				content: Object.values(normalizeRules(Object.fromEntries(rule.content.entries()))),
-				required: rule.required ?? false,
 			}
 		} else {
 			// Rule with metadata
@@ -166,7 +150,6 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 			normalizedRules[keyword] = {
 				applicationOrder: rule.applicationOrder ?? 0,
 				content: async (options: JsonValue, tree: Root) => ruleContent(options, tree),
-				required: rule.required ?? false,
 			}
 		}
 	}
@@ -217,7 +200,6 @@ const normalizedRuleSchema: z.ZodSchema = z.lazy(() =>
 				.returns(z.promise(z.string())),
 			z.array(normalizedRuleSchema),
 		]),
-		required: z.boolean().default(false),
 	}),
 )
 
@@ -241,7 +223,6 @@ const ruleSchema: z.ZodSchema = z.lazy(() =>
 				z.array(ruleSchema), // Array of rules (compound rule)
 				z.string(), // Just a keyword
 			]),
-			required: z.boolean().optional(),
 		}),
 	]),
 )

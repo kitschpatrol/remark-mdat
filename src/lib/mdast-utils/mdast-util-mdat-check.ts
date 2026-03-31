@@ -1,10 +1,8 @@
-/* eslint-disable import/no-named-as-default */
-
 import type { Root } from 'mdast'
 import type { VFile } from 'vfile'
 import { CONTINUE, visit } from 'unist-util-visit'
 import type { CommentMarkerNode } from '../mdat/parse'
-import type { NormalizedRule, NormalizedRules, Rule, Rules } from '../mdat/rules'
+import type { NormalizedRule, NormalizedRules, Rules } from '../mdat/rules'
 import { saveLog } from '../mdat/mdat-log'
 import { parseCommentNode } from '../mdat/parse'
 import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
@@ -14,8 +12,6 @@ export type MdatCheckOptions = {
 	closingPrefix: string
 	keywordPrefix: string
 	metaCommentIdentifier: string
-	/** Enable extra checks, too noisy for real life. */
-	paranoid: boolean
 	rules: Rules
 }
 
@@ -27,7 +23,7 @@ type CommentMarkerWithRule = CommentMarkerNode & {
  * Mdast utility function to check mdat source document, and output.
  */
 export async function mdatCheck(tree: Root, file: VFile, options: MdatCheckOptions) {
-	const { closingPrefix, keywordPrefix, metaCommentIdentifier, paranoid, rules: rawRules } = options
+	const { closingPrefix, keywordPrefix, metaCommentIdentifier, rules: rawRules } = options
 
 	validateRules(rawRules)
 	const rules = normalizeRules(rawRules)
@@ -60,17 +56,8 @@ export async function mdatCheck(tree: Root, file: VFile, options: MdatCheckOptio
 	})
 
 	// Now run some validations
-
-	// Error level checks
-	checkMissingRequiredComments(file, commentMarkers, rules, rawRules)
 	checkMetaCommentPresence(file, commentMarkers, options)
 	await checkRulesReturnedContent(file, commentMarkers, tree)
-
-	// Warning level checks
-	if (paranoid) {
-		checkMissingOptionalComments(file, commentMarkers, rules, rawRules) // Too annoying
-	}
-
 	checkMissingRules(file, commentMarkers)
 	checkMissingPrefix(file, commentMarkers, rules, options)
 }
@@ -91,19 +78,13 @@ async function checkRulesReturnedContent(
 				const returnedContent = await getRuleContent(comment.rule, comment.options, tree, true)
 
 				if (returnedContent.trim() === '') {
-					saveLog(
-						file,
-						comment.rule.required ? 'error' : 'warn',
-						'check',
-						`${comment.html} returned an empty string.`,
-						comment.node,
-					)
+					saveLog(file, 'warn', 'check', `${comment.html} returned an empty string.`, comment.node)
 				}
 			} catch (error) {
 				if (error instanceof Error) {
 					saveLog(
 						file,
-						comment.rule.required ? 'error' : 'warn',
+						'warn',
 						'check',
 						`Could not get content for ${comment.html}. ${error.message}`,
 						comment.node,
@@ -145,94 +126,6 @@ function checkMissingRules(file: VFile, comments: CommentMarkerWithRule[]): void
 }
 
 /**
- * Check for missing optional comments. We have defined the rule, but not written a matching comment.
- */
-function checkMissingOptionalComments(
-	file: VFile,
-	comments: CommentMarkerWithRule[],
-	rules: NormalizedRules,
-	rawRules: Rules,
-): void {
-	for (const [keyword, rule] of Object.entries(rules)) {
-		if (
-			!rule.required &&
-			!comments.some((comment) => comment.type === 'open' && comment.keyword === keyword) &&
-			!satisfiedByCompoundRule(keyword, rawRules)
-		) {
-			saveLog(file, 'warn', 'check', `Missing optional: <!-- ${keyword} -->`)
-		}
-	}
-}
-
-/**
- * Check for missing required comments.
- * The rule set includes a rule with `required: true`, but no matching comment was found in the document.
- */
-function checkMissingRequiredComments(
-	file: VFile,
-	comments: CommentMarkerWithRule[],
-	rules: NormalizedRules,
-	rawRules: Rules,
-): void {
-	for (const [keyword, rule] of Object.entries(rules)) {
-		// Compound rules don't get comments
-		if (
-			rule.required &&
-			!comments.some((comment) => comment.type === 'open' && comment.keyword === keyword) &&
-			!satisfiedByCompoundRule(keyword, rawRules)
-		) {
-			saveLog(file, 'error', 'check', `Missing required: <!-- ${keyword} -->`)
-		}
-	}
-}
-
-/**
- * Extract the content value from a raw rule, unwrapping object-form rules.
- */
-function getRawRuleContent(rule: Rule): Rule {
-	if (typeof rule === 'object' && !Array.isArray(rule)) {
-		return rule.content
-	}
-
-	return rule
-}
-
-/**
- * Get the sub-rule array from a compound rule, if it is one.
- */
-function getCompoundSubRules(rule: Rule): Rule[] | undefined {
-	if (Array.isArray(rule)) return rule
-	if (typeof rule === 'object' && !Array.isArray(rule) && Array.isArray(rule.content)) {
-		return rule.content
-	}
-
-	return undefined
-}
-
-/**
- * Helper to see if a rule keyword is covered by a compound rule in the rule set.
- * Checks whether any compound rule contains the same raw content value (by reference)
- * as the rule for the given keyword. This works when the sub-rule was imported
- * directly into the compound rule definition.
- */
-function satisfiedByCompoundRule(keyword: string, rawRules: Rules): boolean {
-	const rawRule = rawRules[keyword]
-	const ruleContent = getRawRuleContent(rawRule)
-
-	for (const otherRule of Object.values(rawRules)) {
-		const subRules = getCompoundSubRules(otherRule)
-		if (subRules === undefined) continue
-
-		// Check if any sub-rule matches the content by reference
-		if (subRules.some((subRule) => getRawRuleContent(subRule) === ruleContent)) {
-			return true
-		}
-	}
-
-	return false
-}
-
-/**
  * Check that meta presence / absence comment matches options.
  */
 function checkMetaCommentPresence(
@@ -257,4 +150,3 @@ function checkMetaCommentPresence(
 		saveLog(file, 'error', 'check', `Multiple meta comments`)
 	}
 }
-

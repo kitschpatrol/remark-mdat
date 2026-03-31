@@ -24,11 +24,9 @@ Shows the name of the rules file:
 
 <!-- basic-dynamic -->
 
-## Required expansion
+## List expansion
 
-Inclusion is validated via `--check` option
-
-<!-- basic-list-required -->
+<!-- basic-list -->
 
 ## Expansions with options argument, canonical syntax
 

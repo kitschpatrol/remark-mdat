@@ -11,7 +11,6 @@ describe('normalizeRules', () => {
 		const normalized = normalizeRules(rules)
 
 		expect(normalized.greeting.applicationOrder).toBe(0)
-		expect(normalized.greeting.required).toBe(false)
 		expect(typeof normalized.greeting.content).toBe('function')
 		// Content function should return the string
 		expect(await (normalized.greeting.content as Function)({}, {})).toBe('hello')
@@ -38,13 +37,11 @@ describe('normalizeRules', () => {
 			title: {
 				applicationOrder: 5,
 				content: 'My Title',
-				required: true,
 			},
 		}
 		const normalized = normalizeRules(rules)
 
 		expect(normalized.title.applicationOrder).toBe(5)
-		expect(normalized.title.required).toBe(true)
 		expect(await (normalized.title.content as Function)({}, {})).toBe('My Title')
 	})
 
@@ -52,12 +49,10 @@ describe('normalizeRules', () => {
 		const rules: Rules = {
 			title: {
 				content: () => 'dynamic',
-				required: true,
 			},
 		}
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.title.required).toBe(true)
 		expect(normalized.title.applicationOrder).toBe(0)
 		expect(await (normalized.title.content as Function)({}, {})).toBe('dynamic')
 	})
@@ -67,7 +62,6 @@ describe('normalizeRules', () => {
 		const normalized = normalizeRules(rules)
 
 		expect(normalized.header.applicationOrder).toBe(0)
-		expect(normalized.header.required).toBe(false)
 		expect(Array.isArray(normalized.header.content)).toBe(true)
 		expect((normalized.header.content as unknown[]).length).toBe(2)
 	})
@@ -77,13 +71,11 @@ describe('normalizeRules', () => {
 			header: {
 				applicationOrder: 3,
 				content: ['one', 'two'],
-				required: true,
 			},
 		}
 		const normalized = normalizeRules(rules)
 
 		expect(normalized.header.applicationOrder).toBe(3)
-		expect(normalized.header.required).toBe(true)
 		expect(Array.isArray(normalized.header.content)).toBe(true)
 	})
 
@@ -96,7 +88,6 @@ describe('normalizeRules', () => {
 		const normalized = normalizeRules(rules)
 
 		expect(normalized.minimal.applicationOrder).toBe(0)
-		expect(normalized.minimal.required).toBe(false)
 	})
 })
 
@@ -143,7 +134,6 @@ describe('getSoleRule', () => {
 		const normalized: NormalizedRules = normalizeRules(rules)
 		const sole = getSoleRule(normalized)
 
-		expect(sole.required).toBe(false)
 		expect(await (sole.content as Function)({}, {})).toBe('the one')
 	})
 })
