@@ -205,7 +205,7 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
 
   _Exported as `mdat(tree: Root, file: VFile, options: MdatOptions): Promise<void>`_
 
-  `MdatOptions` includes `addMetaComment`, `keywordPrefix`, `metaCommentIdentifier`, and `rules` (all required, unlike the plugin's `Options` where they are optional with defaults).
+  `MdatOptions` includes `addMetaComment`, `metaCommentIdentifier`, and `rules` (all required, unlike the plugin's `Options` where they are optional with defaults).
 
   Utilities wrapped by `mdast-util-mdat`:
   - [**`mdast-util-mdat-split`**](./src/lib/mdast-utils/mdast-util-mdat-split.ts)
@@ -220,7 +220,7 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
 
     _Exported as `mdatClean(tree: Root, file: VFile, options: MdatCleanOptions): void`_
 
-    `MdatCleanOptions` includes `keywordPrefix` and `metaCommentIdentifier`.
+    `MdatCleanOptions` includes `metaCommentIdentifier`.
 
   - [**`mdast-util-mdat-expand`**](./src/lib/mdast-utils/mdast-util-mdat-expand.ts)
 
@@ -228,7 +228,7 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
 
     _Exported as `mdatExpand(tree: Root, file: VFile, options: MdatExpandOptions): Promise<void>`_
 
-    `MdatExpandOptions` includes `addMetaComment`, `keywordPrefix`, `metaCommentIdentifier`, and `rules`.
+    `MdatExpandOptions` includes `addMetaComment`, `metaCommentIdentifier`, and `rules`.
 
   - [**`mdast-util-mdat-check`**](./src/lib/mdast-utils/mdast-util-mdat-check.ts)
 
@@ -236,7 +236,7 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
 
     _Exported as `mdatCheck(tree: Root, file: VFile, options: MdatCheckOptions): Promise<void>`_
 
-    `MdatCheckOptions` includes `addMetaComment`, `keywordPrefix`, `metaCommentIdentifier`, and `rules`.
+    `MdatCheckOptions` includes `addMetaComment`, `metaCommentIdentifier`, and `rules`.
 
     See `reporterMdat` to extract, format, and log results from VFile messages written by `mdatCheck`.
 

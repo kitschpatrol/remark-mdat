@@ -111,6 +111,21 @@ describe('validateRules', () => {
 			validateRules(rules)
 		}).toThrow('Error validating rules')
 	})
+
+	it('should reject keywords starting with reserved characters', () => {
+		expect(() => {
+			validateRules({ '/keyword': 'content' })
+		}).toThrow('Error validating rules')
+		expect(() => {
+			validateRules({ '#keyword': 'content' })
+		}).toThrow('Error validating rules')
+		expect(() => {
+			validateRules({ '*keyword': 'content' })
+		}).toThrow('Error validating rules')
+		expect(() => {
+			validateRules({ '//comment': 'content' })
+		}).toThrow('Error validating rules')
+	})
 })
 
 describe('getSoleRule', () => {

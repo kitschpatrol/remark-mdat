@@ -90,8 +90,9 @@ export function parseCommentNode(
 
 /**
  * Parse any comment string into structured data.
+ * Comments using code-style notation (`//`, `#`, `/*`) are ignored and return `undefined`.
  * @returns A discriminated union of CommentMarker based on comment type, or
- * undefined if the node is not a comment.
+ * undefined if the node is not a comment or is a code-style comment.
  */
 export function parseComment(
 	text: string,
@@ -120,6 +121,11 @@ export function parseComment(
 			html: commentHtml,
 			type,
 		}
+	}
+
+	// Ignore code-style comments embedded in HTML comments
+	if (rawKeyword.startsWith('//') || rawKeyword.startsWith('#') || rawKeyword.startsWith('/*')) {
+		return undefined
 	}
 
 	// Must be open or closing tag, strip closing prefix

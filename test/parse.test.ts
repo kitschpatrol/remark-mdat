@@ -407,3 +407,56 @@ describe('comment type detection', () => {
 		})
 	})
 })
+
+describe('code-style comment ignoring', () => {
+	const options = {
+		metaCommentIdentifier: '+',
+	}
+
+	it('should ignore double-slash line comments', () => {
+		expect(parseComment('<!-- // line comment -->', options)).toBeUndefined()
+		expect(parseComment('<!-- // -->', options)).toBeUndefined()
+		expect(parseComment('<!--//-->', options)).toBeUndefined()
+		expect(parseComment('<!-- //note -->', options)).toBeUndefined()
+		expect(parseComment('<!--//note-->', options)).toBeUndefined()
+	})
+
+	it('should ignore hash comments', () => {
+		expect(parseComment('<!-- # hash comment -->', options)).toBeUndefined()
+		expect(parseComment('<!-- # -->', options)).toBeUndefined()
+		expect(parseComment('<!--#-->', options)).toBeUndefined()
+		expect(parseComment('<!-- #todo -->', options)).toBeUndefined()
+		expect(parseComment('<!--#todo-->', options)).toBeUndefined()
+	})
+
+	it('should ignore block comments', () => {
+		expect(parseComment('<!-- /* block comment */ -->', options)).toBeUndefined()
+		expect(parseComment('<!-- /* */ -->', options)).toBeUndefined()
+		expect(parseComment('<!--/* snug */-->', options)).toBeUndefined()
+		expect(parseComment('<!-- /*unterminated -->', options)).toBeUndefined()
+	})
+
+	it('should still parse closing tags', () => {
+		expect(parseComment('<!-- /keyword -->', options)).toEqual({
+			html: '<!-- /keyword -->',
+			keyword: 'keyword',
+			options: {},
+			type: 'close',
+		})
+		expect(parseComment('<!--/keyword-->', options)).toEqual({
+			html: '<!--/keyword-->',
+			keyword: 'keyword',
+			options: {},
+			type: 'close',
+		})
+	})
+
+	it('should still parse regular open tags', () => {
+		expect(parseComment('<!-- keyword -->', options)).toEqual({
+			html: '<!-- keyword -->',
+			keyword: 'keyword',
+			options: {},
+			type: 'open',
+		})
+	})
+})

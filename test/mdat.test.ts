@@ -107,6 +107,56 @@ describe('comment expansion', () => {
 			}),
 		).rejects.toThrow()
 	})
+
+	it('should expand keywords while ignoring code-style comments', async () => {
+		const expandedString = await expandFileToString('./test/assets/test-document-comments.md', {
+			rules: testRules,
+		})
+		expect(expandedString).toMatchSnapshot()
+	})
+})
+
+describe('code-style comment handling', () => {
+	it('should leave code-style comments untouched during expansion', async () => {
+		const markdown = `<!-- // developer note -->\n<!-- # todo -->\n<!-- /* block */ -->\n<!-- keyword -->\n`
+		const options: Options = {
+			rules: { keyword: 'expanded' },
+		}
+		const result = await expandStringToString(markdown, options)
+		expect(result).toContain('<!-- // developer note -->')
+		expect(result).toContain('<!-- # todo -->')
+		expect(result).toContain('<!-- /* block */ -->')
+		expect(result).toContain('<!-- /keyword -->')
+	})
+
+	it('should not confuse closing tags with line comments', async () => {
+		const markdown = `<!-- keyword -->\n`
+		const options: Options = {
+			rules: { keyword: 'content' },
+		}
+		const result = await expandStringToString(markdown, options)
+		expect(result).toContain('<!-- /keyword -->')
+	})
+})
+
+describe('keyword validation', () => {
+	it('should reject keywords starting with /', async () => {
+		await expect(
+			expandStringToString('<!-- test -->', { rules: { '/bad': 'nope' } }),
+		).rejects.toThrow('Rule keywords must not start with')
+	})
+
+	it('should reject keywords starting with #', async () => {
+		await expect(
+			expandStringToString('<!-- test -->', { rules: { '#bad': 'nope' } }),
+		).rejects.toThrow('Rule keywords must not start with')
+	})
+
+	it('should reject keywords starting with *', async () => {
+		await expect(
+			expandStringToString('<!-- test -->', { rules: { '*bad': 'nope' } }),
+		).rejects.toThrow('Rule keywords must not start with')
+	})
 })
 
 describe('keyword case sensitivity', () => {

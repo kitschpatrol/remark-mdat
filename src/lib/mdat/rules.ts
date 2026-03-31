@@ -228,8 +228,13 @@ const ruleSchema: z.ZodSchema = z.lazy(() =>
 )
 // Z.array(z.lazy(() => ruleSchema)), // Correctly handle recursive arrays of Rule
 
-export const rulesSchema = z.record(ruleSchema).describe('MDAT Rules')
-const normalizedRulesSchema = z.record(normalizedRuleSchema).describe('MDAT Rules')
+const keywordSchema = z.string().refine((key) => !/^[/*#]/.test(key), {
+	message:
+		'Rule keywords must not start with "/", "*", or "#" — these prefixes are reserved for comment syntax',
+})
+
+export const rulesSchema = z.record(keywordSchema, ruleSchema).describe('MDAT Rules')
+const normalizedRulesSchema = z.record(keywordSchema, normalizedRuleSchema).describe('MDAT Rules')
 
 // ----------------------------------------------------------
 
