@@ -15,7 +15,6 @@ import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
 
 export type MdatExpandOptions = {
 	addMetaComment: boolean | string
-	keywordPrefix: string
 	metaCommentIdentifier: string
 	rules: Rules
 }
@@ -29,7 +28,7 @@ type ValidCommentMarker = CommentMarkerNode & {
  * comments, effectively resetting the document to its original state.
  */
 export async function mdatExpand(tree: Root, file: VFile, options: MdatExpandOptions) {
-	const { addMetaComment, keywordPrefix, metaCommentIdentifier, rules: rawRules } = options
+	const { addMetaComment, metaCommentIdentifier, rules: rawRules } = options
 
 	// Make the rules easier to deal with by normalizing to consistent structure
 	validateRules(rawRules)
@@ -42,7 +41,6 @@ export async function mdatExpand(tree: Root, file: VFile, options: MdatExpandOpt
 
 		// Find all <!-- mdat --> comments
 		const commentMarker = parseCommentNode(node, parent, {
-			keywordPrefix,
 			metaCommentIdentifier,
 		})
 
@@ -62,7 +60,7 @@ export async function mdatExpand(tree: Root, file: VFile, options: MdatExpandOpt
 
 	// Expand the rules
 	for (const comment of commentMarkers) {
-		const { html, keyword, keywordPrefix, node, options, parent } = comment
+		const { html, keyword, node, options, parent } = comment
 		const rule = rules[keyword]
 
 		let newMarkdownString = ''
@@ -96,7 +94,7 @@ export async function mdatExpand(tree: Root, file: VFile, options: MdatExpandOpt
 		// Add closing tag
 		const closingNode: Html = {
 			type: 'html',
-			value: `<!-- /${keywordPrefix}${keyword} -->`,
+			value: `<!-- /${keyword} -->`,
 		}
 
 		const openingCommentIndex = parent.children.indexOf(node)

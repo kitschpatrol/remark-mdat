@@ -2,14 +2,13 @@ import type { Root } from 'mdast'
 import type { VFile } from 'vfile'
 import { CONTINUE, visit } from 'unist-util-visit'
 import type { CommentMarkerNode } from '../mdat/parse'
-import type { NormalizedRule, NormalizedRules, Rules } from '../mdat/rules'
+import type { NormalizedRule, Rules } from '../mdat/rules'
 import { saveLog } from '../mdat/mdat-log'
 import { parseCommentNode } from '../mdat/parse'
 import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
 
 export type MdatCheckOptions = {
 	addMetaComment: boolean | string
-	keywordPrefix: string
 	metaCommentIdentifier: string
 	rules: Rules
 }
@@ -22,7 +21,7 @@ type CommentMarkerWithRule = CommentMarkerNode & {
  * Mdast utility function to check mdat source document, and output.
  */
 export async function mdatCheck(tree: Root, file: VFile, options: MdatCheckOptions) {
-	const { keywordPrefix, metaCommentIdentifier, rules: rawRules } = options
+	const { metaCommentIdentifier, rules: rawRules } = options
 
 	validateRules(rawRules)
 	const rules = normalizeRules(rawRules)
@@ -34,7 +33,6 @@ export async function mdatCheck(tree: Root, file: VFile, options: MdatCheckOptio
 		if (parent === undefined || index === undefined) return CONTINUE
 		// Find all comments
 		const commentMarker = parseCommentNode(node, parent, {
-			keywordPrefix,
 			metaCommentIdentifier,
 		})
 
@@ -57,7 +55,6 @@ export async function mdatCheck(tree: Root, file: VFile, options: MdatCheckOptio
 	checkMetaCommentPresence(file, commentMarkers, options)
 	await checkRulesReturnedContent(file, commentMarkers, tree)
 	checkMissingRules(file, commentMarkers)
-	checkMissingPrefix(file, commentMarkers, rules, options)
 }
 
 // Validation functions
@@ -94,26 +91,7 @@ async function checkRulesReturnedContent(
 }
 
 /**
- * Check for comments with missing prefix (have an un-prefixed comment that matches a rule)
- */
-function checkMissingPrefix(
-	file: VFile,
-	comments: CommentMarkerWithRule[],
-	rules: NormalizedRules,
-	options: MdatCheckOptions,
-): void {
-	if (options.keywordPrefix === '') return
-	const ruleKeywords = Object.keys(rules)
-
-	for (const comment of comments) {
-		if (comment.type === 'native' && ruleKeywords.includes(comment.content)) {
-			saveLog(file, 'warn', 'check', `Missing prefix: ${comment.html}`, comment.node)
-		}
-	}
-}
-
-/**
- * Check for missing "optional" rules. These are instances where we have the comment, but not the rule
+ * Check for missing rules. We have the comment, but not the rule.
  */
 function checkMissingRules(file: VFile, comments: CommentMarkerWithRule[]): void {
 	for (const comment of comments) {

@@ -57,15 +57,6 @@ describe('comment expansion', () => {
 		expect(firstPass).toEqual(secondPass)
 	})
 
-	it('should expand prefixed comments only', async () => {
-		const expandedString = await expandFileToString('./test/assets/test-document.md', {
-			keywordPrefix: 'mm-',
-			rules: testRules,
-		})
-
-		expect(expandedString).toMatchSnapshot()
-	})
-
 	it('should include the meta tag if asked', async () => {
 		const expandedString = await expandFileToString('./test/assets/test-document.md', {
 			addMetaComment: true,

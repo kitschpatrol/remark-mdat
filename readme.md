@@ -110,8 +110,6 @@ The plugin accepts an optional options object. All fields are optional:
 | ----------------------- | ------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `rules`                 | `Rules`             | `{}`    | A record mapping comment keywords to rules that determine what content is expanded at each comment site. See [Rules](#rules) below.                   |
 | `addMetaComment`        | `boolean \| string` | `false` | If `true`, prepends a warning comment to the document noting that content was auto-generated. If a `string`, uses that string as the warning message. |
-| `closingPrefix`         | `string`            | `'/'`   | The prefix used to identify closing comment tags, e.g. the `/` in `<!-- /keyword -->`.                                                                |
-| `keywordPrefix`         | `string`            | `''`    | A prefix required on all mdat comments. Useful for namespacing, e.g. setting `'mm-'` means only `<!-- mm-keyword -->` comments are processed.         |
 | `metaCommentIdentifier` | `string`            | `'+'`   | The character used to identify auto-generated meta comments, e.g. `<!--+ ... +-->`.                                                                   |
 
 #### Rules
@@ -207,7 +205,7 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
 
   _Exported as `mdat(tree: Root, file: VFile, options: MdatOptions): Promise<void>`_
 
-  `MdatOptions` includes `addMetaComment`, `closingPrefix`, `keywordPrefix`, `metaCommentIdentifier`, and `rules` (all required, unlike the plugin's `Options` where they are optional with defaults).
+  `MdatOptions` includes `addMetaComment`, `keywordPrefix`, `metaCommentIdentifier`, and `rules` (all required, unlike the plugin's `Options` where they are optional with defaults).
 
   Utilities wrapped by `mdast-util-mdat`:
   - [**`mdast-util-mdat-split`**](./src/lib/mdast-utils/mdast-util-mdat-split.ts)
@@ -222,7 +220,7 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
 
     _Exported as `mdatClean(tree: Root, file: VFile, options: MdatCleanOptions): void`_
 
-    `MdatCleanOptions` includes `closingPrefix`, `keywordPrefix`, and `metaCommentIdentifier`.
+    `MdatCleanOptions` includes `keywordPrefix` and `metaCommentIdentifier`.
 
   - [**`mdast-util-mdat-expand`**](./src/lib/mdast-utils/mdast-util-mdat-expand.ts)
 
@@ -230,7 +228,7 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
 
     _Exported as `mdatExpand(tree: Root, file: VFile, options: MdatExpandOptions): Promise<void>`_
 
-    `MdatExpandOptions` includes `addMetaComment`, `closingPrefix`, `keywordPrefix`, `metaCommentIdentifier`, and `rules`.
+    `MdatExpandOptions` includes `addMetaComment`, `keywordPrefix`, `metaCommentIdentifier`, and `rules`.
 
   - [**`mdast-util-mdat-check`**](./src/lib/mdast-utils/mdast-util-mdat-check.ts)
 
@@ -238,7 +236,7 @@ The remark-mdat plugin chains these utilities together to accommodate the typica
 
     _Exported as `mdatCheck(tree: Root, file: VFile, options: MdatCheckOptions): Promise<void>`_
 
-    `MdatCheckOptions` extends `MdatExpandOptions` with a `paranoid` boolean for extra validation checks.
+    `MdatCheckOptions` includes `addMetaComment`, `keywordPrefix`, `metaCommentIdentifier`, and `rules`.
 
     See `reporterMdat` to extract, format, and log results from VFile messages written by `mdatCheck`.
 

@@ -14,8 +14,6 @@ type CommentMarker = Simplify<
 		| {
 				/** The first complete word in the comment  */
 				keyword: string
-				/** The unique keyword prefix  */
-				keywordPrefix: string
 				/** Parsed JSON object of argument string that followed the keyword, empty object if nothing passed  */
 				options: JsonValue
 				/**
@@ -28,10 +26,9 @@ type CommentMarker = Simplify<
 				/** The original text inside the comment, e.g. `<!-- content -->`  */
 				content: string
 				/**
-				 * `meta`: A mdat-style generated meta comment tag  \
-				 * `native`: A normal comment that does not match the the `keywordPrefix` (if specified)
+				 * `meta`: A mdat-style generated meta comment tag
 				 */
-				type: 'meta' | 'native'
+				type: 'meta'
 		  }
 	) & {
 		// Shared field
@@ -53,8 +50,6 @@ export type CommentMarkerNode = Simplify<
 >
 
 type CommentMarkerParseOptions = {
-	/** Prefix to require on all mdat comments, e.g. `mm-`  */
-	keywordPrefix: string
 	/** Means of identifying mdat generated meta comments, e.g. `+`  */
 	metaCommentIdentifier: string
 }
@@ -104,7 +99,7 @@ export function parseComment(
 ): CommentMarker | undefined {
 	if (!isComment(text)) return
 
-	const { keywordPrefix, metaCommentIdentifier } = options
+	const { metaCommentIdentifier } = options
 	const closingPrefix = '/'
 
 	const commentHtml = text.trim()
@@ -115,13 +110,9 @@ export function parseComment(
 
 	const type = rawKeyword.startsWith(metaCommentIdentifier)
 		? 'meta'
-		: keywordPrefix !== '' &&
-			  !rawKeyword.startsWith(keywordPrefix) &&
-			  !rawKeyword.startsWith(`${closingPrefix}${keywordPrefix}`)
-			? 'native'
-			: rawKeyword.startsWith(closingPrefix)
-				? 'close'
-				: 'open'
+		: rawKeyword.startsWith(closingPrefix)
+			? 'close'
+			: 'open'
 
 	if (type === 'meta') {
 		return {
@@ -131,21 +122,10 @@ export function parseComment(
 		}
 	}
 
-	if (type === 'native') {
-		return {
-			content: commentBody,
-			html: commentHtml,
-			type,
-		}
-	}
-
-	// Must be open or closing tag, strip literal prefixes
+	// Must be open or closing tag, strip closing prefix
 	let keyword = rawKeyword
 	if (keyword.startsWith(closingPrefix)) {
 		keyword = keyword.slice(closingPrefix.length)
-	}
-	if (keyword.startsWith(keywordPrefix)) {
-		keyword = keyword.slice(keywordPrefix.length)
 	}
 
 	const optionText = makeValidJson(argumentParts.join(''))
@@ -167,7 +147,6 @@ export function parseComment(
 		return {
 			html: commentHtml,
 			keyword,
-			keywordPrefix,
 			options,
 			type,
 		}

@@ -86,7 +86,6 @@ describe('check validation', () => {
 	it('should report missing meta comments', async () => {
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: true,
-			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },
 		}
@@ -103,7 +102,6 @@ describe('check validation', () => {
 	it('should report unwelcome meta comments', async () => {
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: false,
-			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },
 		}
@@ -120,7 +118,6 @@ describe('check validation', () => {
 	it('should report multiple meta comments when none are wanted', async () => {
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: false,
-			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },
 		}
@@ -139,7 +136,6 @@ describe('check validation', () => {
 	it('should report multiple meta comments when a single one is wanted', async () => {
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: true,
-			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },
 		}
@@ -166,37 +162,9 @@ describe('check validation', () => {
 		)
 	})
 
-	it('should warn about missing prefixes', async () => {
-		const keywordOptions: Options = {
-			...options,
-			keywordPrefix: 'mm-',
-		}
-		const markdown = `<!-- mm-first-expansion -->\n<!-- optional-expansion -->\n<!-- mm-second-expansion -->`
-		const result = await expandStringToVfile(markdown, keywordOptions)
-		const errorMessage = result.messages.find((message) => message.fatal === false) // "warn" level
-
-		expect(errorMessage).toBeDefined()
-		expect(stripAnsiEscapeCodes(errorMessage!.message)).toMatchInlineSnapshot(
-			`"Missing prefix: <!-- optional-expansion -->"`,
-		)
-	})
-
-	it('should not warn about missing prefixes in non-rules', async () => {
-		const keywordOptions: Options = {
-			...options,
-			keywordPrefix: 'mm-',
-		}
-		const markdown = `<!-- mm-first-expansion -->\n<!-- not-a-rule -->\n<!-- mm-second-expansion -->`
-		const result = await expandStringToVfile(markdown, keywordOptions)
-		const errorMessage = result.messages.find((message) => message.fatal === false) // "warn" level
-
-		expect(errorMessage).not.toBeDefined()
-	})
-
 	it('should require meta comment when addMetaComment is a string', async () => {
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: 'Custom meta comment message',
-			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },
 		}
@@ -214,7 +182,6 @@ describe('check validation', () => {
 		const customMessage = 'Custom meta comment message'
 		const metaOptions: MdatCheckOptions = {
 			addMetaComment: customMessage,
-			keywordPrefix: '',
 			metaCommentIdentifier: '+',
 			rules: { placeholder: 'This is a placeholder' },
 		}
