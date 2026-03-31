@@ -29,13 +29,6 @@ export type NormalizedRule = {
 	 */
 	content: ((options: JsonValue, tree: Root) => Promise<string>) | NormalizedRule[]
 	/**
-	 * The expected order of the keyword in the document relative to other expander comments.
-	 * Used for validation purposes.
-	 * Leave undefined to order skip validation.
-	 * Defaults to undefined, which means order is not enforced.
-	 */
-	order: number | undefined
-	/**
 	 * Whether the presence of the keyword comment in the document is required.
 	 * Used for validation purposes.
 	 * Defaults to false.
@@ -87,11 +80,6 @@ export type Rule =
 			 */
 			content: ((options: JsonValue, tree: Root) => Promise<string> | string) | Rule[] | string
 			/**
-			 * The expected order of the keyword in the document relative to other expander comments.
-			 * Defaults to undefined, which means order is not enforced.
-			 */
-			order?: number | undefined
-			/**
 			 * Whether the presence of the keyword comment in the document is required.
 			 * Defaults to false.
 			 */
@@ -136,7 +124,6 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 				applicationOrder: 0,
 				// eslint-disable-next-line ts/require-await
 				content: async () => rule,
-				order: undefined,
 				required: false,
 			}
 		} else if (typeof rule === 'function') {
@@ -145,7 +132,6 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 			normalizedRules[keyword] = {
 				applicationOrder: 0,
 				content: async (options: JsonValue, tree: Root) => rule(options, tree),
-				order: undefined,
 				required: false,
 			}
 		} else if (Array.isArray(rule)) {
@@ -153,7 +139,6 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 			normalizedRules[keyword] = {
 				applicationOrder: 0,
 				content: Object.values(normalizeRules(Object.fromEntries(rule.entries()))),
-				order: undefined,
 				required: false,
 			}
 		} else if (typeof rule.content === 'string') {
@@ -164,7 +149,6 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 				applicationOrder: rule.applicationOrder ?? 0,
 				// eslint-disable-next-line ts/require-await
 				content: async () => ruleContent,
-				order: rule.order ?? undefined,
 				required: rule.required ?? false,
 			}
 		} else if (Array.isArray(rule.content)) {
@@ -173,7 +157,6 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 			normalizedRules[keyword] = {
 				applicationOrder: rule.applicationOrder ?? 0,
 				content: Object.values(normalizeRules(Object.fromEntries(rule.content.entries()))),
-				order: rule.order ?? undefined,
 				required: rule.required ?? false,
 			}
 		} else {
@@ -183,7 +166,6 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 			normalizedRules[keyword] = {
 				applicationOrder: rule.applicationOrder ?? 0,
 				content: async (options: JsonValue, tree: Root) => ruleContent(options, tree),
-				order: rule.order ?? undefined,
 				required: rule.required ?? false,
 			}
 		}
@@ -235,7 +217,6 @@ const normalizedRuleSchema: z.ZodSchema = z.lazy(() =>
 				.returns(z.promise(z.string())),
 			z.array(normalizedRuleSchema),
 		]),
-		order: z.number().optional(),
 		required: z.boolean().default(false),
 	}),
 )
@@ -260,7 +241,6 @@ const ruleSchema: z.ZodSchema = z.lazy(() =>
 				z.array(ruleSchema), // Array of rules (compound rule)
 				z.string(), // Just a keyword
 			]),
-			order: z.number().optional(),
 			required: z.boolean().optional(),
 		}),
 	]),

@@ -11,7 +11,6 @@ describe('normalizeRules', () => {
 		const normalized = normalizeRules(rules)
 
 		expect(normalized.greeting.applicationOrder).toBe(0)
-		expect(normalized.greeting.order).toBeUndefined()
 		expect(normalized.greeting.required).toBe(false)
 		expect(typeof normalized.greeting.content).toBe('function')
 		// Content function should return the string
@@ -39,14 +38,12 @@ describe('normalizeRules', () => {
 			title: {
 				applicationOrder: 5,
 				content: 'My Title',
-				order: 2,
 				required: true,
 			},
 		}
 		const normalized = normalizeRules(rules)
 
 		expect(normalized.title.applicationOrder).toBe(5)
-		expect(normalized.title.order).toBe(2)
 		expect(normalized.title.required).toBe(true)
 		expect(await (normalized.title.content as Function)({}, {})).toBe('My Title')
 	})
@@ -99,7 +96,6 @@ describe('normalizeRules', () => {
 		const normalized = normalizeRules(rules)
 
 		expect(normalized.minimal.applicationOrder).toBe(0)
-		expect(normalized.minimal.order).toBeUndefined()
 		expect(normalized.minimal.required).toBe(false)
 	})
 })

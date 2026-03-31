@@ -62,14 +62,6 @@ This expansion rule always throws an error. The comment will not be expanded, an
 
 <!-- basic-throws -->
 
-## Ordered expansion
-
-Order in the document is validated via `--check` option
-
-<!-- basic-ordered-2 -->
-
-<!-- basic-ordered-1 -->
-
 ## Inline expansions with paragraph elements
 
 This is a sentence with a "_<!-- basic-inline -->_" inside of it.

@@ -2,8 +2,6 @@
 
 import type { Root } from 'mdast'
 import type { VFile } from 'vfile'
-import Table from 'cli-table3'
-import picocolors from 'picocolors'
 import { CONTINUE, visit } from 'unist-util-visit'
 import type { CommentMarkerNode } from '../mdat/parse'
 import type { NormalizedRule, NormalizedRules, Rule, Rules } from '../mdat/rules'
@@ -65,7 +63,6 @@ export async function mdatCheck(tree: Root, file: VFile, options: MdatCheckOptio
 
 	// Error level checks
 	checkMissingRequiredComments(file, commentMarkers, rules, rawRules)
-	checkCommentOrder(file, commentMarkers)
 	checkMetaCommentPresence(file, commentMarkers, options)
 	await checkRulesReturnedContent(file, commentMarkers, tree)
 
@@ -236,47 +233,6 @@ function satisfiedByCompoundRule(keyword: string, rawRules: Rules): boolean {
 }
 
 /**
- * Check if comment order in document is different from order specified in the rules
- */
-function checkCommentOrder(file: VFile, comments: CommentMarkerWithRule[]): void {
-	const commentsInOrderOfAppearance = comments.filter(
-		(commentMarker) => commentMarker.type === 'open' && commentMarker.rule?.order !== undefined,
-	)
-
-	const commentsInCorrectOrder = [...commentsInOrderOfAppearance].toSorted((a, b) => {
-		const orderA = a.rule?.order
-		const orderB = b.rule?.order
-
-		if (orderA === undefined || orderB === undefined) {
-			throw new Error('Unexpected undefined rule order')
-		}
-
-		return orderA - orderB
-	})
-
-	const currentOrderList = commentOrderList(commentsInOrderOfAppearance)
-	const correctOrderList = commentOrderList(commentsInCorrectOrder)
-
-	const table = new Table({
-		head: [
-			picocolors.red(picocolors.bold('Current Order')),
-			picocolors.green(picocolors.bold('Required Order')),
-		],
-		style: {
-			compact: true,
-		},
-	})
-
-	if (currentOrderList.join(',') !== correctOrderList.join(',')) {
-		table.push(
-			...currentOrderList.map((currentOrder, index) => [currentOrder, correctOrderList[index]]),
-		)
-
-		saveLog(file, 'error', 'check', `Out of order:\n${table.toString()}`)
-	}
-}
-
-/**
  * Check that meta presence / absence comment matches options.
  */
 function checkMetaCommentPresence(
@@ -302,14 +258,3 @@ function checkMetaCommentPresence(
 	}
 }
 
-// Helpers
-
-function commentOrderList(comments: CommentMarkerWithRule[]): string[] {
-	return comments.map((comment, index) => {
-		if (comment.type === 'open' || comment.type === 'close') {
-			return `${index + 1}. ${comment.html}`
-		}
-
-		throw new Error('Unexpected comment type')
-	})
-}

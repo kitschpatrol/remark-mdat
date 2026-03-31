@@ -14,9 +14,6 @@ importers:
       '@types/unist':
         specifier: ^3.0.3
         version: 3.0.3
-      cli-table3:
-        specifier: ^0.6.5
-        version: 0.6.5
       deepmerge-ts:
         specifier: ^7.1.5
         version: 7.1.5

@@ -38,12 +38,10 @@ const options: Options = {
 		},
 		'required-first-expansion': {
 			content: 'This is required first',
-			order: 1,
 			required: true,
 		},
 		'required-second-expansion': {
 			content: 'This is required last',
-			order: 3,
 			required: true,
 		},
 	},
@@ -62,22 +60,6 @@ describe('check validation', () => {
 		const result = await expandStringToVfile(markdown, options)
 		const foundError = result.messages.some((message) => message.fatal === true)
 		expect(foundError).toBeTruthy()
-	})
-
-	it('should report errors when required comments are out of order', async () => {
-		const markdown = `<!-- required-second-expansion -->\n<!-- required-first-expansion -->\n<!-- optional-expansion -->\n`
-		const result = await expandStringToVfile(markdown, options)
-		const errorMessage = result.messages.find((message) => message.fatal === true)
-		expect(errorMessage).toBeDefined()
-		expect(stripAnsiEscapeCodes(errorMessage!.message)).toMatchInlineSnapshot(`
-			"Out of order:
-			┌───────────────────────────────────────┬───────────────────────────────────────┐
-			│ Current Order                         │ Required Order                        │
-			├───────────────────────────────────────┼───────────────────────────────────────┤
-			│ 1. <!-- required-second-expansion --> │ 1. <!-- required-first-expansion -->  │
-			│ 2. <!-- required-first-expansion -->  │ 2. <!-- required-second-expansion --> │
-			└───────────────────────────────────────┴───────────────────────────────────────┘"
-		`)
 	})
 
 	it('should report errors when required comments are missing', async () => {

@@ -40,14 +40,6 @@ export default {
 			return `${resolvedOptions.prefix}I am between two ferns${resolvedOptions.suffix}`
 		},
 	},
-	'basic-ordered-1': {
-		content: 'I had to be first',
-		order: 1,
-	},
-	'basic-ordered-2': {
-		content: 'I had to be last',
-		order: 2,
-	},
 	'basic-throws': {
 		content() {
 			throw new Error('I am a rule that always throws an error')
