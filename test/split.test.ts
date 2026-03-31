@@ -24,15 +24,15 @@ function stringToMdastNode(value: string, startColumn = 1, startLine = 1): Html 
 
 describe('multi comment parsing', () => {
 	it('parse multi-comment html text', () => {
-		expect(splitHtmlIntoMdastNodes(stringToMdastNode('<!-- basic {something: 1} -->')))
+		expect(splitHtmlIntoMdastNodes(stringToMdastNode('<!-- basic({something: 1}) -->')))
 			.toMatchInlineSnapshot(`
 				[
 				  {
 				    "position": {
 				      "end": {
-				        "column": 30,
+				        "column": 31,
 				        "line": 1,
-				        "offset": 29,
+				        "offset": 30,
 				      },
 				      "start": {
 				        "column": 1,
@@ -41,7 +41,7 @@ describe('multi comment parsing', () => {
 				      },
 				    },
 				    "type": "html",
-				    "value": "<!-- basic {something: 1} -->",
+				    "value": "<!-- basic({something: 1}) -->",
 				  },
 				]
 			`)

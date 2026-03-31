@@ -30,15 +30,15 @@ Shows the name of the rules file:
 
 ## Expansions with options argument, canonical syntax
 
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
+<!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->
 
 ## Same expansion with different options
 
-<!-- basic-options {prefix: "🌳 ", suffix: " 🌳"} -->
+<!-- basic-options({prefix: "🌳 ", suffix: " 🌳"}) -->
 
 ## Expansions with arguments, syntax forgiveness
 
-<!--- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
+<!--- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->
 
 ## Expansions via dot paths given arbitrary json files as rules
 
@@ -102,7 +102,7 @@ A<!-- basic --><!-- /basic --><!-- basic --><!-- /basic -->Z
 
 ## Adjacent top-level expansions with options
 
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} --><!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
+<!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) --><!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->
 
 ## Adjacent top-level expansions
 

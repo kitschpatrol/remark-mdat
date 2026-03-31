@@ -48,7 +48,7 @@ I was generated from test-rules.ts
 
 ## Expansions with options argument, canonical syntax
 
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
+<!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->
 
 🪴 I am between two ferns 🪴
 
@@ -56,7 +56,7 @@ I was generated from test-rules.ts
 
 ## Same expansion with different options
 
-<!-- basic-options {prefix: "🌳 ", suffix: " 🌳"} -->
+<!-- basic-options({prefix: "🌳 ", suffix: " 🌳"}) -->
 
 🌳 I am between two ferns 🌳
 
@@ -64,7 +64,7 @@ I was generated from test-rules.ts
 
 ## Expansions with arguments, syntax forgiveness
 
-<!--- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
+<!--- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->
 
 🪴 I am between two ferns 🪴
 
@@ -158,7 +158,7 @@ A<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic 
 
 ## Adjacent top-level expansions with options
 
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->🪴 I am between two ferns 🪴<!-- /basic-options --><!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->🪴 I am between two ferns 🪴<!-- /basic-options -->
+<!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->🪴 I am between two ferns 🪴<!-- /basic-options --><!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->🪴 I am between two ferns 🪴<!-- /basic-options -->
 
 ## Adjacent top-level expansions
 

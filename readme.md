@@ -113,15 +113,11 @@ const rules: Rules = {
   // String: direct replacement
   greeting: 'Hello, world!',
 
-  // Array: compound rule combining multiple sub-rules
-  header: ['# My Project', () => getDescription()],
-
-  // Function with arguments: receives parsed options from the comment
-  // e.g. <!-- greeting({name: "Alice"}) --> or <!-- greeting {name: "Alice"} -->
-  personalGreeting: (options) => `Hello, ${options.name}!`,
-
   // Function: dynamic content (sync or async)
   time: () => new Date().toDateString(),
+
+  // Function with arguments: receives parsed options from the comment
+  personalGreeting: (options) => `Hello, ${options.name}!`,
 
   // Object: rule with validation metadata
   title: {
@@ -129,10 +125,37 @@ const rules: Rules = {
     content: () => getTitle(), // String, function, or array
   },
 
+  // Array: compound rule combining multiple sub-rules
+  header: ['# My Project', () => getDescription()],
+
   // Function with document access: receives the full mdast tree
   toc: (_options, tree) => generateTocFromTree(tree),
 }
 ```
+
+#### Passing arguments to rules
+
+Arguments are passed using function-call syntax: `<!-- keyword(...) -->`. The value inside the parentheses is parsed as [JSON5](https://json5.org/), which means unquoted keys and single quotes are allowed.
+
+```md
+Options as JSON5 (unquoted keys, single quotes):
+
+<!-- greeting({name: 'Alice', shout: true}) -->
+
+Options as strict JSON:
+
+<!-- greeting({"name": "Alice", "shout": true}) -->
+
+Single primitive value:
+
+<!-- repeat(3) -->
+```
+
+Any JSON5 value is supported: objects, arrays, strings, numbers, and booleans. Comments without parentheses receive an empty object `{}` as their options.
+
+For simplicity's sake, only a single argument position is supported. If you need pass multiple arguments, wrap them in an object.
+
+Prefer object arguments for all but the most contextually clear argument values.
 
 ### Examples
 

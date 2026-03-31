@@ -1,3 +1,4 @@
+/* eslint-disable max-depth */
 // @case-police-ignore Html
 
 import type { Html, Parent } from 'mdast'
@@ -76,8 +77,11 @@ export function parseComment(text: string): CommentMarker | undefined {
 	const commentHtml = text.trim()
 	const commentBody = commentHtml.replace(/^\s*<!-{2,}\s*/, '').replace(/\s*-{2,}>\s*$/, '')
 
-	// Splits without capturing
-	const [rawKeyword, ...argumentParts] = commentBody.split(/(\s+|\(|\{)/)
+	// Extract keyword and optional function-call arguments
+	// keyword(...) or just keyword
+	const parenIndex = commentBody.indexOf('(')
+	const rawKeyword =
+		parenIndex === -1 ? commentBody.split(/\s/)[0] : commentBody.slice(0, parenIndex).trim()
 
 	// Ignore code-style comments embedded in HTML comments
 	if (rawKeyword.startsWith('//') || rawKeyword.startsWith('#') || rawKeyword.startsWith('/*')) {
@@ -92,17 +96,23 @@ export function parseComment(text: string): CommentMarker | undefined {
 		keyword = keyword.slice(closingPrefix.length)
 	}
 
-	const optionText = makeValidJson(argumentParts.join(''))
-
+	// Parse arguments from function-call syntax: keyword(...)
 	let options: JsonValue = {}
-
-	try {
-		options = json5.parse<JsonValue>(optionText)
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new VFileMessage(
-				`Failed to parse comment options "${optionText}" for keyword "${keyword}": ${error.message}`,
-			)
+	if (parenIndex !== -1) {
+		const lastParen = commentBody.lastIndexOf(')')
+		if (lastParen > parenIndex) {
+			const argText = commentBody.slice(parenIndex + 1, lastParen).trim()
+			if (argText.length > 0) {
+				try {
+					options = json5.parse<JsonValue>(argText)
+				} catch (error) {
+					if (error instanceof Error) {
+						throw new VFileMessage(
+							`Failed to parse comment options "${argText}" for keyword "${keyword}": ${error.message}`,
+						)
+					}
+				}
+			}
 		}
 	}
 
@@ -117,19 +127,4 @@ export function parseComment(text: string): CommentMarker | undefined {
 function isComment(text: string): boolean {
 	const trimmed = text.trim()
 	return trimmed.startsWith('<!--') && trimmed.endsWith('-->')
-}
-
-// Let the user pass the comment options inside parentheses if they want, like a function call
-// Or let them skip the brackets if they want
-function makeValidJson(text: string): string {
-	// Remove parentheses
-	text = text.trim()
-	text = text.startsWith('(') ? text.slice(1) : text
-	text = text.endsWith(')') ? text.slice(0, -1) : text
-	text = text.trim()
-
-	// Make bare objects valid JSON
-	if (!text.startsWith('{') && !text.startsWith('[')) text = '{' + text
-	if (!text.endsWith('}') && !text.endsWith(']')) text += '}'
-	return text
 }

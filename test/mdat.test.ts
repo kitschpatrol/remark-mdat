@@ -156,7 +156,7 @@ describe('compound rule handling', () => {
 	})
 
 	it('should pass option arrays to compound rules', async () => {
-		const markdown = `<!-- compound [{option: 'yes'}, {option: 'it'}, {option: 'can'}] -->\n`
+		const markdown = `<!-- compound([{option: 'yes'}, {option: 'it'}, {option: 'can'}]) -->\n`
 		const expandedString = await expandStringToString(markdown, {
 			compound: [
 				// eslint-disable-next-line ts/no-unsafe-type-assertion
@@ -168,7 +168,7 @@ describe('compound rule handling', () => {
 			],
 		})
 		expect(expandedString).toMatchInlineSnapshot(`
-			"<!-- compound [{option: 'yes'}, {option: 'it'}, {option: 'can'}] -->
+			"<!-- compound([{option: 'yes'}, {option: 'it'}, {option: 'can'}]) -->
 
 			My option is: yes
 
