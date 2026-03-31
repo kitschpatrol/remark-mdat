@@ -47,6 +47,7 @@
 		"fix": "ksc fix",
 		"lint": "ksc lint",
 		"release": "bumpp --commit 'Release: %s' && pnpm run build && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') && pnpm publish",
+		"release-preview": "bumpp --preid preview --commit 'Release: %s' && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') && pnpm publish --tag preview",
 		"test": "vitest run"
 	},
 	"dependencies": {
