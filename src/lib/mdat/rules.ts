@@ -224,26 +224,18 @@ const normalizedRulesSchema = z.record(keywordSchema, normalizedRuleSchema).desc
 // ----------------------------------------------------------
 
 /**
- * Compound rule helpers, used in both "expand" and "check" utilities
+ * Compound rule helpers for expanding rule content.
  */
 export async function getRuleContent(
 	rule: NormalizedRule,
 	options: JsonValue,
 	tree: Root,
-	check = false,
 ): Promise<string> {
 	if (Array.isArray(rule.content)) {
 		const subruleContent = []
 		for (const [index, subrule] of rule.content.entries()) {
 			const subruleOptions = Array.isArray(options) ? options.at(index) : undefined
-
-			try {
-				subruleContent.push(await getRuleContent(subrule, subruleOptions ?? {}, tree))
-			} catch (error) {
-				if (check) {
-					throw error
-				}
-			}
+			subruleContent.push(await getRuleContent(subrule, subruleOptions ?? {}, tree))
 		}
 
 		return subruleContent.join('\n\n')
@@ -252,10 +244,6 @@ export async function getRuleContent(
 	try {
 		return await rule.content(options, tree)
 	} catch (error) {
-		if (check) {
-			throw error
-		}
-
 		throw new Error('Failed to expand content', { cause: error })
 	}
 }
