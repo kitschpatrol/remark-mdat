@@ -35,26 +35,20 @@ I was generated from test-rules.ts
 
 <!-- /basic-dynamic -->
 
-## Required expansion
+## List expansion
 
-Inclusion is validated via \`--check\` option
-
-<!-- basic-list-required -->
+<!-- basic-list -->
 
 * I
 * am
 * a
 * list
-* that
-* must
-* be
-* here
 
-<!-- /basic-list-required -->
+<!-- /basic-list -->
 
 ## Expansions with options argument, canonical syntax
 
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
+<!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->
 
 🪴 I am between two ferns 🪴
 
@@ -62,7 +56,7 @@ Inclusion is validated via \`--check\` option
 
 ## Same expansion with different options
 
-<!-- basic-options {prefix: "🌳 ", suffix: " 🌳"} -->
+<!-- basic-options({prefix: "🌳 ", suffix: " 🌳"}) -->
 
 🌳 I am between two ferns 🌳
 
@@ -70,7 +64,7 @@ Inclusion is validated via \`--check\` option
 
 ## Expansions with arguments, syntax forgiveness
 
-<!--- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
+<!--- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->
 
 🪴 I am between two ferns 🪴
 
@@ -97,22 +91,6 @@ This expansion rule always returns an empty string. The comment will not be expa
 This expansion rule always throws an error. The comment will not be expanded, and MDAT will report the error.
 
 <!-- basic-throws -->
-
-## Ordered expansion
-
-Order in the document is validated via \`--check\` option
-
-<!-- basic-ordered-2 -->
-
-I had to be last
-
-<!-- /basic-ordered-2 -->
-
-<!-- basic-ordered-1 -->
-
-I had to be first
-
-<!-- /basic-ordered-1 -->
 
 ## Inline expansions with paragraph elements
 
@@ -180,7 +158,7 @@ A<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic 
 
 ## Adjacent top-level expansions with options
 
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->🪴 I am between two ferns 🪴<!-- /basic-options --><!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->🪴 I am between two ferns 🪴<!-- /basic-options -->
+<!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->🪴 I am between two ferns 🪴<!-- /basic-options --><!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->🪴 I am between two ferns 🪴<!-- /basic-options -->
 
 ## Adjacent top-level expansions
 
@@ -196,147 +174,26 @@ A<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic 
 "
 `;
 
-exports[`comment expansion > should expand prefixed comments only 1`] = `
-"# The MDAT sample document
+exports[`comment expansion > should expand keywords while ignoring code-style comments 1`] = `
+"# Comment Handling Test
 
-## Basic comment expansion
+<!-- // This is a developer note, should be ignored -->
 
-<!-- basic -->
+## Section with hash comment
 
-## Basic comment clean up
+<!-- # TODO: Write better docs -->
 
-<!-- basic -->
+Some content here.
 
-Stale content that will be replaced
+<!-- #also-ignored -->
 
-<!-- /basic -->
+## Section with block comment
 
-## Prefixed comment
+<!-- /* This is a block comment, should be ignored */ -->
 
-Expansion only happens when \`--prefix mm-\` option is set:
+## Keyword alongside code-style comments
 
-<!-- mm-basic -->
-
-**A bold statement from test-rules.ts**
-
-<!-- /mm-basic -->
-
-## Comment expansion with dynamic content
-
-Shows the name of the rules file:
-
-<!-- basic-dynamic -->
-
-## Required expansion
-
-Inclusion is validated via \`--check\` option
-
-<!-- basic-list-required -->
-
-## Expansions with options argument, canonical syntax
-
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
-
-## Same expansion with different options
-
-<!-- basic-options {prefix: "🌳 ", suffix: " 🌳"} -->
-
-## Expansions with arguments, syntax forgiveness
-
-<!--- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
-
-## Expansions via dot paths given arbitrary json files as rules
-
-Given e.g. \`--rules ./package.json\`, allow access to fields in the file:
-
-<!--- name -->
-
-<!--- author.name -->
-
-## Handling empty rule content
-
-This expansion rule always returns an empty string. The comment will not be expanded, MDAT will report the error.
-
-<!-- basic-empty -->
-
-## Handling non-required rule errors
-
-This expansion rule always throws an error. The comment will not be expanded, and MDAT will report the error.
-
-<!-- basic-throws -->
-
-## Ordered expansion
-
-Order in the document is validated via \`--check\` option
-
-<!-- basic-ordered-2 -->
-
-<!-- basic-ordered-1 -->
-
-## Inline expansions with paragraph elements
-
-This is a sentence with a "*<!-- basic-inline -->*" inside of it.
-
-## Multiple paragraphs
-
-<!-- basic-multiple-paragraphs -->
-
-## Multiple paragraphs blockquote
-
-> <!-- basic-multiple-paragraphs -->
-
-## Tags in code fence
-
-Should not expand
-
-\`\`\`html
-<!-- basic -->
-\`\`\`
-
-## Stacked expansions
-
-<!-- basic -->
-
-<!-- basic -->
-
-The following required an extra step to split html statements that were being interpreted as contiguous
-
-## Adjacent inline expansions
-
-A<!-- basic --><!-- /basic --><!-- basic --><!-- /basic -->Z
-
-## Adjacent top-level expansions
-
-<!-- basic --><!-- basic -->Z
-
-## Adjacent top-level expansions
-
-<!-- basic --><b>Absolutely</b><!-- basic -->
-
-## Adjacent top-level expansions with options
-
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} --><!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
-
-## Adjacent top-level expansions
-
-<!-- basic --><!-- basic -->
-
-## Adjacent top-level expansions with leading space
-
-&#x20;<!-- basic --><!-- basic -->
-
-## Expansion with leading space
-
-&#x20;<!-- basic -->
-"
-`;
-
-exports[`comment expansion > should include a custom meta comment when provided as a string 1`] = `
-"<!--+ This is a custom warning message. +-->
-
-# The MDAT sample document
-
-## Basic comment expansion
+<!-- // A note about the next keyword -->
 
 <!-- basic -->
 
@@ -344,583 +201,70 @@ exports[`comment expansion > should include a custom meta comment when provided 
 
 <!-- /basic -->
 
-## Basic comment clean up
-
-<!-- basic -->
-
-**A bold statement from test-rules.ts**
-
-<!-- /basic -->
-
-## Prefixed comment
-
-Expansion only happens when \`--prefix mm-\` option is set:
-
-<!-- mm-basic -->
-
-## Comment expansion with dynamic content
-
-Shows the name of the rules file:
+<!-- # Another note -->
 
 <!-- basic-dynamic -->
 
 I was generated from test-rules.ts
 
 <!-- /basic-dynamic -->
-
-## Required expansion
-
-Inclusion is validated via \`--check\` option
-
-<!-- basic-list-required -->
-
-* I
-* am
-* a
-* list
-* that
-* must
-* be
-* here
-
-<!-- /basic-list-required -->
-
-## Expansions with options argument, canonical syntax
-
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
-
-🪴 I am between two ferns 🪴
-
-<!-- /basic-options -->
-
-## Same expansion with different options
-
-<!-- basic-options {prefix: "🌳 ", suffix: " 🌳"} -->
-
-🌳 I am between two ferns 🌳
-
-<!-- /basic-options -->
-
-## Expansions with arguments, syntax forgiveness
-
-<!--- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
-
-🪴 I am between two ferns 🪴
-
-<!-- /basic-options -->
-
-## Expansions via dot paths given arbitrary json files as rules
-
-Given e.g. \`--rules ./package.json\`, allow access to fields in the file:
-
-<!--- name -->
-
-<!--- author.name -->
-
-## Handling empty rule content
-
-This expansion rule always returns an empty string. The comment will not be expanded, MDAT will report the error.
-
-<!-- basic-empty -->
-
-<!-- /basic-empty -->
-
-## Handling non-required rule errors
-
-This expansion rule always throws an error. The comment will not be expanded, and MDAT will report the error.
-
-<!-- basic-throws -->
-
-## Ordered expansion
-
-Order in the document is validated via \`--check\` option
-
-<!-- basic-ordered-2 -->
-
-I had to be last
-
-<!-- /basic-ordered-2 -->
-
-<!-- basic-ordered-1 -->
-
-I had to be first
-
-<!-- /basic-ordered-1 -->
-
-## Inline expansions with paragraph elements
-
-This is a sentence with a "*<!-- basic-inline -->test-rules.ts<!-- /basic-inline -->*" inside of it.
-
-## Multiple paragraphs
-
-<!-- basic-multiple-paragraphs -->
-
-I am a paragraph 1
-
-I am a paragraph 2
-
-I am a paragraph 3
-
-<!-- /basic-multiple-paragraphs -->
-
-## Multiple paragraphs blockquote
-
-> <!-- basic-multiple-paragraphs -->
->
-> I am a paragraph 1
->
-> I am a paragraph 2
->
-> I am a paragraph 3
->
-> <!-- /basic-multiple-paragraphs -->
-
-## Tags in code fence
-
-Should not expand
-
-\`\`\`html
-<!-- basic -->
-\`\`\`
-
-## Stacked expansions
-
-<!-- basic -->
-
-**A bold statement from test-rules.ts**
-
-<!-- /basic -->
-
-<!-- basic -->
-
-**A bold statement from test-rules.ts**
-
-<!-- /basic -->
-
-The following required an extra step to split html statements that were being interpreted as contiguous
-
-## Adjacent inline expansions
-
-A<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->Z
-
-## Adjacent top-level expansions
-
-<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->Z
-
-## Adjacent top-level expansions
-
-<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><b>Absolutely</b><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
-
-## Adjacent top-level expansions with options
-
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->🪴 I am between two ferns 🪴<!-- /basic-options --><!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->🪴 I am between two ferns 🪴<!-- /basic-options -->
-
-## Adjacent top-level expansions
-
-<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
-
-## Adjacent top-level expansions with leading space
-
-&#x20;<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
-
-## Expansion with leading space
-
-&#x20;<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
 "
 `;
 
-exports[`comment expansion > should include the meta tag if asked 1`] = `
-"<!--+ Warning: Content inside HTML comment blocks was generated by mdat and may be overwritten. +-->
+exports[`rule context > should expand fixture file with frontmatter context 1`] = `
+"***
 
-# The MDAT sample document
+title: Frontmatter Test Document
+description: A test document for verifying frontmatter context in rules
+author: Test Author
+tags:
 
-## Basic comment expansion
+* test
+* frontmatter
+  count: 42
 
-<!-- basic -->
+***
 
-**A bold statement from test-rules.ts**
+# Frontmatter context tests
 
-<!-- /basic -->
+## Frontmatter value access
 
-## Basic comment clean up
+<!-- frontmatter-title -->
 
-<!-- basic -->
+Title: none
 
-**A bold statement from test-rules.ts**
+<!-- /frontmatter-title -->
 
-<!-- /basic -->
+## Nested frontmatter access
 
-## Prefixed comment
+<!-- frontmatter-tags -->
 
-Expansion only happens when \`--prefix mm-\` option is set:
+No tags
 
-<!-- mm-basic -->
+<!-- /frontmatter-tags -->
 
-## Comment expansion with dynamic content
+## Frontmatter with options
 
-Shows the name of the rules file:
+<!-- frontmatter-field({field: "description"}) -->
 
-<!-- basic-dynamic -->
+description: not found
 
-I was generated from test-rules.ts
+<!-- /frontmatter-field -->
 
-<!-- /basic-dynamic -->
+## File path access
 
-## Required expansion
+<!-- file-path -->
 
-Inclusion is validated via \`--check\` option
+Path: unknown
 
-<!-- basic-list-required -->
+<!-- /file-path -->
 
-* I
-* am
-* a
-* list
-* that
-* must
-* be
-* here
+## Combined context access
 
-<!-- /basic-list-required -->
+<!-- frontmatter-summary -->
 
-## Expansions with options argument, canonical syntax
+File "unknown" titled "untitled"
 
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
-
-🪴 I am between two ferns 🪴
-
-<!-- /basic-options -->
-
-## Same expansion with different options
-
-<!-- basic-options {prefix: "🌳 ", suffix: " 🌳"} -->
-
-🌳 I am between two ferns 🌳
-
-<!-- /basic-options -->
-
-## Expansions with arguments, syntax forgiveness
-
-<!--- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
-
-🪴 I am between two ferns 🪴
-
-<!-- /basic-options -->
-
-## Expansions via dot paths given arbitrary json files as rules
-
-Given e.g. \`--rules ./package.json\`, allow access to fields in the file:
-
-<!--- name -->
-
-<!--- author.name -->
-
-## Handling empty rule content
-
-This expansion rule always returns an empty string. The comment will not be expanded, MDAT will report the error.
-
-<!-- basic-empty -->
-
-<!-- /basic-empty -->
-
-## Handling non-required rule errors
-
-This expansion rule always throws an error. The comment will not be expanded, and MDAT will report the error.
-
-<!-- basic-throws -->
-
-## Ordered expansion
-
-Order in the document is validated via \`--check\` option
-
-<!-- basic-ordered-2 -->
-
-I had to be last
-
-<!-- /basic-ordered-2 -->
-
-<!-- basic-ordered-1 -->
-
-I had to be first
-
-<!-- /basic-ordered-1 -->
-
-## Inline expansions with paragraph elements
-
-This is a sentence with a "*<!-- basic-inline -->test-rules.ts<!-- /basic-inline -->*" inside of it.
-
-## Multiple paragraphs
-
-<!-- basic-multiple-paragraphs -->
-
-I am a paragraph 1
-
-I am a paragraph 2
-
-I am a paragraph 3
-
-<!-- /basic-multiple-paragraphs -->
-
-## Multiple paragraphs blockquote
-
-> <!-- basic-multiple-paragraphs -->
->
-> I am a paragraph 1
->
-> I am a paragraph 2
->
-> I am a paragraph 3
->
-> <!-- /basic-multiple-paragraphs -->
-
-## Tags in code fence
-
-Should not expand
-
-\`\`\`html
-<!-- basic -->
-\`\`\`
-
-## Stacked expansions
-
-<!-- basic -->
-
-**A bold statement from test-rules.ts**
-
-<!-- /basic -->
-
-<!-- basic -->
-
-**A bold statement from test-rules.ts**
-
-<!-- /basic -->
-
-The following required an extra step to split html statements that were being interpreted as contiguous
-
-## Adjacent inline expansions
-
-A<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->Z
-
-## Adjacent top-level expansions
-
-<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->Z
-
-## Adjacent top-level expansions
-
-<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><b>Absolutely</b><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
-
-## Adjacent top-level expansions with options
-
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->🪴 I am between two ferns 🪴<!-- /basic-options --><!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->🪴 I am between two ferns 🪴<!-- /basic-options -->
-
-## Adjacent top-level expansions
-
-<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
-
-## Adjacent top-level expansions with leading space
-
-&#x20;<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
-
-## Expansion with leading space
-
-&#x20;<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
-"
-`;
-
-exports[`comment expansion > should use custom meta comment with different identifier 1`] = `
-"<!--*** Custom meta identifier test ***-->
-
-# The MDAT sample document
-
-## Basic comment expansion
-
-<!-- basic -->
-
-**A bold statement from test-rules.ts**
-
-<!-- /basic -->
-
-## Basic comment clean up
-
-<!-- basic -->
-
-**A bold statement from test-rules.ts**
-
-<!-- /basic -->
-
-## Prefixed comment
-
-Expansion only happens when \`--prefix mm-\` option is set:
-
-<!-- mm-basic -->
-
-## Comment expansion with dynamic content
-
-Shows the name of the rules file:
-
-<!-- basic-dynamic -->
-
-I was generated from test-rules.ts
-
-<!-- /basic-dynamic -->
-
-## Required expansion
-
-Inclusion is validated via \`--check\` option
-
-<!-- basic-list-required -->
-
-* I
-* am
-* a
-* list
-* that
-* must
-* be
-* here
-
-<!-- /basic-list-required -->
-
-## Expansions with options argument, canonical syntax
-
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
-
-🪴 I am between two ferns 🪴
-
-<!-- /basic-options -->
-
-## Same expansion with different options
-
-<!-- basic-options {prefix: "🌳 ", suffix: " 🌳"} -->
-
-🌳 I am between two ferns 🌳
-
-<!-- /basic-options -->
-
-## Expansions with arguments, syntax forgiveness
-
-<!--- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
-
-🪴 I am between two ferns 🪴
-
-<!-- /basic-options -->
-
-## Expansions via dot paths given arbitrary json files as rules
-
-Given e.g. \`--rules ./package.json\`, allow access to fields in the file:
-
-<!--- name -->
-
-<!--- author.name -->
-
-## Handling empty rule content
-
-This expansion rule always returns an empty string. The comment will not be expanded, MDAT will report the error.
-
-<!-- basic-empty -->
-
-<!-- /basic-empty -->
-
-## Handling non-required rule errors
-
-This expansion rule always throws an error. The comment will not be expanded, and MDAT will report the error.
-
-<!-- basic-throws -->
-
-## Ordered expansion
-
-Order in the document is validated via \`--check\` option
-
-<!-- basic-ordered-2 -->
-
-I had to be last
-
-<!-- /basic-ordered-2 -->
-
-<!-- basic-ordered-1 -->
-
-I had to be first
-
-<!-- /basic-ordered-1 -->
-
-## Inline expansions with paragraph elements
-
-This is a sentence with a "*<!-- basic-inline -->test-rules.ts<!-- /basic-inline -->*" inside of it.
-
-## Multiple paragraphs
-
-<!-- basic-multiple-paragraphs -->
-
-I am a paragraph 1
-
-I am a paragraph 2
-
-I am a paragraph 3
-
-<!-- /basic-multiple-paragraphs -->
-
-## Multiple paragraphs blockquote
-
-> <!-- basic-multiple-paragraphs -->
->
-> I am a paragraph 1
->
-> I am a paragraph 2
->
-> I am a paragraph 3
->
-> <!-- /basic-multiple-paragraphs -->
-
-## Tags in code fence
-
-Should not expand
-
-\`\`\`html
-<!-- basic -->
-\`\`\`
-
-## Stacked expansions
-
-<!-- basic -->
-
-**A bold statement from test-rules.ts**
-
-<!-- /basic -->
-
-<!-- basic -->
-
-**A bold statement from test-rules.ts**
-
-<!-- /basic -->
-
-The following required an extra step to split html statements that were being interpreted as contiguous
-
-## Adjacent inline expansions
-
-A<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->Z
-
-## Adjacent top-level expansions
-
-<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->Z
-
-## Adjacent top-level expansions
-
-<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><b>Absolutely</b><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
-
-## Adjacent top-level expansions with options
-
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->🪴 I am between two ferns 🪴<!-- /basic-options --><!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->🪴 I am between two ferns 🪴<!-- /basic-options -->
-
-## Adjacent top-level expansions
-
-<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
-
-## Adjacent top-level expansions with leading space
-
-&#x20;<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic --><!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
-
-## Expansion with leading space
-
-&#x20;<!-- basic -->**A bold statement from test-rules.ts**<!-- /basic -->
+<!-- /frontmatter-summary -->
 "
 `;

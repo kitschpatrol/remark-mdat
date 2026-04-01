@@ -1,3 +1,4 @@
+/* eslint-disable max-depth */
 // @case-police-ignore Html
 
 import type { Html, Parent } from 'mdast'
@@ -7,40 +8,20 @@ import { VFileMessage } from 'vfile-message'
 
 /**
  * Structured data about a parsed comment.
- * Note that this is a discriminated union based on the `type` field.
  */
-type CommentMarker = Simplify<
-	(
-		| {
-				/** Character used to delimit closing tags, e.g. the `/` in `<!-- /keyword -->`  */
-				closingPrefix: string
-				/** The first complete word in the comment  */
-				keyword: string
-				/** The unique keyword prefix  */
-				keywordPrefix: string
-				/** Parsed JSON object of argument string that followed the keyword, empty object if nothing passed  */
-				options: JsonValue
-				/**
-				 * `open`: A mdat-style opening comment tag, e.g. `<!-- keyword -->`  \
-				 * `close`: A mdat-style closing comment tag, e.g. `<!-- /keyword -->`
-				 */
-				type: 'close' | 'open'
-		  }
-		| {
-				/** The original text inside the comment, e.g. `<!-- content -->`  */
-				content: string
-				/**
-				 * `meta`: A mdat-style generated meta comment tag  \
-				 * `native`: A normal comment that does not match the the `keywordPrefix` (if specified)
-				 */
-				type: 'meta' | 'native'
-		  }
-	) & {
-		// Shared field
-		/** The complete original comment, e.g. `<!-- keyword -->`  */
-		html: string
-	}
->
+type CommentMarker = Simplify<{
+	/** The complete original comment, e.g. `<!-- keyword -->`  */
+	html: string
+	/** The first complete word in the comment  */
+	keyword: string
+	/** Parsed JSON object of argument string that followed the keyword, empty object if nothing passed  */
+	options: JsonValue
+	/**
+	 * `open`: A mdat-style opening comment tag, e.g. `<!-- keyword -->`  \
+	 * `close`: A mdat-style closing comment tag, e.g. `<!-- /keyword -->`
+	 */
+	type: 'close' | 'open'
+}>
 
 /**
  * Parsed comment with additional information about the Mdast Node and its Parent.
@@ -54,27 +35,13 @@ export type CommentMarkerNode = Simplify<
 	}
 >
 
-type CommentMarkerParseOptions = {
-	/** Character to identify closing tags, e.g. the `/` in `<!-- /keyword -->`  */
-	closingPrefix: string
-	/** Prefix to require on all mdat comments, e.g. `mm-`  */
-	keywordPrefix: string
-	/** Means of identifying mdat generated meta comments, e.g. `+`  */
-	metaCommentIdentifier: string
-}
-
 /**
  * Parse an Mdast HTML comment node into structured data.
- * @returns A discriminated union of CommentMarkerNode based on comment type, or
- * undefined if the node is not a comment.
+ * @returns A CommentMarkerNode or undefined if the node is not a recognized comment.
  */
-export function parseCommentNode(
-	node: Html,
-	parent: Parent,
-	options: CommentMarkerParseOptions,
-): CommentMarkerNode | undefined {
+export function parseCommentNode(node: Html, parent: Parent): CommentMarkerNode | undefined {
 	try {
-		const result = parseComment(node.value, options)
+		const result = parseComment(node.value)
 
 		if (result === undefined) {
 			return undefined
@@ -99,112 +66,65 @@ export function parseCommentNode(
 
 /**
  * Parse any comment string into structured data.
- * @returns A discriminated union of CommentMarker based on comment type, or
- * undefined if the node is not a comment.
+ * Comments using code-style notation (`//`, `#`, `/*`) are ignored and return `undefined`.
+ * @returns A CommentMarker or undefined if the node is not a recognized comment.
  */
-export function parseComment(
-	text: string,
-	options: CommentMarkerParseOptions,
-): CommentMarker | undefined {
+export function parseComment(text: string): CommentMarker | undefined {
 	if (!isComment(text)) return
 
-	const { closingPrefix, keywordPrefix, metaCommentIdentifier } = options
-
-	if (closingPrefix === '') {
-		throw new VFileMessage('closingPrefix must not be an empty string')
-	}
+	const closingPrefix = '/'
 
 	const commentHtml = text.trim()
 	const commentBody = commentHtml.replace(/^\s*<!-{2,}\s*/, '').replace(/\s*-{2,}>\s*$/, '')
 
-	// Splits without capturing
-	const [rawKeyword, ...argumentParts] = commentBody.split(/(\s+|\(|\{)/)
+	// Extract keyword and optional function-call arguments
+	// keyword(...) or just keyword
+	const parenIndex = commentBody.indexOf('(')
+	const rawKeyword =
+		parenIndex === -1 ? commentBody.split(/\s/)[0] : commentBody.slice(0, parenIndex).trim()
 
-	const type = rawKeyword.startsWith(metaCommentIdentifier)
-		? 'meta'
-		: keywordPrefix !== '' &&
-			  !rawKeyword.startsWith(keywordPrefix) &&
-			  !rawKeyword.startsWith(`${closingPrefix}${keywordPrefix}`)
-			? 'native'
-			: rawKeyword.startsWith(closingPrefix)
-				? 'close'
-				: 'open'
-
-	if (type === 'meta') {
-		return {
-			content: trimMetaIdentifiers(commentBody, metaCommentIdentifier),
-			html: commentHtml,
-			type,
-		}
+	// Ignore code-style comments embedded in HTML comments
+	if (rawKeyword.startsWith('//') || rawKeyword.startsWith('#') || rawKeyword.startsWith('/*')) {
+		return undefined
 	}
 
-	if (type === 'native') {
-		return {
-			content: commentBody,
-			html: commentHtml,
-			type,
-		}
-	}
+	const type = rawKeyword.startsWith(closingPrefix) ? 'close' : 'open'
 
-	// Must be open or closing tag, strip literal prefixes
+	// Strip closing prefix
 	let keyword = rawKeyword
-	if (keyword.startsWith(closingPrefix)) {
+	if (type === 'close') {
 		keyword = keyword.slice(closingPrefix.length)
 	}
-	if (keyword.startsWith(keywordPrefix)) {
-		keyword = keyword.slice(keywordPrefix.length)
-	}
 
-	const optionText = makeValidJson(argumentParts.join(''))
-
-	// eslint-disable-next-line ts/no-unnecessary-condition
-	if (type === 'open' || type === 'close') {
-		let options: JsonValue = {}
-
-		try {
-			options = json5.parse<JsonValue>(optionText)
-		} catch (error) {
-			if (error instanceof Error) {
-				throw new VFileMessage(
-					`Failed to parse comment options "${optionText}" for keyword "${keyword}": ${error.message}`,
-				)
+	// Parse arguments from function-call syntax: keyword(...)
+	let options: JsonValue = {}
+	if (parenIndex !== -1) {
+		const lastParen = commentBody.lastIndexOf(')')
+		if (lastParen > parenIndex) {
+			const argText = commentBody.slice(parenIndex + 1, lastParen).trim()
+			if (argText.length > 0) {
+				try {
+					options = json5.parse<JsonValue>(argText)
+				} catch (error) {
+					if (error instanceof Error) {
+						throw new VFileMessage(
+							`Failed to parse comment options "${argText}" for keyword "${keyword}": ${error.message}`,
+						)
+					}
+				}
 			}
 		}
+	}
 
-		return {
-			closingPrefix,
-			html: commentHtml,
-			keyword,
-			keywordPrefix,
-			options,
-			type,
-		}
+	return {
+		html: commentHtml,
+		keyword,
+		options,
+		type,
 	}
 }
 
 function isComment(text: string): boolean {
 	const trimmed = text.trim()
 	return trimmed.startsWith('<!--') && trimmed.endsWith('-->')
-}
-
-// Let the user pass the comment options inside parentheses if they want, like a function call
-// Or let them skip the brackets if they want
-function makeValidJson(text: string): string {
-	// Remove parentheses
-	text = text.trim()
-	text = text.startsWith('(') ? text.slice(1) : text
-	text = text.endsWith(')') ? text.slice(0, -1) : text
-	text = text.trim()
-
-	// Make bare objects valid JSON
-	if (!text.startsWith('{') && !text.startsWith('[')) text = '{' + text
-	if (!text.endsWith('}') && !text.endsWith(']')) text += '}'
-	return text
-}
-
-function trimMetaIdentifiers(text: string, metaCommentIdentifier: string): string {
-	text = text.trim()
-	text = text.startsWith(metaCommentIdentifier) ? text.slice(metaCommentIdentifier.length) : text
-	text = text.endsWith(metaCommentIdentifier) ? text.slice(0, -metaCommentIdentifier.length) : text
-	return text
 }

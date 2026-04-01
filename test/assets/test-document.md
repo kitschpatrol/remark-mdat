@@ -24,23 +24,21 @@ Shows the name of the rules file:
 
 <!-- basic-dynamic -->
 
-## Required expansion
+## List expansion
 
-Inclusion is validated via `--check` option
-
-<!-- basic-list-required -->
+<!-- basic-list -->
 
 ## Expansions with options argument, canonical syntax
 
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
+<!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->
 
 ## Same expansion with different options
 
-<!-- basic-options {prefix: "🌳 ", suffix: " 🌳"} -->
+<!-- basic-options({prefix: "🌳 ", suffix: " 🌳"}) -->
 
 ## Expansions with arguments, syntax forgiveness
 
-<!--- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
+<!--- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->
 
 ## Expansions via dot paths given arbitrary json files as rules
 
@@ -61,14 +59,6 @@ This expansion rule always returns an empty string. The comment will not be expa
 This expansion rule always throws an error. The comment will not be expanded, and MDAT will report the error.
 
 <!-- basic-throws -->
-
-## Ordered expansion
-
-Order in the document is validated via `--check` option
-
-<!-- basic-ordered-2 -->
-
-<!-- basic-ordered-1 -->
 
 ## Inline expansions with paragraph elements
 
@@ -112,7 +102,7 @@ A<!-- basic --><!-- /basic --><!-- basic --><!-- /basic -->Z
 
 ## Adjacent top-level expansions with options
 
-<!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} --><!-- basic-options {prefix: "🪴 ", suffix: " 🪴"} -->
+<!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) --><!-- basic-options({prefix: "🪴 ", suffix: " 🪴"}) -->
 
 ## Adjacent top-level expansions
 

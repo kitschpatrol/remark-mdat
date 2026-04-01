@@ -1,6 +1,6 @@
 {
 	"name": "remark-mdat",
-	"version": "1.2.5",
+	"version": "2.0.0-preview.4",
 	"description": "A remark plugin implementing the Markdown Autophagic Template (MDAT) system.",
 	"keywords": [
 		"mdat",
@@ -47,15 +47,16 @@
 		"fix": "ksc fix",
 		"lint": "ksc lint",
 		"release": "bumpp --commit 'Release: %s' && pnpm run build && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') && pnpm publish",
+		"release-preview": "bumpp --preid preview --commit 'Release: %s' && pnpm run build && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') && pnpm publish --tag preview",
 		"test": "vitest run"
 	},
 	"dependencies": {
 		"@types/mdast": "^4.0.4",
 		"@types/unist": "^3.0.3",
-		"cli-table3": "^0.6.5",
-		"deepmerge-ts": "^7.1.5",
+		"gray-matter-es": "^0.2.1",
 		"hast-util-from-html": "^2.0.3",
 		"json5": "^2.2.3",
+		"lognow": "^0.5.2",
 		"picocolors": "^1.1.1",
 		"remark": "^15.0.1",
 		"remark-gfm": "^4.0.1",
@@ -64,21 +65,21 @@
 		"unist-util-visit": "^5.1.0",
 		"vfile": "^6.0.3",
 		"vfile-message": "^4.0.3",
-		"zod": "^3.25.76"
+		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@arethetypeswrong/core": "^0.18.2",
-		"@kitschpatrol/shared-config": "^6.1.0",
+		"@kitschpatrol/shared-config": "^6.2.0",
 		"@types/node": "~20.19.37",
 		"bumpp": "^11.0.1",
 		"publint": "^0.3.18",
-		"tsdown": "^0.21.4",
+		"tsdown": "^0.21.7",
 		"typescript": "~5.9.3",
-		"vitest": "^4.1.1"
+		"vitest": "^4.1.2"
 	},
 	"packageManager": "pnpm@10.33.0",
 	"engines": {
-		"node": ">=20.0.0"
+		"node": ">=20.19.6"
 	},
 	"devEngines": {
 		"runtime": {

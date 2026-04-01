@@ -6,7 +6,7 @@ import type { VFile } from 'vfile'
 import type { Options, VFileMessage } from 'vfile-message'
 import path from 'node:path'
 import picocolors from 'picocolors'
-import log from './log'
+import { log } from './log'
 
 /**
  * Tries to provide a simpler wrapper to vfile.message
@@ -40,7 +40,7 @@ export type MdatFileReport = {
 
 // Wrapper for file.message
 
-// Function Overloads
+// Note overloads
 export function saveLog(
 	file: VFile,
 	level: 'error' | 'info' | 'warn',
@@ -56,8 +56,6 @@ export function saveLog(
 	message: string,
 	node?: Node,
 ): void
-
-// Function Implementation
 export function saveLog(
 	file: VFile,
 	level: 'error' | 'info' | 'warn',
@@ -143,10 +141,10 @@ export function reporterMdat(files: VFile[]): void {
 		const mdatFileReport = getMdatReport(file)
 		const { destinationPath, errors, infos, sourcePath, warnings } = mdatFileReport
 
-		log.info(picocolors.bold('MDAT Report:'))
-		log.info(`\tFrom: ${picocolors.blue(picocolors.bold(sourcePath))}`)
+		log.debug(picocolors.bold('MDAT Report:'))
+		log.debug(`\tFrom: ${picocolors.blue(picocolors.bold(sourcePath))}`)
 		if (destinationPath !== undefined) {
-			log.info(`\tTo:   ${picocolors.blue(picocolors.bold(destinationPath))}`)
+			log.debug(`\tTo:   ${picocolors.blue(picocolors.bold(destinationPath))}`)
 		}
 
 		for (const message of errors) {
@@ -158,11 +156,11 @@ export function reporterMdat(files: VFile[]): void {
 		}
 
 		for (const message of infos) {
-			log.info(mdatMessageToLogString(sourcePath, message))
+			log.debug(mdatMessageToLogString(sourcePath, message))
 		}
 
 		if (errors.length === 0 && warnings.length === 0) {
-			log.info(`No issues found in ${sourcePath}`)
+			log.debug(`No issues found in ${sourcePath}`)
 		} else {
 			log.error(`${errors.length} errors, ${warnings.length} warnings found in ${sourcePath}`)
 		}
