@@ -40,7 +40,7 @@ export type MdatFileReport = {
 
 // Wrapper for file.message
 
-// Function Overloads
+// Note overloads
 export function saveLog(
 	file: VFile,
 	level: 'error' | 'info' | 'warn',
@@ -56,8 +56,6 @@ export function saveLog(
 	message: string,
 	node?: Node,
 ): void
-
-// Function Implementation
 export function saveLog(
 	file: VFile,
 	level: 'error' | 'info' | 'warn',

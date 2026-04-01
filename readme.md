@@ -41,6 +41,7 @@
   - [API](#api)
   - [Examples](#examples)
 - [Utilities](#utilities)
+- [Migrating from remark-mdat 1.x to 2.x](#migrating-from-remark-mdat-1x-to-2x)
 - [Implementation notes](#implementation-notes)
 - [Maintainers](#maintainers)
 - [Acknowledgments](#acknowledgments)
@@ -53,13 +54,13 @@
 
 This is a [remark](https://remark.js.org) plugin that automates the inline expansion of placeholder HTML comments with dynamic content in Markdown, making it easy to keep readme files and other documentation in sync with an external single source of truth.
 
-The plugin can take placeholder comments in a Markdown file like this:
+The plugin finds placeholder comments in a Markdown file like this:
 
 ```md
 <!-- title -->
 ```
 
-And replace it with dynamic data. In this case, from `package.json`:
+And expands them with the data of your choosing. In this case, it reads the `title` field a nearby `package.json`:
 
 ```md
 <!-- title -->
@@ -75,12 +76,12 @@ This plugin powers the higher-level [`mdat` package](https://github.com/kitschpa
 
 ### Dependencies
 
-This library is ESM only and requires Node 20+. It's designed to work with Remark 15. `remark-mdat` is implemented in TypeScript and bundles a complete set of type definitions.
+This library is ESM only and requires Node 20.19.6+. It's designed to work with Remark 15. `remark-mdat` is implemented in TypeScript and bundles a complete set of type definitions.
 
 ### Installation
 
 ```sh
-npm install remark-mdat
+pnpm add remark-mdat
 ```
 
 ## Usage
@@ -119,9 +120,9 @@ const rules: Rules = {
   // Function with arguments: receives parsed options from the comment
   personalGreeting: (options) => `Hello, ${options.name}!`,
 
-  // Object: rule with validation metadata
+  // Object: with processing priority
   title: {
-    order: 0, // Processing priority (default: 0)
+    order: 1, // Runs after other rules (default is 0)
     content: () => getTitle(), // String, function, or array
   },
 
@@ -148,7 +149,7 @@ type RuleContext = {
 }
 ```
 
-Frontmatter is automatically extracted from the raw Markdown source using [gray-matter-es](https://github.com/ryoppippi/gray-matter-es), so it works regardless of whether `remark-frontmatter` is in your pipeline. If the document has no frontmatter block, `context.frontmatter` is `undefined`.
+Frontmatter is automatically extracted if available. If the document has no frontmatter block, `context.frontmatter` remains `undefined`.
 
 ```ts
 const rules: Rules = {
@@ -181,11 +182,11 @@ Single primitive value:
 <!-- repeat(3) -->
 ```
 
+Prefer object arguments over single primitive values for all but the most contextually clear argument values.
+
 Any JSON5 value is supported: objects, arrays, strings, numbers, and booleans. Comments without parentheses receive an empty object `{}` as their options.
 
-For simplicity's sake, only a single argument position is supported. If you need pass multiple arguments, wrap them in an object.
-
-Prefer object arguments for all but the most contextually clear argument values.
+For simplicity's sake, only a single argument position is supported. If you need pass multiple arguments, wrap them in an object. For security's sake, only JSON5 / JSON values are permitted in keyword arguments, no JavaScript is evaluated.
 
 ### Examples
 
@@ -221,7 +222,7 @@ import remarkMdat from 'remark-mdat'
 
 // Create the rules
 const rules: Rules = {
-  time: () => new Date().toDateString(),
+  time: new Date().toDateString(),
 }
 
 const markdownInput = '<!-- time -->'
@@ -234,7 +235,7 @@ console.log(markdownOutput.toString())
 // Logs:
 // <!-- time -->
 //
-// Mon Feb 05 2024
+// Mon April 01 2026
 //
 // <!-- /time -->
 ```
@@ -274,9 +275,121 @@ Errors and warnings are reported inline during expansion via [VFile messages](ht
 
     _Exported as `mdatExpand(tree: Root, file: VFile, rules: Rules): Promise<void>`_
 
+## Migrating from remark-mdat 1.x to 2.x
+
+Version 2.0 simplifies and solidifies the API by removing several configuration options and validation features that added complexity without sufficient benefit. The core expansion behavior is unchanged — the plugin still matches HTML comments to rules and expands them — but the way you configure it has changed.
+
+### Options are now just rules
+
+In 1.x, the plugin accepted an options object with multiple fields to customize parsing and generation:
+
+```ts
+// 1.x
+remark().use(remarkMdat, {
+  rules: { title: () => '# My Title' },
+  addMetaComment: true,
+  closingPrefix: '/',
+  keywordPrefix: 'mm-',
+  metaCommentIdentifier: '+',
+})
+```
+
+In 2.x, the plugin hard-codes opinionated approach to parsing and only accepts a `Rules` record directly:
+
+```ts
+// 2.x
+remark().use(remarkMdat, {
+  title: () => '# My Title',
+})
+```
+
+The `Options` type is now an alias for `Rules`. If you were importing `MdatOptions`, `MdatExpandOptions`, `MdatCheckOptions`, or `MdatCleanOptions`, replace them with `Rules`.
+
+### Removed options
+
+The following plugin options have been removed entirely:
+
+| Removed option          | Migration                                                                |
+| ----------------------- | ------------------------------------------------------------------------ |
+| `addMetaComment`        | Remove. Auto-generated warning comments are no longer supported.         |
+| `metaCommentIdentifier` | Remove. The `<!--+ ... +-->` meta comment syntax is gone.                |
+| `closingPrefix`         | Remove. The closing prefix is now always `/` (e.g. `<!-- /keyword -->`). |
+| `keywordPrefix`         | Remove. Keyword prefixing / namespacing is no longer supported.          |
+
+### Removed rule properties
+
+| Removed property | Migration                                                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `required`       | Remove. All rules are treated equally. Missing comments produce a warning instead of an error.                                                    |
+| `order           | Remove. The 1.x `order` property enforced comment _position_ in the document. In 2.x, `order` controls _processing priority_ only (default: `0`). |
+
+### Changed rule properties
+
+| Changed property   | Migration          |
+| ------------------ | ------------------ |
+| `applicationOrder` | Change to `order`. |
+
+### Removed validation utility
+
+The `mdast-util-mdat-check` utility and its export `mdatCheck` have been removed. Validation logic (missing rules, empty content, rule errors) is now handled inline during expansion by `mdatExpand`, which reports issues as VFile messages. Use `reporterMdat` to format and display these messages.
+
+### Rule function signature change
+
+In 1.x, rule content functions received the mdast tree directly as the second argument:
+
+```ts
+// 1.x
+const rules = {
+  toc: (_options, tree) => generateTocFromTree(tree),
+}
+```
+
+In 2.x, the second argument is a `RuleContext` object containing the tree, parsed frontmatter, and file path:
+
+```ts
+// 2.x
+const rules = {
+  toc: (_options, context) => generateTocFromTree(context.tree),
+}
+```
+
+### Stricter argument syntax
+
+In 1.x, the argument parser was very permissive — parentheses were optional, bare key-value pairs were auto-wrapped in braces, and space-separated arguments worked:
+
+```md
+<!-- greeting name: "Alice" -->
+<!-- greeting {name: "Alice"} -->
+<!-- greeting({name: "Alice"}) -->
+```
+
+In 2.x, arguments **must** use function-call syntax with parentheses. The content inside the parentheses is parsed as [JSON5](https://json5.org/):
+
+```md
+<!-- greeting({name: 'Alice'}) -->
+```
+
+Bare or space-separated arguments like `<!-- greeting name: "Alice" -->` will no longer be parsed — the extra text after the keyword is ignored and the rule receives an empty `{}` options object.
+
+As a trade-off for the stricter syntax, primitive values are now supported as arguments: `<!-- repeat(3) -->`, `<!-- show("hello") -->`.
+
+### Comment-style comments are ignored
+
+HTML comments using code-style prefixes (`<!-- // ... -->`, `<!-- # ... -->`, `<!-- /* ... */ -->`) are now ignored by the parser, so you can use them for regular comments alongside mdat keywords without triggering warnings. This replaces 1.x parser configuration options like `keywordPrefix`.
+
+### Compound rule error handling
+
+In 1.x, a failing sub-rule in a compound rule (array of rules) caused the entire expansion to fail. In 2.x, individual sub-rule failures are reported as warnings and skipped — the expansion only fails if every sub-rule fails.
+
+### Removed export: `deepMergeDefined`
+
+The `deepMergeDefined` utility has been moved to the [`mdat`](https://github.com/kitschpatrol/mdat) package. If you were importing it from `remark-mdat`, import it from `mdat` instead.
+
 ## Implementation notes
 
 This project was split from a monorepo containing both `mdat` and `remark-mdat` into separate repos in July 2024.
+
+The API was redesigned and simplified for version 2 in March 2026.
 
 Remark is not a peer dependency on account of this discussion: [strip-markdown/issues/24](https://github.com/remarkjs/strip-markdown/issues/24)
 
