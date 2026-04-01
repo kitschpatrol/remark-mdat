@@ -141,10 +141,10 @@ export function reporterMdat(files: VFile[]): void {
 		const mdatFileReport = getMdatReport(file)
 		const { destinationPath, errors, infos, sourcePath, warnings } = mdatFileReport
 
-		log.info(picocolors.bold('MDAT Report:'))
-		log.info(`\tFrom: ${picocolors.blue(picocolors.bold(sourcePath))}`)
+		log.debug(picocolors.bold('MDAT Report:'))
+		log.debug(`\tFrom: ${picocolors.blue(picocolors.bold(sourcePath))}`)
 		if (destinationPath !== undefined) {
-			log.info(`\tTo:   ${picocolors.blue(picocolors.bold(destinationPath))}`)
+			log.debug(`\tTo:   ${picocolors.blue(picocolors.bold(destinationPath))}`)
 		}
 
 		for (const message of errors) {
@@ -156,11 +156,11 @@ export function reporterMdat(files: VFile[]): void {
 		}
 
 		for (const message of infos) {
-			log.info(mdatMessageToLogString(sourcePath, message))
+			log.debug(mdatMessageToLogString(sourcePath, message))
 		}
 
 		if (errors.length === 0 && warnings.length === 0) {
-			log.info(`No issues found in ${sourcePath}`)
+			log.debug(`No issues found in ${sourcePath}`)
 		} else {
 			log.error(`${errors.length} errors, ${warnings.length} warnings found in ${sourcePath}`)
 		}

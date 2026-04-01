@@ -275,7 +275,7 @@ Errors and warnings are reported inline during expansion via [VFile messages](ht
 
     _Exported as `mdatExpand(tree: Root, file: VFile, rules: Rules): Promise<void>`_
 
-## Migrating from remark-mdat 1.x to 2.x
+## Migrating from 1.x to 2.x
 
 Version 2.0 simplifies and solidifies the API by removing several configuration options and validation features that added complexity without sufficient benefit. The core expansion behavior is unchanged — the plugin still matches HTML comments to rules and expands them — but the way you configure it has changed.
 
@@ -321,7 +321,7 @@ The following plugin options have been removed entirely:
 | Removed property | Migration                                                                                                                                         |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `required`       | Remove. All rules are treated equally. Missing comments produce a warning instead of an error.                                                    |
-| `order           | Remove. The 1.x `order` property enforced comment _position_ in the document. In 2.x, `order` controls _processing priority_ only (default: `0`). |
+| `order`          | Remove. The 1.x `order` property enforced comment _position_ in the document. In 2.x, `order` controls _processing priority_ only (default: `0`). |
 
 ### Changed rule properties
 
