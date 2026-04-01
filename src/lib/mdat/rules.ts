@@ -239,18 +239,38 @@ const normalizedRulesSchema = z.record(keywordSchema, normalizedRuleSchema).desc
 // ----------------------------------------------------------
 
 /**
- * Compound rule helpers for expanding rule content.
+ * Expand rule content. For compound rules (content arrays), individual
+ * sub-rule failures are reported via `onWarning` and skipped. The entire
+ * expansion only fails if every sub-rule fails.
  */
 export async function getRuleContent(
 	rule: NormalizedRule,
 	options: JsonValue,
 	context: RuleContext,
+	onWarning?: (message: string) => void,
 ): Promise<string> {
 	if (Array.isArray(rule.content)) {
-		const subruleContent = []
+		const subruleContent: string[] = []
+		const errors: Error[] = []
+
 		for (const [index, subrule] of rule.content.entries()) {
 			const subruleOptions = Array.isArray(options) ? options.at(index) : undefined
-			subruleContent.push(await getRuleContent(subrule, subruleOptions ?? {}, context))
+			try {
+				subruleContent.push(await getRuleContent(subrule, subruleOptions ?? {}, context, onWarning))
+			} catch (error) {
+				const message =
+					error instanceof Error
+						? error.cause instanceof Error
+							? error.cause.message
+							: error.message
+						: String(error)
+				onWarning?.(`Sub-rule ${String(index)} failed: ${message}`)
+				errors.push(error instanceof Error ? error : new Error(String(error)))
+			}
+		}
+
+		if (subruleContent.length === 0) {
+			throw new AggregateError(errors, 'All sub-rules failed in compound rule')
 		}
 
 		return subruleContent.join('\n\n')

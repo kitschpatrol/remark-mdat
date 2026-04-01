@@ -164,6 +164,45 @@ describe('compound rule handling', () => {
 		`)
 	})
 
+	it('should skip a failing sub-rule and expand the rest', async () => {
+		const markdown = `<!-- compound -->\n`
+		const rules: Rules = {
+			compound: [
+				'first',
+				() => {
+					throw new Error('Sub-rule broke')
+				},
+				'third',
+			],
+		}
+		const result = await expandStringToVfile(markdown, rules)
+		const output = result.toString()
+		expect(output).toContain('first')
+		expect(output).toContain('third')
+		expect(output).not.toContain('Sub-rule broke')
+		const warning = result.messages.find((m) => m.fatal === false)
+		expect(warning).toBeDefined()
+		expect(stripAnsiEscapeCodes(warning!.message)).toContain('Sub-rule 1 failed')
+	})
+
+	it('should error when all sub-rules in a compound rule fail', async () => {
+		const markdown = `<!-- compound -->\n`
+		const rules: Rules = {
+			compound: [
+				() => {
+					throw new Error('fail 1')
+				},
+				() => {
+					throw new Error('fail 2')
+				},
+			],
+		}
+		const result = await expandStringToVfile(markdown, rules)
+		const error = result.messages.find((m) => m.fatal === true)
+		expect(error).toBeDefined()
+		expect(stripAnsiEscapeCodes(error!.message)).toContain('All sub-rules failed')
+	})
+
 	it('should pass option arrays to compound rules', async () => {
 		const markdown = `<!-- compound([{option: 'yes'}, {option: 'it'}, {option: 'can'}]) -->\n`
 		const expandedString = await expandStringToString(markdown, {

@@ -60,7 +60,9 @@ export async function mdatExpand(tree: Root, file: VFile, rules: Rules) {
 		let newMarkdownString = ''
 		try {
 			// Handle compound rules
-			newMarkdownString = await getRuleContent(rule, options, context)
+			newMarkdownString = await getRuleContent(rule, options, context, (warning) => {
+				saveLog(file, 'warn', 'expand', `${html}: ${warning}`, node)
+			})
 
 			if (newMarkdownString.trim() === '') {
 				saveLog(file, 'error', 'expand', `Got empty content when expanding ${html}`, node)
