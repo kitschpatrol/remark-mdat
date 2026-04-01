@@ -69,7 +69,7 @@
 	},
 	"devDependencies": {
 		"@arethetypeswrong/core": "^0.18.2",
-		"@kitschpatrol/shared-config": "^6.1.0",
+		"@kitschpatrol/shared-config": "^6.2.0",
 		"@types/node": "~20.19.37",
 		"bumpp": "^11.0.1",
 		"publint": "^0.3.18",
