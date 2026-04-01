@@ -1,21 +1,29 @@
 import type { Root } from 'mdast'
 import type { Plugin } from 'unified'
+import { z } from 'zod'
 import type { Rules } from './mdat/rules'
 import { mdat } from './mdast-utils/mdast-util-mdat'
+import { rulesSchema } from './mdat/rules'
 
-export type Options = Rules
+export type Options = {
+	rules?: Rules
+}
 
 const defaultRules: Rules = {
 	mdat: `Powered by the Markdown Autophagic Template system: [mdat](https://github.com/kitschpatrol/mdat).`,
 }
 
-// Schema is exported for validation in other packages
+export const optionsSchema = z
+	.object({
+		rules: rulesSchema.optional(),
+	})
+	.describe('MDAT Plugin Options')
 
 /**
  * A remark plugin that expands HTML comments in Markdown files.
  */
-const remarkMdat: Plugin<[Options], Root> = function (rules) {
-	const resolvedRules: Rules = { ...defaultRules, ...rules }
+const remarkMdat: Plugin<[Options?], Root> = function (options) {
+	const resolvedRules: Rules = { ...defaultRules, ...options?.rules }
 
 	return async function (tree, file) {
 		await mdat(tree, file, resolvedRules)
@@ -23,5 +31,3 @@ const remarkMdat: Plugin<[Options], Root> = function (rules) {
 }
 
 export default remarkMdat
-
-export { rulesSchema as optionsSchema } from './mdat/rules'

@@ -11,12 +11,12 @@ import testRules from './assets/test-rules'
 import testRulesInvalid from './assets/test-rules-invalid'
 
 async function expandStringToString(markdown: string, rules: Rules): Promise<string> {
-	const result = await remark().use(remarkGfm).use(remarkMdat, rules).process(markdown)
+	const result = await remark().use(remarkGfm).use(remarkMdat, { rules }).process(markdown)
 	return result.toString()
 }
 
 async function expandStringToVfile(markdown: string, rules: Rules): Promise<VFile> {
-	return remark().use(remarkGfm).use(remarkMdat, rules).process(markdown)
+	return remark().use(remarkGfm).use(remarkMdat, { rules }).process(markdown)
 }
 
 function stripAnsiEscapeCodes(text: string): string {
@@ -42,7 +42,7 @@ export async function cleanString(markdown: string): Promise<string> {
 
 async function expandFileToString(file: string, rules: Rules): Promise<string> {
 	const buffer = await fs.readFile(file)
-	const result = await remark().use(remarkGfm).use(remarkMdat, rules).process(buffer)
+	const result = await remark().use(remarkGfm).use(remarkMdat, { rules }).process(buffer)
 	return result.toString()
 }
 

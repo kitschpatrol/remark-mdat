@@ -103,7 +103,7 @@ remark().use(remarkMdat)
 
 #### Options
 
-The plugin accepts an optional `Rules` object as its options. This is a `Record<string, Rule>` where each key is a keyword matching an HTML comment in the Markdown file (e.g. `title` matches `<!-- title -->`).
+The plugin accepts an optional `Options` object with a `rules` field. `Rules` is a `Record<string, Rule>` where each key is a keyword matching an HTML comment in the Markdown file (e.g. `title` matches `<!-- title -->`).
 
 HTML comments using code-style notation (`<!-- // ... -->`, `<!-- # ... -->`, `<!-- /* ... */ -->`) are ignored and will not be treated as mdat keywords. Rule keywords cannot start with `/`, `*`, or `#`.
 
@@ -228,7 +228,7 @@ const rules: Rules = {
 const markdownInput = '<!-- time -->'
 
 // Pass the rules to remarkMdat
-const markdownOutput = await remark().use(remarkMdat, rules).process(markdownInput)
+const markdownOutput = await remark().use(remarkMdat, { rules }).process(markdownInput)
 
 console.log(markdownOutput.toString())
 
@@ -279,7 +279,7 @@ Errors and warnings are reported inline during expansion via [VFile messages](ht
 
 Version 2.0 simplifies and solidifies the API by removing several configuration options and validation features that added complexity without sufficient benefit. The core expansion behavior is unchanged — the plugin still matches HTML comments to rules and expands them — but the way you configure it has changed.
 
-### Options are now just rules
+### Simplified options
 
 In 1.x, the plugin accepted an options object with multiple fields to customize parsing and generation:
 
@@ -294,16 +294,16 @@ remark().use(remarkMdat, {
 })
 ```
 
-In 2.x, the plugin hard-codes opinionated approach to parsing and only accepts a `Rules` record directly:
+In 2.x, the configuration options for parsing and generation have been removed. The `Options` object now contains only a `rules` field:
 
 ```ts
 // 2.x
 remark().use(remarkMdat, {
-  title: () => '# My Title',
+  rules: { title: () => '# My Title' },
 })
 ```
 
-The `Options` type is now an alias for `Rules`. If you were importing `MdatOptions`, `MdatExpandOptions`, `MdatCheckOptions`, or `MdatCleanOptions`, replace them with `Rules`.
+If you were importing `MdatOptions`, `MdatExpandOptions`, `MdatCheckOptions`, or `MdatCleanOptions`, replace them with `Options` (for plugin configuration) or `Rules` (for the rules record).
 
 ### Removed options
 
