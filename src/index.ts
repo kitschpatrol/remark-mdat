@@ -16,6 +16,7 @@ export {
 	type NormalizedRule,
 	type NormalizedRules,
 	type Rule,
+	type RuleContext,
 	type Rules,
 	rulesSchema,
 	type SimplifyDeep,

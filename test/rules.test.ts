@@ -1,9 +1,17 @@
 /* eslint-disable ts/no-unsafe-function-type */
 /* eslint-disable ts/no-unsafe-call */
 /* eslint-disable ts/no-unsafe-type-assertion */
+/* eslint-disable ts/consistent-type-assertions */
+import type { Root } from 'mdast'
 import { describe, expect, it } from 'vitest'
-import type { NormalizedRules, Rules } from '../src/lib/mdat/rules'
+import type { NormalizedRules, RuleContext, Rules } from '../src/lib/mdat/rules'
 import { getSoleRule, getSoleRuleKey, normalizeRules, validateRules } from '../src/lib/mdat/rules'
+
+const mockContext: RuleContext = {
+	filePath: undefined,
+	frontmatter: undefined,
+	tree: {} as Root,
+}
 
 describe('normalizeRules', () => {
 	it('should normalize a string rule', async () => {
@@ -13,7 +21,7 @@ describe('normalizeRules', () => {
 		expect(normalized.greeting.order).toBe(0)
 		expect(typeof normalized.greeting.content).toBe('function')
 		// Content function should return the string
-		expect(await (normalized.greeting.content as Function)({}, {})).toBe('hello')
+		expect(await (normalized.greeting.content as Function)({}, mockContext)).toBe('hello')
 	})
 
 	it('should normalize a function rule', async () => {
@@ -21,7 +29,7 @@ describe('normalizeRules', () => {
 		const normalized = normalizeRules(rules)
 
 		expect(typeof normalized.time.content).toBe('function')
-		expect(await (normalized.time.content as Function)({}, {})).toBe('now')
+		expect(await (normalized.time.content as Function)({}, mockContext)).toBe('now')
 	})
 
 	it('should normalize an async function rule', async () => {
@@ -29,7 +37,7 @@ describe('normalizeRules', () => {
 		const rules: Rules = { time: async () => 'later' }
 		const normalized = normalizeRules(rules)
 
-		expect(await (normalized.time.content as Function)({}, {})).toBe('later')
+		expect(await (normalized.time.content as Function)({}, mockContext)).toBe('later')
 	})
 
 	it('should normalize a string-content object rule with metadata', async () => {
@@ -42,7 +50,7 @@ describe('normalizeRules', () => {
 		const normalized = normalizeRules(rules)
 
 		expect(normalized.title.order).toBe(5)
-		expect(await (normalized.title.content as Function)({}, {})).toBe('My Title')
+		expect(await (normalized.title.content as Function)({}, mockContext)).toBe('My Title')
 	})
 
 	it('should normalize a function-content object rule with metadata', async () => {
@@ -54,7 +62,7 @@ describe('normalizeRules', () => {
 		const normalized = normalizeRules(rules)
 
 		expect(normalized.title.order).toBe(0)
-		expect(await (normalized.title.content as Function)({}, {})).toBe('dynamic')
+		expect(await (normalized.title.content as Function)({}, mockContext)).toBe('dynamic')
 	})
 
 	it('should normalize a top-level compound rule (array)', () => {
@@ -149,7 +157,7 @@ describe('getSoleRule', () => {
 		const normalized: NormalizedRules = normalizeRules(rules)
 		const sole = getSoleRule(normalized)
 
-		expect(await (sole.content as Function)({}, {})).toBe('the one')
+		expect(await (sole.content as Function)({}, mockContext)).toBe('the one')
 	})
 })
 

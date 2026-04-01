@@ -128,8 +128,38 @@ const rules: Rules = {
   // Array: compound rule combining multiple sub-rules
   header: ['# My Project', () => getDescription()],
 
-  // Function with document access: receives the full mdast tree
-  toc: (_options, tree) => generateTocFromTree(tree),
+  // Function with context: access the document tree, frontmatter, and file path
+  toc: (_options, context) => generateTocFromTree(context.tree),
+}
+```
+
+#### Rule context
+
+Rule content functions receive a `RuleContext` object as their second argument, providing access to the document being processed:
+
+```ts
+type RuleContext = {
+  /** File path of the source document, if known. */
+  filePath: string | undefined
+  /** Parsed YAML frontmatter from the document, if present. */
+  frontmatter: Record<string, unknown> | undefined
+  /** The full mdast AST of the document. Do not mutate. */
+  tree: Root
+}
+```
+
+Frontmatter is automatically extracted from the raw Markdown source using [gray-matter-es](https://github.com/ryoppippi/gray-matter-es), so it works regardless of whether `remark-frontmatter` is in your pipeline. If the document has no frontmatter block, `context.frontmatter` is `undefined`.
+
+```ts
+const rules: Rules = {
+  // Access frontmatter values
+  title: (_options, context) => `# ${context.frontmatter?.title ?? 'Untitled'}`,
+
+  // Use the file path
+  source: (_options, context) => `Source: ${context.filePath ?? 'unknown'}`,
+
+  // Traverse the AST
+  toc: (_options, context) => generateTocFromTree(context.tree),
 }
 ```
 

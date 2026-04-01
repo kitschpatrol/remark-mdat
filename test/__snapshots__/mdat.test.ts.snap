@@ -210,3 +210,61 @@ I was generated from test-rules.ts
 <!-- /basic-dynamic -->
 "
 `;
+
+exports[`rule context > should expand fixture file with frontmatter context 1`] = `
+"***
+
+title: Frontmatter Test Document
+description: A test document for verifying frontmatter context in rules
+author: Test Author
+tags:
+
+* test
+* frontmatter
+  count: 42
+
+***
+
+# Frontmatter context tests
+
+## Frontmatter value access
+
+<!-- frontmatter-title -->
+
+Title: none
+
+<!-- /frontmatter-title -->
+
+## Nested frontmatter access
+
+<!-- frontmatter-tags -->
+
+No tags
+
+<!-- /frontmatter-tags -->
+
+## Frontmatter with options
+
+<!-- frontmatter-field({field: "description"}) -->
+
+description: not found
+
+<!-- /frontmatter-field -->
+
+## File path access
+
+<!-- file-path -->
+
+Path: unknown
+
+<!-- /file-path -->
+
+## Combined context access
+
+<!-- frontmatter-summary -->
+
+File "unknown" titled "untitled"
+
+<!-- /frontmatter-summary -->
+"
+`;

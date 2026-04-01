@@ -47,12 +47,13 @@
 		"fix": "ksc fix",
 		"lint": "ksc lint",
 		"release": "bumpp --commit 'Release: %s' && pnpm run build && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') && pnpm publish",
-		"release-preview": "bumpp --preid preview --commit 'Release: %s' && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') && pnpm publish --tag preview",
+		"release-preview": "bumpp --preid preview --commit 'Release: %s' && pnpm run build && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') && pnpm publish --tag preview",
 		"test": "vitest run"
 	},
 	"dependencies": {
 		"@types/mdast": "^4.0.4",
 		"@types/unist": "^3.0.3",
+		"gray-matter-es": "^0.2.1",
 		"hast-util-from-html": "^2.0.3",
 		"json5": "^2.2.3",
 		"lognow": "^0.5.2",
@@ -78,7 +79,7 @@
 	},
 	"packageManager": "pnpm@10.33.0",
 	"engines": {
-		"node": ">=20.19.0"
+		"node": ">=20.19.6"
 	},
 	"devEngines": {
 		"runtime": {

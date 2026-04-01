@@ -5,7 +5,7 @@ import fs from 'node:fs/promises'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { describe, expect, it } from 'vitest'
-import type { Rules } from '../src'
+import type { RuleContext, Rules } from '../src'
 import remarkMdat, { mdatClean, mdatSplit } from '../src'
 import testRules from './assets/test-rules'
 import testRulesInvalid from './assets/test-rules-invalid'
@@ -346,5 +346,81 @@ describe('VFile message reporting', () => {
 		expect(stripAnsiEscapeCodes(warnMessage!.message)).toMatchInlineSnapshot(
 			`"Missing rule for: <!-- mystery-comment -->"`,
 		)
+	})
+})
+
+describe('rule context', () => {
+	const contextRules: Rules = {
+		'file-path'(_options: unknown, context: RuleContext) {
+			return `Path: ${context.filePath ?? 'unknown'}`
+		},
+		'frontmatter-field'(options: unknown, context: RuleContext) {
+			if (typeof options !== 'object' || options === null || !('field' in options)) {
+				return 'not found'
+			}
+
+			const field = String(options.field)
+			const value = context.frontmatter?.[field]
+			return `${field}: ${typeof value === 'string' ? value : 'not found'}`
+		},
+		'frontmatter-summary'(_options: unknown, context: RuleContext) {
+			const title = context.frontmatter?.title
+			const path = context.filePath ?? 'unknown'
+			return `File "${path}" titled "${typeof title === 'string' ? title : 'untitled'}"`
+		},
+		'frontmatter-tags'(_options: unknown, context: RuleContext) {
+			const tags = context.frontmatter?.tags
+			if (!Array.isArray(tags)) return 'No tags'
+			return tags.map((tag: unknown) => `- ${String(tag)}`).join('\n')
+		},
+		'frontmatter-title'(_options: unknown, context: RuleContext) {
+			const title = context.frontmatter?.title
+			return `Title: ${typeof title === 'string' ? title : 'none'}`
+		},
+	}
+
+	it('should expand fixture file with frontmatter context', async () => {
+		const result = await expandFileToString(
+			'./test/assets/test-document-frontmatter.md',
+			contextRules,
+		)
+		expect(result).toMatchSnapshot()
+	})
+
+	it('should pass parsed frontmatter to rule content functions', async () => {
+		const markdown = `---\ntitle: Hello World\ntags:\n  - one\n  - two\n---\n\n<!-- frontmatter-title -->\n`
+		const result = await expandStringToString(markdown, contextRules)
+		expect(result).toContain('Title: Hello World')
+	})
+
+	it('should pass undefined frontmatter when document has none', async () => {
+		const markdown = `<!-- frontmatter-title -->\n`
+		const result = await expandStringToString(markdown, contextRules)
+		expect(result).toContain('Title: none')
+	})
+
+	it('should pass the mdast tree in context', async () => {
+		const markdown = `# Heading\n\n<!-- check -->\n`
+		const rules: Rules = {
+			check(_options: unknown, context: RuleContext) {
+				const hasHeading = context.tree.children.some((node) => node.type === 'heading')
+				return `Has heading: ${String(hasHeading)}`
+			},
+		}
+		const result = await expandStringToString(markdown, rules)
+		expect(result).toContain('Has heading: true')
+	})
+
+	it('should pass array frontmatter values', async () => {
+		const markdown = `---\ntags:\n  - alpha\n  - beta\n---\n\n<!-- frontmatter-tags -->\n`
+		const result = await expandStringToString(markdown, contextRules)
+		expect(result).toContain('* alpha')
+		expect(result).toContain('* beta')
+	})
+
+	it('should pass frontmatter field via options', async () => {
+		const markdown = `---\ndescription: A great doc\n---\n\n<!-- frontmatter-field({field: "description"}) -->\n`
+		const result = await expandStringToString(markdown, contextRules)
+		expect(result).toContain('description: A great doc')
 	})
 })

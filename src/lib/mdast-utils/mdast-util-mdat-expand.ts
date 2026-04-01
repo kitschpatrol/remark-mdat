@@ -2,11 +2,12 @@
 
 import type { Html, Root } from 'mdast'
 import type { VFile } from 'vfile'
+import { matter } from 'gray-matter-es'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { CONTINUE, visit } from 'unist-util-visit'
 import type { CommentMarkerNode } from '../mdat/parse'
-import type { Rules } from '../mdat/rules'
+import type { RuleContext, Rules } from '../mdat/rules'
 import { saveLog } from '../mdat/mdat-log'
 import { parseCommentNode } from '../mdat/parse'
 import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
@@ -18,6 +19,16 @@ export async function mdatExpand(tree: Root, file: VFile, rules: Rules) {
 	// Make the rules easier to deal with by normalizing to consistent structure
 	validateRules(rules)
 	const normalizedRules = normalizeRules(rules)
+
+	// Build context for rule content functions
+	const frontmatter: Record<string, unknown> | undefined = (() => {
+		if (typeof file.value !== 'string') return
+		const { data } = matter(file.value)
+		return Object.keys(data).length > 0 ? data : undefined
+	})()
+	// File.path getter returns undefined when history is empty, despite the string type
+	const filePath = file.history.length > 0 ? file.path : undefined
+	const context: RuleContext = { filePath, frontmatter, tree }
 
 	// Get all valid comment markers from the tree
 	const commentMarkers: CommentMarkerNode[] = []
@@ -49,7 +60,7 @@ export async function mdatExpand(tree: Root, file: VFile, rules: Rules) {
 		let newMarkdownString = ''
 		try {
 			// Handle compound rules
-			newMarkdownString = await getRuleContent(rule, options, tree)
+			newMarkdownString = await getRuleContent(rule, options, context)
 
 			if (newMarkdownString.trim() === '') {
 				saveLog(file, 'error', 'expand', `Got empty content when expanding ${html}`, node)
