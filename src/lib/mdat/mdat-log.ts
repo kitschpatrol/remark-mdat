@@ -1,5 +1,4 @@
 /* eslint-disable ts/no-unnecessary-condition */
-/* eslint-disable jsdoc/require-jsdoc */
 
 import type { Node } from 'unist'
 import type { VFile } from 'vfile'
@@ -8,22 +7,31 @@ import path from 'node:path'
 import picocolors from 'picocolors'
 import { log } from './log'
 
-/**
- * Tries to provide a simpler wrapper to vfile.message
- */
+/** A simplified representation of a {@link VFileMessage}. */
 export type MdatMessage = {
+	/** Starting column of the message origin. */
 	column?: number
+	/** Severity level. */
 	level: 'error' | 'info' | 'warn'
+	/** Starting line of the message origin. */
 	line?: number
+	/** Human-readable description of the issue. */
 	message: string
+	/** Namespace that produced the message (e.g. the rule name). */
 	source?: string
 }
 
+/** Aggregated processing report for a single file. */
 export type MdatFileReport = {
+	/** Output path if the file was written to a different location. */
 	destinationPath?: string
+	/** Fatal errors that prevented successful processing. */
 	errors: MdatMessage[]
+	/** Informational messages. */
 	infos: MdatMessage[]
+	/** Original input file path. */
 	sourcePath: string
+	/** Non-fatal warnings encountered during processing. */
 	warnings: MdatMessage[]
 }
 
@@ -38,9 +46,10 @@ export type MdatFileReport = {
 // ruleId (string or undefined, example: 'my-rule') — category of message
 // source (string or undefined, example: 'my-package') — namespace of message
 
-// Wrapper for file.message
-
-// Note overloads
+/**
+ * Records a diagnostic message on a VFile at the given location.
+ * Accepts either explicit line/column numbers or a unist Node for position.
+ */
 export function saveLog(
 	file: VFile,
 	level: 'error' | 'info' | 'warn',
@@ -105,6 +114,7 @@ function vFileMessageToMdatMessage(vFileMessage: VFileMessage): MdatMessage {
 	}
 }
 
+/** Converts an array of processed VFiles into {@link MdatFileReport} objects. */
 export function getMdatReports(files: VFile[]): MdatFileReport[] {
 	return files.map((file) => getMdatReport(file))
 }
@@ -136,6 +146,7 @@ function getMdatReport(file: VFile): MdatFileReport {
 	return mdatFileReport
 }
 
+/** Logs a human-readable processing report for each VFile to the library logger. */
 export function reporterMdat(files: VFile[]): void {
 	for (const file of files) {
 		const mdatFileReport = getMdatReport(file)

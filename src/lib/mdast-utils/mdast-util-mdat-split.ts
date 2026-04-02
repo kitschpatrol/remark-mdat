@@ -1,5 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
-
 // @case-police-ignore Html
 
 import type { Html, Root, Text } from 'mdast'
@@ -38,8 +36,7 @@ export function mdatSplit(tree: Root, file: VFile) {
 	})
 }
 
-// Helpers
-// Exported for testing
+/** Splits a single mdast HTML node containing multiple comments into individual HTML and text nodes. Exported for testing. */
 export function splitHtmlIntoMdastNodes(mdastNode: Html): Array<Html | Text> {
 	const htmlTree = fromHtml(mdastNode.value, { fragment: true })
 

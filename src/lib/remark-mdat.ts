@@ -5,7 +5,9 @@ import type { Rules } from './mdat/rules'
 import { mdat } from './mdast-utils/mdast-util-mdat'
 import { normalizeRules, rulesSchema } from './mdat/rules'
 
+/** Configuration for the remarkMdat plugin. */
 export type Options = {
+	/** Rules mapping comment keywords to expansion content. Merged with built-in defaults. */
 	rules?: Rules
 }
 
@@ -13,6 +15,7 @@ const defaultRules: Rules = {
 	mdat: `Powered by the Markdown Autophagic Template system: [mdat](https://github.com/kitschpatrol/mdat).`,
 }
 
+/** Zod schema for validating {@link Options}. */
 export const optionsSchema = z
 	.object({
 		rules: rulesSchema.optional(),

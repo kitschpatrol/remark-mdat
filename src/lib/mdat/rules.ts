@@ -1,12 +1,10 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import type { Root } from 'mdast'
 import type { JsonValue, MergeDeep, Simplify } from 'type-fest'
 import { z } from 'zod'
 
 // Note that more advanced rule loading is implemented in `mdat`
 
-// Type-fest's internal SimplifyDeep implementation is not exported
-// this isn't quite the same, but works for our purposes
+/** Recursively simplifies a type for cleaner IDE hover display. Approximation of type-fest's internal `SimplifyDeep`. */
 export type SimplifyDeep<T> = Simplify<MergeDeep<T, T>>
 
 // Basic interface for comment expanders
@@ -115,6 +113,7 @@ export type Rule =
  */
 export type Rules = SimplifyDeep<Record<string, Rule>>
 
+/** A record mapping comment keywords to {@link NormalizedRule} objects. */
 export type NormalizedRules = SimplifyDeep<Record<string, NormalizedRule>>
 
 /** Brand symbol to detect pre-normalized rules and skip re-validation. */
@@ -125,7 +124,7 @@ export function isNormalized(rules: NormalizedRules | Rules): rules is Normalize
 	return NORMALIZED in rules
 }
 
-// Helpers
+/** Converts flexible {@link Rules} into strict {@link NormalizedRules} for internal processing. */
 export function normalizeRules(rules: Rules): NormalizedRules {
 	validateRules(rules)
 	const normalizedRules: NormalizedRules = {}
@@ -182,6 +181,7 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 	return normalizedRules
 }
 
+/** Validates rules against {@link rulesSchema}, throwing on invalid input. */
 export function validateRules(rules: Rules) {
 	// Check, throws on errors
 	try {
@@ -226,6 +226,7 @@ const keywordSchema = z.string().check(
 	}),
 )
 
+/** Zod schema for validating {@link Rules} records. */
 export const rulesSchema = z.record(keywordSchema, ruleSchema).describe('MDAT Rules')
 
 // ----------------------------------------------------------
