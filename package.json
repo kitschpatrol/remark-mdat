@@ -56,7 +56,7 @@
 		"gray-matter-es": "^0.2.1",
 		"hast-util-from-html": "^2.0.3",
 		"json5": "^2.2.3",
-		"lognow": "^0.5.2",
+		"lognow": "^0.6.0",
 		"picocolors": "^1.1.1",
 		"remark": "^15.0.1",
 		"remark-gfm": "^4.0.1",
@@ -69,7 +69,7 @@
 	},
 	"devDependencies": {
 		"@arethetypeswrong/core": "^0.18.2",
-		"@kitschpatrol/shared-config": "^6.2.0",
+		"@kitschpatrol/shared-config": "^7.0.0",
 		"@types/node": "~20.19.37",
 		"bumpp": "^11.0.1",
 		"publint": "^0.3.18",

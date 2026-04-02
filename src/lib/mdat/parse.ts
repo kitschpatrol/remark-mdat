@@ -64,6 +64,10 @@ export function parseCommentNode(node: Html, parent: Parent): CommentMarkerNode 
 	}
 }
 
+const HTML_COMMENT_OPEN_REGEX = /^\s*<!-{2,}\s*/
+const HTML_COMMENT_CLOSE_REGEX = /\s*-{2,}>\s*$/
+const WHITESPACE_REGEX = /\s/
+
 /**
  * Parse any comment string into structured data.
  * Comments using code-style notation (`//`, `#`, `/*`) are ignored and return `undefined`.
@@ -75,13 +79,17 @@ export function parseComment(text: string): CommentMarker | undefined {
 	const closingPrefix = '/'
 
 	const commentHtml = text.trim()
-	const commentBody = commentHtml.replace(/^\s*<!-{2,}\s*/, '').replace(/\s*-{2,}>\s*$/, '')
+	const commentBody = commentHtml
+		.replace(HTML_COMMENT_OPEN_REGEX, '')
+		.replace(HTML_COMMENT_CLOSE_REGEX, '')
 
 	// Extract keyword and optional function-call arguments
 	// keyword(...) or just keyword
 	const parenIndex = commentBody.indexOf('(')
 	const rawKeyword =
-		parenIndex === -1 ? commentBody.split(/\s/)[0] : commentBody.slice(0, parenIndex).trim()
+		parenIndex === -1
+			? commentBody.split(WHITESPACE_REGEX)[0]
+			: commentBody.slice(0, parenIndex).trim()
 
 	// Ignore code-style comments embedded in HTML comments
 	if (rawKeyword.startsWith('//') || rawKeyword.startsWith('#') || rawKeyword.startsWith('/*')) {

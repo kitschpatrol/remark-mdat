@@ -226,8 +226,10 @@ const ruleSchema: z.ZodType = z.lazy(() =>
 	]),
 )
 
+const COMMENT_PREFIX_REGEX = /^[/*#]/
+
 const keywordSchema = z.string().check(
-	z.refine((key: string) => !/^[/*#]/.test(key), {
+	z.refine((key: string) => !COMMENT_PREFIX_REGEX.test(key), {
 		message:
 			'Rule keywords must not start with "/", "*", or "#" — these prefixes are reserved for comment syntax',
 	}),

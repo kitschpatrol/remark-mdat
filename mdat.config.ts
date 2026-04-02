@@ -1,5 +1,3 @@
 import { mdatConfig } from '@kitschpatrol/mdat-config'
 
-export default mdatConfig({
-	addMetaComment: false,
-})
+export default mdatConfig()
