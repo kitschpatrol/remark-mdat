@@ -8,3 +8,4 @@ package-lock.json
 # Customizations
 *.svg
 .tsup
+test/benchmarks/baseline.json

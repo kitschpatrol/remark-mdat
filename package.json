@@ -41,6 +41,8 @@
 		"dist/*"
 	],
 	"scripts": {
+		"bench": "vitest bench --no-file-parallelism --compare test/benchmarks/baseline.json",
+		"bench:baseline": "vitest bench --no-file-parallelism --outputJson test/benchmarks/baseline.json",
 		"build": "tsdown",
 		"clean": "git rm -f pnpm-lock.yaml ; git clean -fdX",
 		"dev": "pnpm run test",
