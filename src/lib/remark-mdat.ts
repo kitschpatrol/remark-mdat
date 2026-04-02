@@ -3,7 +3,7 @@ import type { Plugin } from 'unified'
 import { z } from 'zod'
 import type { Rules } from './mdat/rules'
 import { mdat } from './mdast-utils/mdast-util-mdat'
-import { rulesSchema } from './mdat/rules'
+import { normalizeRules, rulesSchema } from './mdat/rules'
 
 export type Options = {
 	rules?: Rules
@@ -24,9 +24,10 @@ export const optionsSchema = z
  */
 const remarkMdat: Plugin<[Options?], Root> = function (options) {
 	const resolvedRules: Rules = { ...defaultRules, ...options?.rules }
+	const normalizedRules = normalizeRules(resolvedRules)
 
 	return async function (tree, file) {
-		await mdat(tree, file, resolvedRules)
+		await mdat(tree, file, normalizedRules)
 	}
 }
 

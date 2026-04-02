@@ -117,8 +117,17 @@ export type Rules = SimplifyDeep<Record<string, Rule>>
 
 export type NormalizedRules = SimplifyDeep<Record<string, NormalizedRule>>
 
+/** Brand symbol to detect pre-normalized rules and skip re-validation. */
+const NORMALIZED = Symbol('normalized')
+
+/** Check whether rules have already been normalized. */
+export function isNormalized(rules: NormalizedRules | Rules): rules is NormalizedRules {
+	return NORMALIZED in rules
+}
+
 // Helpers
 export function normalizeRules(rules: Rules): NormalizedRules {
+	validateRules(rules)
 	const normalizedRules: NormalizedRules = {}
 
 	for (const [keyword, rule] of Object.entries(rules)) {
@@ -169,7 +178,7 @@ export function normalizeRules(rules: Rules): NormalizedRules {
 		}
 	}
 
-	validateNormalizedRules(normalizedRules)
+	Object.defineProperty(normalizedRules, NORMALIZED, { value: true })
 	return normalizedRules
 }
 
@@ -184,17 +193,6 @@ export function validateRules(rules: Rules) {
 	}
 }
 
-function validateNormalizedRules(rules: NormalizedRules) {
-	// Check, throws on errors
-	try {
-		normalizedRulesSchema.parse(rules)
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new TypeError(`Error validating rules: ${error.message}`)
-		}
-	}
-}
-
 // ----------------------------------------------------------
 
 // Some duplication here, but less painful than inferring the TS types
@@ -202,13 +200,6 @@ function validateNormalizedRules(rules: NormalizedRules) {
 
 // eslint-disable-next-line ts/no-unsafe-function-type
 const functionSchema = z.custom<Function>((value) => typeof value === 'function')
-
-const normalizedRuleSchema: z.ZodType = z.lazy(() =>
-	z.object({
-		content: z.union([functionSchema, z.array(normalizedRuleSchema)]),
-		order: z.number(),
-	}),
-)
 
 const ruleSchema: z.ZodType = z.lazy(() =>
 	z.union([
@@ -236,7 +227,6 @@ const keywordSchema = z.string().check(
 )
 
 export const rulesSchema = z.record(keywordSchema, ruleSchema).describe('MDAT Rules')
-const normalizedRulesSchema = z.record(keywordSchema, normalizedRuleSchema).describe('MDAT Rules')
 
 // ----------------------------------------------------------
 

@@ -17,6 +17,12 @@ export function mdatSplit(tree: Root, file: VFile) {
 	visit(tree, 'html', (node, index, parent) => {
 		if (parent === undefined || index === undefined) return CONTINUE
 
+		// Fast path: single comments never need splitting
+		const v = node.value
+		if (v.startsWith('<!--') && v.endsWith('-->') && !v.includes('<!--', 4)) {
+			return CONTINUE
+		}
+
 		const htmlNodes = splitHtmlIntoMdastNodes(node)
 
 		if (htmlNodes.length > 1) {

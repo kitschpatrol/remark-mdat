@@ -7,18 +7,17 @@ import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { CONTINUE, visit } from 'unist-util-visit'
 import type { CommentMarkerNode } from '../mdat/parse'
-import type { RuleContext, Rules } from '../mdat/rules'
+import type { NormalizedRules, RuleContext, Rules } from '../mdat/rules'
 import { saveLog } from '../mdat/mdat-log'
 import { parseCommentNode } from '../mdat/parse'
-import { getRuleContent, normalizeRules, validateRules } from '../mdat/rules'
+import { getRuleContent, isNormalized, normalizeRules } from '../mdat/rules'
 
 /**
  * Mdast utility to expand mdat comments in the tree.
  */
-export async function mdatExpand(tree: Root, file: VFile, rules: Rules) {
-	// Make the rules easier to deal with by normalizing to consistent structure
-	validateRules(rules)
-	const normalizedRules = normalizeRules(rules)
+export async function mdatExpand(tree: Root, file: VFile, rules: NormalizedRules | Rules) {
+	// Skip normalization if rules are already normalized (e.g. from plugin init)
+	const normalizedRules = isNormalized(rules) ? rules : normalizeRules(rules)
 
 	// Build context for rule content functions
 	const frontmatter: Record<string, unknown> | undefined = (() => {
@@ -52,6 +51,9 @@ export async function mdatExpand(tree: Root, file: VFile, rules: Rules) {
 	// Sort by order
 	commentMarkers.sort((a, b) => normalizedRules[a.keyword].order - normalizedRules[b.keyword].order)
 
+	// Reuse a single parser for all comment expansions
+	const parser = remark().use(remarkGfm)
+
 	// Expand the rules
 	for (const comment of commentMarkers) {
 		const { html, keyword, node, options, parent } = comment
@@ -84,7 +86,7 @@ export async function mdatExpand(tree: Root, file: VFile, rules: Rules) {
 
 		// String to Markdown Nodes
 		// TODO Consider exposing this for more complex use cases?
-		const newNodes = remark().use(remarkGfm).parse(newMarkdownString).children
+		const newNodes = parser.parse(newMarkdownString).children
 
 		// Add closing tag
 		const closingNode: Html = {
