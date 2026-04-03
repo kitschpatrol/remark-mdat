@@ -46,6 +46,7 @@
   - [Removed options](#removed-options)
   - [Removed rule properties](#removed-rule-properties)
   - [Changed rule properties](#changed-rule-properties)
+  - [Renamed `clean` to `collapse`](#renamed-clean-to-collapse)
   - [Removed validation utility](#removed-validation-utility)
   - [Rule function signature change](#rule-function-signature-change)
   - [Stricter argument syntax](#stricter-argument-syntax)
@@ -273,11 +274,11 @@ Errors and warnings are reported inline during expansion via [VFile messages](ht
 
     _Exported as `mdatSplit(tree: Root, file: VFile): void`_
 
-  - [**`mdast-util-mdat-clean`**](./src/lib/mdast-utils/mdast-util-mdat-clean.ts)
+  - [**`mdast-util-mdat-collapse`**](./src/lib/mdast-utils/mdast-util-mdat-collapse.ts)
 
     Transformer function that resets all mdat comment expansions in a file, collapsing expanded comments back into single-line placeholders.
 
-    _Exported as `mdatClean(tree: Root, file: VFile): void`_
+    _Exported as `mdatCollapse(tree: Root, file: VFile): void`_
 
   - [**`mdast-util-mdat-expand`**](./src/lib/mdast-utils/mdast-util-mdat-expand.ts)
 
@@ -338,6 +339,10 @@ The following plugin options have been removed entirely:
 | Changed property   | Migration          |
 | ------------------ | ------------------ |
 | `applicationOrder` | Change to `order`. |
+
+### Renamed `clean` to `collapse`
+
+The former `mdast-util-mdat-clean` / `mdatClean` is now `mdast-util-mdat-collapse` / `mdatCollapse` since this is more clearly the opposite of "expand", and aligns with language used in the Mdat CLI tool. (Note that `mdatClean` is still available as a deprecated alias, but it will be removed in 3.0.)
 
 ### Removed validation utility
 

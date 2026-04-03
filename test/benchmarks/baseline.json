@@ -369,7 +369,7 @@
           ]
         },
         {
-          "fullName": "test/benchmarks/mdat.bench.ts > clean (split + collapse expanded content)",
+          "fullName": "test/benchmarks/mdat.bench.ts > collapse (split + collapse expanded content)",
           "benchmarks": [
             {
               "id": "-478817275_3_0",

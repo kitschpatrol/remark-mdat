@@ -1,6 +1,7 @@
 // Export utilities for advanced use cases
 export { mdat } from './lib/mdast-utils/mdast-util-mdat'
 export { mdatClean } from './lib/mdast-utils/mdast-util-mdat-clean'
+export { mdatCollapse } from './lib/mdast-utils/mdast-util-mdat-collapse'
 export { mdatExpand } from './lib/mdast-utils/mdast-util-mdat-expand'
 export { mdatSplit } from './lib/mdast-utils/mdast-util-mdat-split'
 export { setLogger } from './lib/mdat/log'

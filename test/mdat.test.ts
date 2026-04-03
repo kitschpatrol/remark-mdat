@@ -6,7 +6,7 @@ import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { describe, expect, it } from 'vitest'
 import type { RuleContext, Rules } from '../src'
-import remarkMdat, { mdatClean, mdatSplit } from '../src'
+import remarkMdat, { mdatCollapse, mdatSplit } from '../src'
 import testRules from './assets/test-rules'
 import testRulesInvalid from './assets/test-rules-invalid'
 
@@ -25,7 +25,7 @@ function stripAnsiEscapeCodes(text: string): string {
 }
 
 // Export for linter
-export async function cleanString(markdown: string): Promise<string> {
+export async function collapseString(markdown: string): Promise<string> {
 	const result = await remark()
 		.use(remarkGfm)
 		.use(
@@ -33,7 +33,7 @@ export async function cleanString(markdown: string): Promise<string> {
 				// eslint-disable-next-line unicorn/consistent-function-scoping
 				function (tree: Root, file: VFile) {
 					mdatSplit(tree, file)
-					mdatClean(tree, file)
+					mdatCollapse(tree, file)
 				},
 		)
 		.process(markdown)
@@ -263,23 +263,23 @@ describe('idempotency', () => {
 	})
 })
 
-describe('clean round-trip', () => {
-	it('should clean expanded comments back to placeholders', async () => {
+describe('collapsed round-trip', () => {
+	it('should collapsed expanded comments back to placeholders', async () => {
 		const original = `<!-- keyword -->\n`
 		const expanded = await expandStringToString(original, { keyword: 'expanded content' })
-		const cleaned = await cleanString(expanded)
-		expect(cleaned.trim()).toBe(original.trim())
+		const collapsed = await collapseString(expanded)
+		expect(collapsed.trim()).toBe(original.trim())
 	})
 
-	it('should preserve surrounding content through expand and clean', async () => {
+	it('should preserve surrounding content through expand and collapsed', async () => {
 		const original = `# Header\n\nSome content\n\n<!-- keyword -->\n\nMore content\n`
 		const expanded = await expandStringToString(original, { keyword: 'expanded' })
-		const cleaned = await cleanString(expanded)
-		expect(cleaned).toContain('# Header')
-		expect(cleaned).toContain('Some content')
-		expect(cleaned).toContain('More content')
-		expect(cleaned).toContain('<!-- keyword -->')
-		expect(cleaned).not.toContain('<!-- /keyword -->')
+		const collapsed = await collapseString(expanded)
+		expect(collapsed).toContain('# Header')
+		expect(collapsed).toContain('Some content')
+		expect(collapsed).toContain('More content')
+		expect(collapsed).toContain('<!-- keyword -->')
+		expect(collapsed).not.toContain('<!-- /keyword -->')
 	})
 })
 
