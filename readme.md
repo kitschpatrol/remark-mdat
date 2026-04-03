@@ -52,6 +52,7 @@
   - [Stricter argument syntax](#stricter-argument-syntax)
   - [Comment-style comments are ignored](#comment-style-comments-are-ignored)
   - [Compound rule error handling](#compound-rule-error-handling)
+  - [New utility: `mdatStrip`](#new-utility-mdatstrip)
   - [Removed export: `deepMergeDefined`](#removed-export-deepmergedefined)
 - [Implementation notes](#implementation-notes)
 - [Maintainers](#maintainers)
@@ -286,6 +287,12 @@ Errors and warnings are reported inline during expansion via [VFile messages](ht
 
     _Exported as `mdatExpand(tree: Root, file: VFile, rules: Rules): Promise<void>`_
 
+- [**`mdast-util-mdat-strip`**](./src/lib/mdast-utils/mdast-util-mdat-strip.ts)
+
+  Transformer function that strips all mdat comment nodes (both opening and closing) from the tree, preserving any content between them. Code-style comments (`<!-- // ... -->`, `<!-- # ... -->`, `<!-- /* ... */ -->`) are left untouched. Useful for producing a final Markdown document with all mdat scaffolding removed.
+
+  _Exported as `mdatStrip(tree: Root, file: VFile): void`_
+
 ## Migrating from 1.x to 2.x
 
 Version 2.0 simplifies and solidifies the API by removing several configuration options and validation features that added complexity without sufficient benefit. The core expansion behavior is unchanged — the plugin still matches HTML comments to rules and expands them — but the way you configure it has changed.
@@ -395,6 +402,10 @@ HTML comments using code-style prefixes (`<!-- // ... -->`, `<!-- # ... -->`, `<
 ### Compound rule error handling
 
 In 1.x, a failing sub-rule in a compound rule (array of rules) caused the entire expansion to fail. In 2.x, individual sub-rule failures are reported as warnings and skipped — the expansion only fails if every sub-rule fails.
+
+### New utility: `mdatStrip`
+
+A new `mdast-util-mdat-strip` utility is available for removing all mdat comment nodes from a document while preserving the content between them. Code-style comments (`//`, `#`, `/*`) are left untouched. This is useful for producing a final Markdown document with no mdat scaffolding. See the [Utilities](#utilities) section for details.
 
 ### Removed export: `deepMergeDefined`
 

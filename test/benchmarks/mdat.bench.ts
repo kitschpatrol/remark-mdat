@@ -6,7 +6,7 @@ import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { bench, describe } from 'vitest'
 import type { Rules } from '../../src'
-import remarkMdat, { mdatCollapse, mdatSplit } from '../../src'
+import remarkMdat, { mdatCollapse, mdatSplit, mdatStrip } from '../../src'
 import { splitHtmlIntoMdastNodes } from '../../src/lib/mdast-utils/mdast-util-mdat-split'
 import { parseComment } from '../../src/lib/mdat/parse'
 import { normalizeRules } from '../../src/lib/mdat/rules'
@@ -106,6 +106,21 @@ async function collapseString(markdown: string): Promise<string> {
 				function (tree: Root, file: VFile) {
 					mdatSplit(tree, file)
 					mdatCollapse(tree, file)
+				},
+		)
+		.process(markdown)
+	return result.toString()
+}
+
+async function stripString(markdown: string): Promise<string> {
+	const result = await remark()
+		.use(remarkGfm)
+		.use(
+			() =>
+				// eslint-disable-next-line unicorn/consistent-function-scoping
+				function (tree: Root, file: VFile) {
+					mdatSplit(tree, file)
+					mdatStrip(tree, file)
 				},
 		)
 		.process(markdown)
@@ -221,6 +236,16 @@ describe('collapse (split + collapse expanded content)', () => {
 
 	bench('large expanded document (50 pairs)', async () => {
 		await collapseString(largeExpandedDoc)
+	})
+})
+
+describe('strip (split + strip mdat comments)', () => {
+	bench('small expanded document (3 pairs)', async () => {
+		await stripString(smallExpandedDoc)
+	})
+
+	bench('large expanded document (50 pairs)', async () => {
+		await stripString(largeExpandedDoc)
 	})
 })
 
