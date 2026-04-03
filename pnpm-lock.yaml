@@ -58,7 +58,7 @@ importers:
         specifier: ^0.18.2
         version: 0.18.2
       '@kitschpatrol/shared-config':
-        specifier: ^7.0.0
+        specifier: ^7.0.1
         version: 7.0.1(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@pnpm/logger@1001.0.1)(@types/estree@1.0.8)(@types/node@20.19.37)(@typescript-eslint/utils@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(jiti@2.6.1)(postcss-html@1.8.1)(stylelint-order@8.1.1(stylelint@17.6.0(typescript@5.9.3)))(svelte@5.55.1)(typescript@5.9.3)(vitest@4.1.2(@types/node@20.19.37)(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@20.19.37)(jiti@2.6.1)(yaml@2.8.3)))
       '@types/node':
         specifier: ~20.19.37
@@ -2760,8 +2760,8 @@ packages:
   fast-xml-builder@1.1.4:
     resolution: {integrity: sha512-f2jhpN4Eccy0/Uz9csxh3Nu6q4ErKxf0XIsasomfOihuSUa3/xw6w8dnOtCDgEItQFJG8KyXPzQXzcODDrrbOg==}
 
-  fast-xml-parser@5.5.9:
-    resolution: {integrity: sha512-jldvxr1MC6rtiZKgrFnDSvT8xuH+eJqxqOBThUVjYrxssYTo1avZLGql5l0a0BAERR01CadYzZ83kVEkbyDg+g==}
+  fast-xml-parser@5.5.10:
+    resolution: {integrity: sha512-go2J2xODMc32hT+4Xr/bBGXMaIoiCwrwp2mMtAvKyvEFW6S/v5Gn2pBmE4nvbwNjGhpcAiOwEv7R6/GZ6XRa9w==}
     hasBin: true
 
   fastest-levenshtein@1.0.16:
@@ -8635,7 +8635,7 @@ snapshots:
     dependencies:
       path-expression-matcher: 1.2.1
 
-  fast-xml-parser@5.5.9:
+  fast-xml-parser@5.5.10:
     dependencies:
       fast-xml-builder: 1.1.4
       path-expression-matcher: 1.2.1
@@ -9687,7 +9687,7 @@ snapshots:
       '@types/yargs': 17.0.35
       case-police: 2.2.0
       defu: 6.1.6
-      fast-xml-parser: 5.5.9
+      fast-xml-parser: 5.5.10
       find-workspaces: 0.3.1
       git-url-parse: 16.1.0
       gray-matter-es: 0.2.1
