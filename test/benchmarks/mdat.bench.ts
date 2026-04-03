@@ -1,12 +1,12 @@
 /* eslint-disable unicorn/prefer-single-call */
 
 import type { Root } from 'mdast'
-import type { VFile } from 'vfile'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
+import { VFile } from 'vfile'
 import { bench, describe } from 'vitest'
 import type { Rules } from '../../src'
-import remarkMdat, { mdatCollapse, mdatSplit, mdatStrip } from '../../src'
+import remarkMdat, { mdatCollapse, mdatDiff, mdatSplit, mdatStrip } from '../../src'
 import { splitHtmlIntoMdastNodes } from '../../src/lib/mdast-utils/mdast-util-mdat-split'
 import { parseComment } from '../../src/lib/mdat/parse'
 import { normalizeRules } from '../../src/lib/mdat/rules'
@@ -284,5 +284,40 @@ describe('full pipeline', () => {
 
 	bench('adjacent comments (10 in one node)', async () => {
 		await processString(adjacentDoc, makeRules(10))
+	})
+})
+
+describe('diff (compare original vs expanded)', () => {
+	bench('small document (3 pairs)', () => {
+		const parser = remark().use(remarkGfm)
+		const originalTree = parser.parse(smallDoc)
+		const originalFile = new VFile(smallDoc)
+		mdatSplit(originalTree, originalFile)
+		const expandedTree = parser.parse(smallExpandedDoc)
+		const expandedFile = new VFile(smallExpandedDoc)
+		mdatSplit(expandedTree, expandedFile)
+		mdatDiff(originalTree, originalFile, expandedTree, expandedFile)
+	})
+
+	bench('large document (50 pairs)', () => {
+		const parser = remark().use(remarkGfm)
+		const originalTree = parser.parse(largeDoc)
+		const originalFile = new VFile(largeDoc)
+		mdatSplit(originalTree, originalFile)
+		const expandedTree = parser.parse(largeExpandedDoc)
+		const expandedFile = new VFile(largeExpandedDoc)
+		mdatSplit(expandedTree, expandedFile)
+		mdatDiff(originalTree, originalFile, expandedTree, expandedFile)
+	})
+
+	bench('identical documents (no diff)', () => {
+		const parser = remark().use(remarkGfm)
+		const tree1 = parser.parse(smallExpandedDoc)
+		const file1 = new VFile(smallExpandedDoc)
+		mdatSplit(tree1, file1)
+		const tree2 = parser.parse(smallExpandedDoc)
+		const file2 = new VFile(smallExpandedDoc)
+		mdatSplit(tree2, file2)
+		mdatDiff(tree1, file1, tree2, file2)
 	})
 })
