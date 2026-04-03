@@ -2,6 +2,7 @@
 export { mdat } from './lib/mdast-utils/mdast-util-mdat'
 export { mdatClean } from './lib/mdast-utils/mdast-util-mdat-clean'
 export { mdatCollapse } from './lib/mdast-utils/mdast-util-mdat-collapse'
+export { mdatDiff, type MdatDiffResult } from './lib/mdast-utils/mdast-util-mdat-diff'
 export { mdatExpand } from './lib/mdast-utils/mdast-util-mdat-expand'
 export { mdatSplit } from './lib/mdast-utils/mdast-util-mdat-split'
 export { mdatStrip } from './lib/mdast-utils/mdast-util-mdat-strip'

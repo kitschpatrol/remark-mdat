@@ -8,8 +8,9 @@ import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 import { saveLog } from '../mdat/mdat-log'
 
 /**
- * Mdast utility plugin to split any multi-comment nodes and their content into individual MDAST HTML
- * nodes. They're wrapped in a paragraph so as not to introduce new breaks.
+ * Mdast utility plugin to split any multi-comment nodes and their content into
+ * individual MDAST HTML nodes. They're wrapped in a paragraph so as not to
+ * introduce new breaks.
  */
 export function mdatSplit(tree: Root, file: VFile) {
 	visit(tree, 'html', (node, index, parent) => {
@@ -36,7 +37,10 @@ export function mdatSplit(tree: Root, file: VFile) {
 	})
 }
 
-/** Splits a single mdast HTML node containing multiple comments into individual HTML and text nodes. Exported for testing. */
+/**
+ * Splits a single mdast HTML node containing multiple comments into individual
+ * HTML and text nodes. Exported for testing.
+ */
 export function splitHtmlIntoMdastNodes(mdastNode: Html): Array<Html | Text> {
 	const htmlTree = fromHtml(mdastNode.value, { fragment: true })
 
@@ -75,6 +79,7 @@ function addStartPoint(
 	position: Position | undefined,
 	start: Point | undefined,
 ): Position | undefined {
+	// Defensive: hast nodes and mdast nodes always have positions
 	if (position === undefined || start === undefined) return undefined
 
 	// The column offset from the parent mdast node only applies to hast
@@ -90,6 +95,7 @@ function addStartPoint(
 					? position.start.column - 1 + start.column
 					: position.start.column,
 			line: startLine,
+			// Defensive: offsets always present from parser
 			offset:
 				position.start.offset !== undefined && start.offset !== undefined
 					? position.start.offset + start.offset
@@ -99,6 +105,7 @@ function addStartPoint(
 			column:
 				position.end.line === 1 ? position.end.column - 1 + start.column : position.end.column,
 			line: endLine,
+			// Defensive: offsets always present from parser
 			offset:
 				position.end.offset !== undefined && start.offset !== undefined
 					? position.end.offset + start.offset
@@ -112,6 +119,7 @@ function getOriginalMarkup(mdastNode: Html, hastNode: Node): string {
 	// But could create issues where the HTML is not exactly the same as the original
 	// toHtml(hastNode)
 
+	// Defensive: hast-util-from-html always provides positions
 	if (hastNode.position === undefined) {
 		throw new Error('Hast ElementContent node has no position!')
 	}

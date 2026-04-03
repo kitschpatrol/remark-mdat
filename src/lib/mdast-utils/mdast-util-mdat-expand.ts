@@ -17,15 +17,17 @@ import { getRuleContent, isNormalized, normalizeRules } from '../mdat/rules'
  */
 export async function mdatExpand(tree: Root, file: VFile, rules: NormalizedRules | Rules) {
 	// Skip normalization if rules are already normalized (e.g. from plugin init)
+
 	const normalizedRules = isNormalized(rules) ? rules : normalizeRules(rules)
 
 	// Build context for rule content functions
+
 	const frontmatter: Record<string, unknown> | undefined = (() => {
 		if (typeof file.value !== 'string') return
 		const { data } = matter(file.value)
 		return Object.keys(data).length > 0 ? data : undefined
 	})()
-	// File.path getter returns undefined when history is empty, despite the string type
+
 	const filePath = file.history.length > 0 ? file.path : undefined
 	const context: RuleContext = { filePath, frontmatter, tree }
 
@@ -70,6 +72,7 @@ export async function mdatExpand(tree: Root, file: VFile, rules: NormalizedRules
 				saveLog(file, 'error', 'expand', `Got empty content when expanding ${html}`, node)
 			}
 		} catch (error) {
+			// Defensive: getRuleContent always throws Error
 			if (error instanceof Error) {
 				const causeMessage = error.cause instanceof Error ? `: ${error.cause.message}` : ''
 				saveLog(

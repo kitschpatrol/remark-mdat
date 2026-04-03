@@ -27,35 +27,34 @@ export function mdatCollapse(tree: Root, file: VFile): void {
 			return CONTINUE
 		}
 
-		// eslint-disable-next-line ts/no-unnecessary-condition
-		if (marker.type === 'close') {
-			// Check the match
-			if (lastOpenMarker === undefined) {
-				saveLog(file, 'error', 'collapse', 'Found closing marker without opening marker', node)
-				return CONTINUE
-			}
+		// If marker.type === 'close'
 
-			if (lastOpenMarker.parent !== marker.parent) {
-				saveLog(file, 'error', 'collapse', "Opening marker doesn't share a parent", node)
-				return CONTINUE
-			}
-
-			if (lastOpenMarker.keyword !== marker.keyword) {
-				saveLog(file, 'error', 'collapse', "Opening marker doesn't share a keyword", node)
-				return CONTINUE
-			}
-
-			// Remove everything between the opening and closing markers, and remove
-			// the closing marker as well
-			const openMarkerIndex = parent.children.indexOf(lastOpenMarker.node)
-			const closeMarkerIndex = parent.children.indexOf(marker.node)
-			const nodesToRemove = closeMarkerIndex - openMarkerIndex + 1
-
-			parent.children.splice(openMarkerIndex + 1, nodesToRemove - 1)
-			lastOpenMarker = undefined
-
-			// Return revised index since we spliced out nodes
-			return [CONTINUE, index - nodesToRemove + 1]
+		// Check the match
+		if (lastOpenMarker === undefined) {
+			saveLog(file, 'error', 'collapse', 'Found closing marker without opening marker', node)
+			return CONTINUE
 		}
+
+		if (lastOpenMarker.parent !== marker.parent) {
+			saveLog(file, 'error', 'collapse', "Opening marker doesn't share a parent", node)
+			return CONTINUE
+		}
+
+		if (lastOpenMarker.keyword !== marker.keyword) {
+			saveLog(file, 'error', 'collapse', "Opening marker doesn't share a keyword", node)
+			return CONTINUE
+		}
+
+		// Remove everything between the opening and closing markers, and remove
+		// the closing marker as well
+		const openMarkerIndex = parent.children.indexOf(lastOpenMarker.node)
+		const closeMarkerIndex = parent.children.indexOf(marker.node)
+		const nodesToRemove = closeMarkerIndex - openMarkerIndex + 1
+
+		parent.children.splice(openMarkerIndex + 1, nodesToRemove - 1)
+		lastOpenMarker = undefined
+
+		// Return revised index since we spliced out nodes
+		return [CONTINUE, index - nodesToRemove + 1]
 	})
 }

@@ -293,6 +293,12 @@ Errors and warnings are reported inline during expansion via [VFile messages](ht
 
   _Exported as `mdatStrip(tree: Root, file: VFile): void`_
 
+- [**`mdast-util-mdat-diff`**](./src/lib/mdast-utils/mdast-util-mdat-diff.ts)
+
+  Compares an original document against an expanded document per-tag, identifying which mdat comments have stale content, are unexpanded, or are up to date. Reports results via VFile messages (`source: 'diff'`) and returns structured `MdatDiffResult[]`. Both trees should have `mdatSplit` applied before calling. Useful for implementing `check` commands that report which specific tags need updating.
+
+  _Exported as `mdatDiff(originalTree: Root, originalFile: VFile, expandedTree: Root, expandedFile: VFile): MdatDiffResult[]`_
+
 ## Migrating from 1.x to 2.x
 
 Version 2.0 simplifies and solidifies the API by removing several configuration options and validation features that added complexity without sufficient benefit. The core expansion behavior is unchanged — the plugin still matches HTML comments to rules and expands them — but the way you configure it has changed.
