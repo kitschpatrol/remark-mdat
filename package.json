@@ -45,6 +45,7 @@
 		"bench:baseline": "vitest bench --run --no-file-parallelism --outputJson test/benchmarks/baseline.json",
 		"build": "tsdown",
 		"clean": "git rm -f pnpm-lock.yaml ; git clean -fdX",
+		"coverage": "vitest --coverage --run",
 		"dev": "pnpm run test",
 		"fix": "ksc fix",
 		"lint": "ksc lint",

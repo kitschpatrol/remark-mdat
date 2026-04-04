@@ -317,6 +317,19 @@ describe('comment type detection', () => {
 	})
 })
 
+describe('comment option parse errors', () => {
+	it('should throw on invalid JSON5 in options', () => {
+		expect(() => parseComment('<!-- keyword({bad: ) -->')).toThrow(
+			'Failed to parse comment options',
+		)
+	})
+
+	it('should treat unclosed parentheses as no-args', () => {
+		const result = parseComment('<!-- keyword(something -->')
+		expect(result?.options).toEqual({})
+	})
+})
+
 describe('code-style comment ignoring', () => {
 	it('should ignore double-slash line comments', () => {
 		expect(parseComment('<!-- // line comment -->')).toBeUndefined()

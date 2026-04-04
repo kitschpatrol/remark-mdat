@@ -10,21 +10,25 @@ import { VFileMessage } from 'vfile-message'
  * Structured data about a parsed comment.
  */
 type CommentMarker = Simplify<{
-	/** The complete original comment, e.g. `<!-- keyword -->`  */
+	/** The complete original comment, e.g. `<!-- keyword -->` */
 	html: string
-	/** The first complete word in the comment  */
+	/** The first complete word in the comment */
 	keyword: string
-	/** Parsed JSON object of argument string that followed the keyword, empty object if nothing passed  */
+	/**
+	 * Parsed JSON object of argument string that followed the keyword, empty
+	 * object if nothing passed
+	 */
 	options: JsonValue
 	/**
-	 * `open`: A mdat-style opening comment tag, e.g. `<!-- keyword -->`  \
+	 * `open`: A mdat-style opening comment tag, e.g. `<!-- keyword -->`\
 	 * `close`: A mdat-style closing comment tag, e.g. `<!-- /keyword -->`
 	 */
 	type: 'close' | 'open'
 }>
 
 /**
- * Parsed comment with additional information about the Mdast Node and its Parent.
+ * Parsed comment with additional information about the Mdast Node and its
+ * Parent.
  */
 export type CommentMarkerNode = Simplify<
 	CommentMarker & {
@@ -37,7 +41,9 @@ export type CommentMarkerNode = Simplify<
 
 /**
  * Parse an Mdast HTML comment node into structured data.
- * @returns A CommentMarkerNode or undefined if the node is not a recognized comment.
+ *
+ * @returns A CommentMarkerNode or undefined if the node is not a recognized
+ *   comment.
  */
 export function parseCommentNode(node: Html, parent: Parent): CommentMarkerNode | undefined {
 	try {
@@ -56,11 +62,15 @@ export function parseCommentNode(node: Html, parent: Parent): CommentMarkerNode 
 		if (error instanceof VFileMessage) {
 			error.line = node.position?.start.line
 			throw error
-		} else if (error instanceof Error) {
-			throw new VFileMessage(error.message, node)
-		} else {
-			throw new VFileMessage('Unknown error', node)
 		}
+
+		// Defensive: parseComment only throws VFileMessage
+		if (error instanceof Error) {
+			throw new VFileMessage(error.message, node)
+		}
+
+		// Defensive: parseComment only throws VFileMessage
+		throw new VFileMessage('Unknown error', node)
 	}
 }
 
@@ -69,9 +79,11 @@ const HTML_COMMENT_CLOSE_REGEX = /\s*-{2,}>\s*$/
 const WHITESPACE_REGEX = /\s/
 
 /**
- * Parse any comment string into structured data.
- * Comments using code-style notation (`//`, `#`, `/*`) are ignored and return `undefined`.
- * @returns A CommentMarker or undefined if the node is not a recognized comment.
+ * Parse any comment string into structured data. Comments using code-style
+ * notation (`//`, `#`, `/*`) are ignored and return `undefined`.
+ *
+ * @returns A CommentMarker or undefined if the node is not a recognized
+ *   comment.
  */
 export function parseComment(text: string): CommentMarker | undefined {
 	if (!isComment(text)) return
@@ -114,6 +126,7 @@ export function parseComment(text: string): CommentMarker | undefined {
 				try {
 					options = json5.parse<JsonValue>(argText)
 				} catch (error) {
+					// Defensive: json5 always throws Error
 					if (error instanceof Error) {
 						throw new VFileMessage(
 							`Failed to parse comment options "${argText}" for keyword "${keyword}": ${error.message}`,

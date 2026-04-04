@@ -47,8 +47,8 @@ export type MdatFileReport = {
 // source (string or undefined, example: 'my-package') — namespace of message
 
 /**
- * Records a diagnostic message on a VFile at the given location.
- * Accepts either explicit line/column numbers or a unist Node for position.
+ * Records a diagnostic message on a VFile at the given location. Accepts either
+ * explicit line/column numbers or a unist Node for position.
  */
 export function saveLog(
 	file: VFile,
@@ -78,10 +78,12 @@ export function saveLog(
 
 	if (lineOrNode === undefined || typeof lineOrNode === 'number') {
 		// Handle the case where lineOrNode is a number
+		// Defensive: nullish defines, and both overloads tested
 		line = lineOrNode ?? 0
 		column = maybeColumn ?? 0 // Use the provided column or default to 0
 	} else {
 		// Handle the case where lineOrNode is a Node
+		// defensive: nodes from parser always have positions
 		line = lineOrNode?.position?.start.line ?? 0
 		column = lineOrNode?.position?.start.column ?? 0
 	}
@@ -183,6 +185,7 @@ function mdatMessageToLogString(sourcePath: string, mdatMessage: MdatMessage): s
 
 	const resolvedSource = source ? picocolors.gray(`[${source}] `) : ''
 	const lineColumn = line && column ? `:${line}:${column}` : ''
+
 	const highlightedMessage = highlightComments(message, level)
 
 	return `${resolvedSource}${highlightedMessage} ${picocolors.whiteBright(sourcePath + lineColumn)}`

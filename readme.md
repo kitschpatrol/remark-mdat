@@ -295,7 +295,7 @@ Errors and warnings are reported inline during expansion via [VFile messages](ht
 
 - [**`mdast-util-mdat-diff`**](./src/lib/mdast-utils/mdast-util-mdat-diff.ts)
 
-  Compares an original document against an expanded document per-tag, identifying which mdat comments have stale content, are unexpanded, or are up to date. Reports results via VFile messages (`source: 'diff'`) and returns structured `MdatDiffResult[]`. Both trees should have `mdatSplit` applied before calling. Useful for implementing `check` commands that report which specific tags need updating.
+  Compares an original document against an expanded document per-tag, identifying which mdat comments have stale content, are unexpanded, missing, or are up to date. Reports results via VFile messages (`source: 'diff'`) and returns structured `MdatDiffResult[]`. Both trees should have `mdatSplit` applied before calling. Useful for implementing `check` commands that report which specific tags need updating.
 
   _Exported as `mdatDiff(originalTree: Root, originalFile: VFile, expandedTree: Root, expandedFile: VFile): MdatDiffResult[]`_
 
