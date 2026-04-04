@@ -242,6 +242,60 @@ describe('mdatDiff', () => {
 		expect(results).toEqual([{ keyword: 'tag', line: 1, status: 'unexpanded' }])
 	})
 
+	it('should report added for tags only present in expanded', () => {
+		const original = '# Just text'
+		const expanded = '<!-- new -->\n\ncontent\n\n<!-- /new -->'
+		const { expandedFile, expandedTree, originalFile, originalTree } = prepareDiff(
+			original,
+			expanded,
+		)
+		const results = mdatDiff(originalTree, originalFile, expandedTree, expandedFile)
+		expect(results).toEqual([{ keyword: 'new', line: 1, status: 'added' }])
+	})
+
+	it('should handle consecutive open markers without close between them', () => {
+		const original = ['<!-- a -->', '', '<!-- b -->', '', 'content b', '', '<!-- /b -->'].join('\n')
+		const expanded = [
+			'<!-- a -->',
+			'',
+			'expanded a',
+			'',
+			'<!-- /a -->',
+			'',
+			'<!-- b -->',
+			'',
+			'content b',
+			'',
+			'<!-- /b -->',
+		].join('\n')
+
+		const { expandedFile, expandedTree, originalFile, originalTree } = prepareDiff(
+			original,
+			expanded,
+		)
+		const results = mdatDiff(originalTree, originalFile, expandedTree, expandedFile)
+		expect(results.some((r) => r.keyword === 'a' && r.status === 'unexpanded')).toBe(true)
+		expect(results.some((r) => r.keyword === 'b')).toBe(true)
+	})
+
+	it('should warn about mismatched close markers', () => {
+		const text = '<!-- a -->\n\ncontent\n\n<!-- /b -->'
+		const { expandedFile, expandedTree, originalFile, originalTree } = prepareDiff(text, text)
+		mdatDiff(originalTree, originalFile, expandedTree, expandedFile)
+
+		const warnings = expandedFile.messages.filter((m) => m.fatal === false)
+		expect(warnings.some((w) => w.reason.includes('Keyword mismatch'))).toBe(true)
+	})
+
+	it('should warn about orphan close markers', () => {
+		const text = '<!-- /orphan -->'
+		const { expandedFile, expandedTree, originalFile, originalTree } = prepareDiff(text, text)
+		mdatDiff(originalTree, originalFile, expandedTree, expandedFile)
+
+		const warnings = expandedFile.messages.filter((m) => m.fatal === false)
+		expect(warnings.some((w) => w.reason.includes('Close marker without open'))).toBe(true)
+	})
+
 	it('should handle document with no mdat tags', () => {
 		const text = '# Just a heading\n\nSome text.'
 		const { expandedFile, expandedTree, originalFile, originalTree } = prepareDiff(text, text)

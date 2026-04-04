@@ -87,6 +87,16 @@ describe('normalizeRules', () => {
 		expect(Array.isArray(normalized.header.content)).toBe(true)
 	})
 
+	it('should default order to 0 for object-form compound rules without order', () => {
+		const rules: Rules = {
+			header: {
+				content: ['one', 'two'],
+			},
+		}
+		const normalized = normalizeRules(rules)
+		expect(normalized.header.order).toBe(0)
+	})
+
 	it('should default optional metadata fields', () => {
 		const rules: Rules = {
 			minimal: {

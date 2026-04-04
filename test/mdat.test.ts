@@ -317,6 +317,15 @@ describe('argument edge cases', () => {
 	})
 })
 
+describe('parse error propagation', () => {
+	it('should propagate parse errors from invalid JSON5 in comment options', async () => {
+		const markdown = `<!-- keyword({bad: ) -->\n`
+		await expect(expandStringToString(markdown, { keyword: 'content' })).rejects.toThrow(
+			'Failed to parse comment options',
+		)
+	})
+})
+
 describe('async error handling', () => {
 	it('should report errors when async rules reject', async () => {
 		const rules: Rules = {
@@ -385,6 +394,63 @@ describe('VFile message reporting', () => {
 		expect(stripAnsiEscapeCodes(warnMessage!.message)).toMatchInlineSnapshot(
 			`"Missing rule for: <!-- mystery-comment -->"`,
 		)
+	})
+})
+
+describe('collapse error paths', () => {
+	it('should handle closing marker without opening marker', async () => {
+		const markdown = `<!-- /orphan -->\n`
+		const result = await remark()
+			.use(remarkGfm)
+			.use(
+				() =>
+					// eslint-disable-next-line unicorn/consistent-function-scoping
+					function (tree: Root, file: VFile) {
+						mdatSplit(tree, file)
+						mdatCollapse(tree, file)
+					},
+			)
+			.process(markdown)
+		const error = result.messages.find((m) => m.fatal === true)
+		expect(error).toBeDefined()
+		expect(error!.reason).toContain('closing marker without opening marker')
+	})
+
+	it('should handle keyword mismatch between open and close markers', async () => {
+		const markdown = `<!-- alpha -->\n\ncontent\n\n<!-- /beta -->\n`
+		const result = await remark()
+			.use(remarkGfm)
+			.use(
+				() =>
+					// eslint-disable-next-line unicorn/consistent-function-scoping
+					function (tree: Root, file: VFile) {
+						mdatSplit(tree, file)
+						mdatCollapse(tree, file)
+					},
+			)
+			.process(markdown)
+		const error = result.messages.find((m) => m.fatal === true)
+		expect(error).toBeDefined()
+		expect(error!.reason).toContain("doesn't share a keyword")
+	})
+
+	it('should handle open and close markers in different parents', async () => {
+		// Open inside a blockquote, close outside
+		const markdown = `> <!-- nested -->\n\n<!-- /nested -->\n`
+		const result = await remark()
+			.use(remarkGfm)
+			.use(
+				() =>
+					// eslint-disable-next-line unicorn/consistent-function-scoping
+					function (tree: Root, file: VFile) {
+						mdatSplit(tree, file)
+						mdatCollapse(tree, file)
+					},
+			)
+			.process(markdown)
+		const error = result.messages.find((m) => m.fatal === true)
+		expect(error).toBeDefined()
+		expect(error!.reason).toContain("doesn't share a parent")
 	})
 })
 
