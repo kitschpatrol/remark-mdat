@@ -4,14 +4,7 @@
 
 <!-- /title -->
 
-<!-- badges { custom: {
-    "CI": {
-      image: "https://github.com/kitschpatrol/remark-mdat/actions/workflows/ci.yml/badge.svg",
-      link: "https://github.com/kitschpatrol/remark-mdat/actions/workflows/ci.yml",
-    },
-  }
-}
--->
+<!-- badges -->
 
 [![NPM Package remark-mdat](https://img.shields.io/npm/v/remark-mdat.svg)](https://npmjs.com/package/remark-mdat)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -361,6 +354,8 @@ The former `mdast-util-mdat-clean` / `mdatClean` is now `mdast-util-mdat-collaps
 
 The `mdast-util-mdat-check` utility and its export `mdatCheck` have been removed. Validation logic (missing rules, empty content, rule errors) is now handled inline during expansion by `mdatExpand`, which reports issues as VFile messages. Use `reporterMdat` to format and display these messages.
 
+For use cases where you need to check whether a file's expansions are up to date without modifying it (similar to `validate` in 1.x), use the new `mdatDiff` utility. It compares an original document against a freshly expanded version per-tag, identifying stale, unexpanded, or missing comments and reporting structured results.
+
 ### Rule function signature change
 
 In 1.x, rule content functions received the mdast tree directly as the second argument:
@@ -387,7 +382,7 @@ In 1.x, the argument parser was very permissive — parentheses were optional, b
 
 ```md
 <!-- greeting name: "Alice" -->
-<!-- greeting {name: "Alice"} -->
+<!-- greeting ({name: "Alice"}) -->
 <!-- greeting({name: "Alice"}) -->
 ```
 
@@ -427,7 +422,7 @@ Remark is not a peer dependency on account of this discussion: [strip-markdown/i
 
 ## Maintainers
 
-[@kitschpatrol](https://github.com/kitschpatrol)
+[kitschpatrol](https://github.com/kitschpatrol)
 
 ## Acknowledgments
 
