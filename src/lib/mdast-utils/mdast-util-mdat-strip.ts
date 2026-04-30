@@ -10,11 +10,15 @@ import { parseCommentNode } from '../mdat/parse'
  */
 export function mdatStrip(tree: Root, _file: VFile): void {
 	visit(tree, 'html', (node, index, parent) => {
-		if (parent === undefined || index === undefined) return CONTINUE
+		if (parent === undefined || index === undefined) {
+			return CONTINUE
+		}
 
 		const marker = parseCommentNode(node, parent)
 
-		if (marker === undefined) return CONTINUE
+		if (marker === undefined) {
+			return CONTINUE
+		}
 
 		parent.children.splice(index, 1)
 

@@ -4,7 +4,6 @@ onlyBuiltDependencies:
   - puppeteer
   - unrs-resolver
 
-# Required by @kitschpatrol/shared-config
 publicHoistPattern:
   - '@kitschpatrol/repo-config'
   - '@kitschpatrol/typescript-config'

@@ -7,7 +7,10 @@ import { normalizeRules, rulesSchema } from './mdat/rules'
 
 /** Configuration for the remarkMdat plugin. */
 export type Options = {
-	/** Rules mapping comment keywords to expansion content. Merged with built-in defaults. */
+	/**
+	 * Rules mapping comment keywords to expansion content. Merged with built-in
+	 * defaults.
+	 */
 	rules?: Rules
 }
 

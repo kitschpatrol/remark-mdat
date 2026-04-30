@@ -15,12 +15,16 @@ export function mdatCollapse(tree: Root, file: VFile): void {
 	// Find closing tags, then go back to last opening tag
 	let lastOpenMarker: CommentMarkerNode | undefined
 	visit(tree, 'html', (node, index, parent) => {
-		if (parent === undefined || index === undefined) return CONTINUE
+		if (parent === undefined || index === undefined) {
+			return CONTINUE
+		}
 
 		// Parse the marker to find probably mdat comments
 		const marker = parseCommentNode(node, parent)
 
-		if (marker === undefined) return CONTINUE
+		if (marker === undefined) {
+			return CONTINUE
+		}
 
 		if (marker.type === 'open') {
 			lastOpenMarker = marker

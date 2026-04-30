@@ -23,7 +23,10 @@ export async function mdatExpand(tree: Root, file: VFile, rules: NormalizedRules
 	// Build context for rule content functions
 
 	const frontmatter: Record<string, unknown> | undefined = (() => {
-		if (typeof file.value !== 'string') return
+		if (typeof file.value !== 'string') {
+			return
+		}
+
 		const { data } = matter(file.value)
 		return Object.keys(data).length > 0 ? data : undefined
 	})()
@@ -34,12 +37,16 @@ export async function mdatExpand(tree: Root, file: VFile, rules: NormalizedRules
 	// Get all valid comment markers from the tree
 	const commentMarkers: CommentMarkerNode[] = []
 	visit(tree, 'html', (node, index, parent) => {
-		if (parent === undefined || index === undefined) return CONTINUE
+		if (parent === undefined || index === undefined) {
+			return CONTINUE
+		}
 
 		// Find all <!-- mdat --> comments
 		const commentMarker = parseCommentNode(node, parent)
 
-		if (commentMarker?.type !== 'open') return CONTINUE
+		if (commentMarker?.type !== 'open') {
+			return CONTINUE
+		}
 
 		// eslint-disable-next-line ts/no-unnecessary-condition
 		if (normalizedRules[commentMarker.keyword] === undefined) {

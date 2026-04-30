@@ -93,11 +93,15 @@ function extractSections(tree: Root, text: string, file: VFile): TagSection[] {
 	let lastOpenEndOffset: number | undefined
 
 	visit(tree, 'html', (node, index, parent) => {
-		if (parent === undefined || index === undefined) return CONTINUE
+		if (parent === undefined || index === undefined) {
+			return CONTINUE
+		}
 
 		const marker = parseCommentNode(node, parent)
 
-		if (marker === undefined) return CONTINUE
+		if (marker === undefined) {
+			return CONTINUE
+		}
 
 		if (marker.type === 'open') {
 			// If there was a previous unmatched open, record it as unexpanded

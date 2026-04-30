@@ -14,7 +14,9 @@ import { saveLog } from '../mdat/mdat-log'
  */
 export function mdatSplit(tree: Root, file: VFile) {
 	visit(tree, 'html', (node, index, parent) => {
-		if (parent === undefined || index === undefined) return CONTINUE
+		if (parent === undefined || index === undefined) {
+			return CONTINUE
+		}
 
 		// Fast path: single comments never need splitting
 		const v = node.value
@@ -48,7 +50,9 @@ export function splitHtmlIntoMdastNodes(mdastNode: Html): Array<Html | Text> {
 
 	visit(htmlTree, (hastNode) => {
 		// Ignore the root
-		if (hastNode.type === 'root') return CONTINUE
+		if (hastNode.type === 'root') {
+			return CONTINUE
+		}
 
 		// Return text as normal mdast node
 		if (hastNode.type === 'text') {
@@ -80,7 +84,9 @@ function addStartPoint(
 	start: Point | undefined,
 ): Position | undefined {
 	// Defensive: hast nodes and mdast nodes always have positions
-	if (position === undefined || start === undefined) return undefined
+	if (position === undefined || start === undefined) {
+		return undefined
+	}
 
 	// The column offset from the parent mdast node only applies to hast
 	// positions on line 1 of the fragment; positions on subsequent lines

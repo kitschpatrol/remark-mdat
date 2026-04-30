@@ -86,7 +86,9 @@ const WHITESPACE_REGEX = /\s/
  *   comment.
  */
 export function parseComment(text: string): CommentMarker | undefined {
-	if (!isComment(text)) return
+	if (!isComment(text)) {
+		return
+	}
 
 	const closingPrefix = '/'
 
