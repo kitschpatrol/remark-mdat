@@ -262,6 +262,7 @@ Errors and warnings are reported inline during expansion via [VFile messages](ht
   _Exported as `mdat(tree: Root, file: VFile, rules: Rules): Promise<void>`_
 
   Utilities wrapped by `mdast-util-mdat`:
+
   - [**`mdast-util-mdat-split`**](./src/lib/mdast-utils/mdast-util-mdat-split.ts)
 
     Transformer function that splits multi-comment HTML nodes into individual mdast nodes, allowing inline mdat expansion comments.

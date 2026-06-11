@@ -63,7 +63,7 @@
 		"picocolors": "^1.1.1",
 		"remark": "^15.0.1",
 		"remark-gfm": "^4.0.1",
-		"type-fest": "^5.6.0",
+		"type-fest": "^5.7.0",
 		"unified": "^11.0.5",
 		"unist-util-visit": "^5.1.0",
 		"vfile": "^6.0.3",
@@ -71,25 +71,25 @@
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {
-		"@arethetypeswrong/core": "^0.18.2",
-		"@kitschpatrol/shared-config": "^7.6.0",
+		"@arethetypeswrong/core": "^0.18.3",
+		"@kitschpatrol/shared-config": "^7.6.3",
 		"@types/node": "~20.19.41",
-		"@vitest/coverage-v8": "^4.1.6",
+		"@vitest/coverage-v8": "^4.1.8",
 		"bumpp": "^11.1.0",
 		"publint": "^0.3.21",
 		"shx": "^0.4.0",
-		"tsdown": "^0.22.0",
+		"tsdown": "^0.22.2",
 		"typescript": "~5.9.3",
-		"vitest": "^4.1.6"
+		"vitest": "^4.1.8"
 	},
-	"packageManager": "pnpm@11.1.2",
+	"packageManager": "pnpm@11.5.1",
 	"engines": {
 		"node": ">=20.19.6"
 	},
 	"devEngines": {
 		"runtime": {
 			"name": "node",
-			"version": ">=22.21.0"
+			"version": ">=22.22.2"
 		}
 	}
 }
