@@ -1,6 +1,6 @@
 {
 	"name": "remark-mdat",
-	"version": "2.2.3",
+	"version": "2.2.4",
 	"description": "A remark plugin implementing the Markdown Autophagic Template (MDAT) system.",
 	"keywords": [
 		"mdat",
