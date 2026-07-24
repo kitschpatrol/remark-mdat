@@ -11,7 +11,6 @@ async function stripString(markdown: string): Promise<string> {
 		.use(remarkGfm)
 		.use(
 			() =>
-				// eslint-disable-next-line unicorn/consistent-function-scoping
 				function (tree: Root, file: VFile) {
 					mdatSplit(tree, file)
 					mdatStrip(tree, file)
@@ -151,7 +150,6 @@ More content.
 
 	it('should strip expanded keywords with options', async () => {
 		const rules: Rules = {
-			// eslint-disable-next-line ts/no-unsafe-type-assertion
 			greet: (options) => `Hello, ${(options as { name: string }).name}!`,
 		}
 		const result = await expandThenStrip('<!-- greet({name: "Alice"}) -->\n', rules)

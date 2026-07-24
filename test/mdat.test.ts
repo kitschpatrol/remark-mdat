@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import type { Root } from 'mdast'
 import type { VFile } from 'vfile'
 import fs from 'node:fs/promises'
@@ -21,16 +20,14 @@ async function expandStringToVfile(markdown: string, rules: Rules): Promise<VFil
 
 function stripAnsiEscapeCodes(text: string): string {
 	// eslint-disable-next-line no-control-regex
-	return text.replaceAll(/\u001B\[[\d;]*m/g, '')
+	return text.replaceAll(/\u{1B}\[[\d;]*m/gv, '')
 }
 
-// Export for linter
-export async function collapseString(markdown: string): Promise<string> {
+async function collapseString(markdown: string): Promise<string> {
 	const result = await remark()
 		.use(remarkGfm)
 		.use(
 			() =>
-				// eslint-disable-next-line unicorn/consistent-function-scoping
 				function (tree: Root, file: VFile) {
 					mdatSplit(tree, file)
 					mdatCollapse(tree, file)
@@ -207,11 +204,10 @@ describe('compound rule handling', () => {
 		const markdown = `<!-- compound([{option: 'yes'}, {option: 'it'}, {option: 'can'}]) -->\n`
 		const expandedString = await expandStringToString(markdown, {
 			compound: [
-				// eslint-disable-next-line ts/no-unsafe-type-assertion
 				(options) => `My option is: ${(options as { option: string }).option}`,
-				// eslint-disable-next-line ts/no-unsafe-type-assertion
+
 				(options) => `My option is: ${(options as { option: string }).option}`,
-				// eslint-disable-next-line ts/no-unsafe-type-assertion
+
 				(options) => `My option is: ${(options as { option: string }).option}`,
 			],
 		})
@@ -234,7 +230,6 @@ describe('idempotency', () => {
 	it('should be idempotent with option arguments', async () => {
 		const markdown = `<!-- greet({name: "Alice"}) -->\n`
 		const rules: Rules = {
-			// eslint-disable-next-line ts/no-unsafe-type-assertion
 			greet: (options) => `Hello, ${(options as { name: string }).name}!`,
 		}
 		const firstPass = await expandStringToString(markdown, rules)
@@ -287,7 +282,6 @@ describe('same keyword with different options', () => {
 	it('should expand multiple instances with distinct options', async () => {
 		const markdown = `<!-- greet({name: "Alice"}) -->\n\n<!-- greet({name: "Bob"}) -->\n`
 		const rules: Rules = {
-			// eslint-disable-next-line ts/no-unsafe-type-assertion
 			greet: (options) => `Hello, ${(options as { name: string }).name}!`,
 		}
 		const result = await expandStringToString(markdown, rules)
@@ -300,7 +294,6 @@ describe('argument edge cases', () => {
 	it('should parse string arguments containing parentheses', async () => {
 		const markdown = `<!-- keyword({pattern: "func(arg)"}) -->\n`
 		const rules: Rules = {
-			// eslint-disable-next-line ts/no-unsafe-type-assertion
 			keyword: (options) => `Pattern: ${(options as { pattern: string }).pattern}`,
 		}
 		const result = await expandStringToString(markdown, rules)
@@ -404,7 +397,6 @@ describe('collapse error paths', () => {
 			.use(remarkGfm)
 			.use(
 				() =>
-					// eslint-disable-next-line unicorn/consistent-function-scoping
 					function (tree: Root, file: VFile) {
 						mdatSplit(tree, file)
 						mdatCollapse(tree, file)
@@ -422,7 +414,6 @@ describe('collapse error paths', () => {
 			.use(remarkGfm)
 			.use(
 				() =>
-					// eslint-disable-next-line unicorn/consistent-function-scoping
 					function (tree: Root, file: VFile) {
 						mdatSplit(tree, file)
 						mdatCollapse(tree, file)
@@ -441,7 +432,6 @@ describe('collapse error paths', () => {
 			.use(remarkGfm)
 			.use(
 				() =>
-					// eslint-disable-next-line unicorn/consistent-function-scoping
 					function (tree: Root, file: VFile) {
 						mdatSplit(tree, file)
 						mdatCollapse(tree, file)

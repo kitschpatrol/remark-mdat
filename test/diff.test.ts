@@ -148,9 +148,9 @@ describe('mdatDiff', () => {
 
 		const warnMessages = expandedFile.messages.filter((m) => m.fatal === false)
 		expect(warnMessages).toHaveLength(1)
-		expect(warnMessages[0].reason).toContain('Stale')
-		expect(warnMessages[0].reason).toContain('title')
-		expect(warnMessages[0].source).toBe('diff')
+		expect(warnMessages[0]!.reason).toContain('Stale')
+		expect(warnMessages[0]!.reason).toContain('title')
+		expect(warnMessages[0]!.source).toBe('diff')
 	})
 
 	it('should add info messages for up-to-date tags', () => {
@@ -160,7 +160,7 @@ describe('mdatDiff', () => {
 
 		const infoMessages = expandedFile.messages.filter((m) => m.fatal === undefined)
 		expect(infoMessages).toHaveLength(1)
-		expect(infoMessages[0].reason).toContain('Up to date')
+		expect(infoMessages[0]!.reason).toContain('Up to date')
 	})
 
 	it('should handle CRLF normalization', () => {

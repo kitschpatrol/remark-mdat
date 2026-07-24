@@ -1,6 +1,5 @@
 /* eslint-disable ts/no-unsafe-function-type */
-/* eslint-disable ts/no-unsafe-call */
-/* eslint-disable ts/no-unsafe-type-assertion */
+
 /* eslint-disable ts/consistent-type-assertions */
 import type { Root } from 'mdast'
 import { describe, expect, it } from 'vitest'
@@ -18,18 +17,18 @@ describe('normalizeRules', () => {
 		const rules: Rules = { greeting: 'hello' }
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.greeting.order).toBe(0)
-		expect(typeof normalized.greeting.content).toBe('function')
+		expect(normalized.greeting!.order).toBe(0)
+		expect(typeof normalized.greeting!.content).toBe('function')
 		// Content function should return the string
-		expect(await (normalized.greeting.content as Function)({}, mockContext)).toBe('hello')
+		expect(await (normalized.greeting!.content as Function)({}, mockContext)).toBe('hello')
 	})
 
 	it('should normalize a function rule', async () => {
 		const rules: Rules = { time: () => 'now' }
 		const normalized = normalizeRules(rules)
 
-		expect(typeof normalized.time.content).toBe('function')
-		expect(await (normalized.time.content as Function)({}, mockContext)).toBe('now')
+		expect(typeof normalized.time!.content).toBe('function')
+		expect(await (normalized.time!.content as Function)({}, mockContext)).toBe('now')
 	})
 
 	it('should normalize an async function rule', async () => {
@@ -37,7 +36,7 @@ describe('normalizeRules', () => {
 		const rules: Rules = { time: async () => 'later' }
 		const normalized = normalizeRules(rules)
 
-		expect(await (normalized.time.content as Function)({}, mockContext)).toBe('later')
+		expect(await (normalized.time!.content as Function)({}, mockContext)).toBe('later')
 	})
 
 	it('should normalize a string-content object rule with metadata', async () => {
@@ -49,8 +48,8 @@ describe('normalizeRules', () => {
 		}
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.title.order).toBe(5)
-		expect(await (normalized.title.content as Function)({}, mockContext)).toBe('My Title')
+		expect(normalized.title!.order).toBe(5)
+		expect(await (normalized.title!.content as Function)({}, mockContext)).toBe('My Title')
 	})
 
 	it('should normalize a function-content object rule with metadata', async () => {
@@ -61,17 +60,17 @@ describe('normalizeRules', () => {
 		}
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.title.order).toBe(0)
-		expect(await (normalized.title.content as Function)({}, mockContext)).toBe('dynamic')
+		expect(normalized.title!.order).toBe(0)
+		expect(await (normalized.title!.content as Function)({}, mockContext)).toBe('dynamic')
 	})
 
 	it('should normalize a top-level compound rule (array)', () => {
 		const rules: Rules = { header: ['one', 'two'] }
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.header.order).toBe(0)
-		expect(Array.isArray(normalized.header.content)).toBe(true)
-		expect((normalized.header.content as unknown[]).length).toBe(2)
+		expect(normalized.header!.order).toBe(0)
+		expect(Array.isArray(normalized.header!.content)).toBe(true)
+		expect((normalized.header!.content as unknown[]).length).toBe(2)
 	})
 
 	it('should normalize an object-form compound rule with metadata', () => {
@@ -83,8 +82,8 @@ describe('normalizeRules', () => {
 		}
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.header.order).toBe(3)
-		expect(Array.isArray(normalized.header.content)).toBe(true)
+		expect(normalized.header!.order).toBe(3)
+		expect(Array.isArray(normalized.header!.content)).toBe(true)
 	})
 
 	it('should default order to 0 for object-form compound rules without order', () => {
@@ -94,7 +93,7 @@ describe('normalizeRules', () => {
 			},
 		}
 		const normalized = normalizeRules(rules)
-		expect(normalized.header.order).toBe(0)
+		expect(normalized.header!.order).toBe(0)
 	})
 
 	it('should default optional metadata fields', () => {
@@ -105,7 +104,7 @@ describe('normalizeRules', () => {
 		}
 		const normalized = normalizeRules(rules)
 
-		expect(normalized.minimal.order).toBe(0)
+		expect(normalized.minimal!.order).toBe(0)
 	})
 })
 

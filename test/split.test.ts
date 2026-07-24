@@ -367,15 +367,15 @@ describe('multi comment parsing', () => {
 		const result = splitHtmlIntoMdastNodes(stringToMdastNode(multiLineValue, 5, 3))
 
 		// First node: <!-- a --> on fragment line 1, column offset applies
-		expect(result[0].position?.start).toEqual({ column: 5, line: 3, offset: 0 })
-		expect(result[0].position?.end).toEqual({ column: 15, line: 3, offset: 10 })
+		expect(result[0]!.position?.start).toEqual({ column: 5, line: 3, offset: 0 })
+		expect(result[0]!.position?.end).toEqual({ column: 15, line: 3, offset: 10 })
 
 		// Middle node: newline text, starts on fragment line 1, ends on line 2
-		expect(result[1].position?.start).toEqual({ column: 15, line: 3, offset: 10 })
-		expect(result[1].position?.end).toEqual({ column: 1, line: 4, offset: 11 })
+		expect(result[1]!.position?.start).toEqual({ column: 15, line: 3, offset: 10 })
+		expect(result[1]!.position?.end).toEqual({ column: 1, line: 4, offset: 11 })
 
 		// Third node: <!-- b --> on fragment line 2, column should NOT be offset
-		expect(result[2].position?.start).toEqual({ column: 1, line: 4, offset: 11 })
-		expect(result[2].position?.end).toEqual({ column: 11, line: 4, offset: 21 })
+		expect(result[2]!.position?.start).toEqual({ column: 1, line: 4, offset: 11 })
+		expect(result[2]!.position?.end).toEqual({ column: 11, line: 4, offset: 21 })
 	})
 })

@@ -183,8 +183,10 @@ export function reporterMdat(files: VFile[]): void {
 function mdatMessageToLogString(sourcePath: string, mdatMessage: MdatMessage): string {
 	const { column, level, line, message, source } = mdatMessage
 
-	const resolvedSource = source ? picocolors.gray(`[${source}] `) : ''
-	const lineColumn = line && column ? `:${line}:${column}` : ''
+	const resolvedSource =
+		source !== undefined && source !== '' ? picocolors.gray(`[${source}] `) : ''
+	const hasPlace = line !== undefined && line !== 0 && column !== undefined && column !== 0
+	const lineColumn = hasPlace ? `:${line}:${column}` : ''
 
 	const highlightedMessage = highlightComments(message, level)
 
@@ -192,7 +194,7 @@ function mdatMessageToLogString(sourcePath: string, mdatMessage: MdatMessage): s
 }
 
 function highlightComments(text: string, level: 'error' | 'info' | 'warn'): string {
-	return text.replaceAll(/<!--.+-->/g, (match) =>
+	return text.replaceAll(/<!--.+-->/gv, (match) =>
 		level === 'info'
 			? picocolors.green(match)
 			: level === 'warn'

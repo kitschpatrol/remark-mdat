@@ -29,10 +29,11 @@ function makeDynamicRules(n: number): Rules {
 	for (let i = 0; i < n; i++) {
 		rules[`rule-${String(i)}`] = {
 			content(options) {
-				const label =
+				const label = String(
 					typeof options === 'object' && options !== null && 'label' in options
-						? String((options as Record<string, unknown>).label)
-						: String(i)
+						? (options as Record<string, unknown>).label
+						: i,
+				)
 				return `Dynamic content ${label}.`
 			},
 		}
@@ -102,7 +103,6 @@ async function collapseString(markdown: string): Promise<string> {
 		.use(remarkGfm)
 		.use(
 			() =>
-				// eslint-disable-next-line unicorn/consistent-function-scoping
 				function (tree: Root, file: VFile) {
 					mdatSplit(tree, file)
 					mdatCollapse(tree, file)
@@ -117,7 +117,6 @@ async function stripString(markdown: string): Promise<string> {
 		.use(remarkGfm)
 		.use(
 			() =>
-				// eslint-disable-next-line unicorn/consistent-function-scoping
 				function (tree: Root, file: VFile) {
 					mdatSplit(tree, file)
 					mdatStrip(tree, file)

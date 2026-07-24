@@ -74,9 +74,9 @@ export function parseCommentNode(node: Html, parent: Parent): CommentMarkerNode 
 	}
 }
 
-const HTML_COMMENT_OPEN_REGEX = /^\s*<!-{2,}\s*/
-const HTML_COMMENT_CLOSE_REGEX = /\s*-{2,}>\s*$/
-const WHITESPACE_REGEX = /\s/
+const HTML_COMMENT_OPEN_REGEX = /^\s*<!-{2,}\s*/v
+const HTML_COMMENT_CLOSE_REGEX = /\s*-{2,}>\s*$/v
+const WHITESPACE_REGEX = /\s/v
 
 /**
  * Parse any comment string into structured data. Comments using code-style
@@ -90,8 +90,6 @@ export function parseComment(text: string): CommentMarker | undefined {
 		return
 	}
 
-	const closingPrefix = '/'
-
 	const commentHtml = text.trim()
 	const commentBody = commentHtml
 		.replace(HTML_COMMENT_OPEN_REGEX, '')
@@ -102,7 +100,7 @@ export function parseComment(text: string): CommentMarker | undefined {
 	const parenIndex = commentBody.indexOf('(')
 	const rawKeyword =
 		parenIndex === -1
-			? commentBody.split(WHITESPACE_REGEX)[0]
+			? (commentBody.split(WHITESPACE_REGEX)[0] ?? '')
 			: commentBody.slice(0, parenIndex).trim()
 
 	// Ignore code-style comments embedded in HTML comments
@@ -110,6 +108,7 @@ export function parseComment(text: string): CommentMarker | undefined {
 		return undefined
 	}
 
+	const closingPrefix = '/'
 	const type = rawKeyword.startsWith(closingPrefix) ? 'close' : 'open'
 
 	// Strip closing prefix

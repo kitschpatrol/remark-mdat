@@ -31,11 +31,13 @@ export function mdatSplit(tree: Root, file: VFile) {
 			saveLog(file, 'warn', 'split', 'Multiple comments in a single HTML node.', node)
 
 			// TODO really vet this step
-			parent.children.splice(index, 1, {
+			parent.children[index] = {
 				children: htmlNodes,
 				type: 'paragraph',
-			})
+			}
 		}
+
+		return CONTINUE
 	})
 }
 

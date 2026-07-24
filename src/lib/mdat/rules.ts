@@ -85,9 +85,7 @@ export type Rule =
 			 *   location.
 			 */
 			content:
-				| ((options: JsonValue, context: RuleContext) => Promise<string> | string)
-				| Rule[]
-				| string
+				((options: JsonValue, context: RuleContext) => Promise<string> | string) | Rule[] | string
 			/**
 			 * The order in which the rule should be applied during processing.
 			 * Defaults to 0.
@@ -131,7 +129,7 @@ const NORMALIZED = Symbol('normalized')
 
 /** Check whether rules have already been normalized. */
 export function isNormalized(rules: NormalizedRules | Rules): rules is NormalizedRules {
-	return NORMALIZED in rules
+	return Object.hasOwn(rules, NORMALIZED)
 }
 
 /**
@@ -202,7 +200,7 @@ export function validateRules(rules: Rules) {
 	} catch (error) {
 		// Defensive: zod always throws Error instances
 		if (error instanceof Error) {
-			throw new TypeError(`Error validating rules: ${error.message}`)
+			throw new TypeError(`Error validating rules: ${error.message}`, { cause: error })
 		}
 	}
 }
@@ -231,7 +229,7 @@ const ruleSchema: z.ZodType = z.lazy(() =>
 	]),
 )
 
-const COMMENT_PREFIX_REGEX = /^[/*#]/
+const COMMENT_PREFIX_REGEX = /^[\/*#]/v
 
 const keywordSchema = z.string().check(
 	z.refine((key: string) => !COMMENT_PREFIX_REGEX.test(key), {
@@ -298,7 +296,6 @@ export async function getRuleContent(
  * Throws if there are no entries or more than one entry.
  */
 export function getSoleRule<T extends NormalizedRules | Rules>(rules: T): T[keyof T] {
-	// eslint-disable-next-line ts/no-unsafe-type-assertion
 	return getSoleRecord<T[keyof T]>(rules as Record<string, T[keyof T]>)
 }
 
@@ -310,11 +307,12 @@ export function getSoleRule<T extends NormalizedRules | Rules>(rules: T): T[keyo
  */
 export function getSoleRuleKey<T extends NormalizedRules | Rules>(rules: T): keyof T {
 	const keys = Object.keys(rules)
-	if (keys.length !== 1) {
+	const [soleKey] = keys
+	if (soleKey === undefined || keys.length > 1) {
 		throw new Error(`Expected exactly one rule, found ${keys.length}`)
 	}
 
-	return keys[0]
+	return soleKey
 }
 
 /**
@@ -338,5 +336,6 @@ function getSoleRecord<V>(record: Record<string, V>): V {
 		throw new Error('Found multiple entries in "sole record" record. This should never happen')
 	}
 
-	return recordValues[0]
+	// Non-null assertion is safe, sole entry guaranteed by the length checks above
+	return recordValues[0]!
 }

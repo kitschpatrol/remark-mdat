@@ -25,7 +25,7 @@ describe('getMdatReports', () => {
 		const result = await expandToVfile(markdown, rules)
 		const reports = getMdatReports([result])
 		expect(reports).toHaveLength(1)
-		const report: MdatFileReport = reports[0]
+		const report: MdatFileReport = reports[0]!
 		// Should have warnings (mystery missing rule) and infos (keyword expanded)
 		expect(report.warnings.length + report.infos.length).toBeGreaterThan(0)
 	})
@@ -38,24 +38,24 @@ describe('getMdatReports', () => {
 		const markdown = `<!-- empty-rule -->\n<!-- keyword -->\n`
 		const result = await expandToVfile(markdown, rules)
 		const reports = getMdatReports([result])
-		expect(reports[0].errors.length).toBeGreaterThan(0)
-		expect(reports[0].errors[0].level).toBe('error')
-		expect(reports[0].infos.some((m) => m.level === 'info')).toBe(true)
+		expect(reports[0]!.errors.length).toBeGreaterThan(0)
+		expect(reports[0]!.errors[0]!.level).toBe('error')
+		expect(reports[0]!.infos.some((m) => m.level === 'info')).toBe(true)
 	})
 
 	it('should normalize the source path', async () => {
 		const result = await expandToVfile('<!-- k -->\n', { k: 'v' })
 		result.history = ['./test/../test/file.md']
 		const reports = getMdatReports([result])
-		expect(reports[0].sourcePath).not.toContain('..')
+		expect(reports[0]!.sourcePath).not.toContain('..')
 	})
 
 	it('should include destination path when history has multiple entries', async () => {
 		const result = await expandToVfile('<!-- k -->\n', { k: 'v' })
 		result.history = ['input.md', 'output.md']
 		const reports = getMdatReports([result])
-		expect(reports[0].sourcePath).toBe('input.md')
-		expect(reports[0].destinationPath).toBe('output.md')
+		expect(reports[0]!.sourcePath).toBe('input.md')
+		expect(reports[0]!.destinationPath).toBe('output.md')
 	})
 })
 

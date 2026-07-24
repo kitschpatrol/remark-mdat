@@ -7,7 +7,7 @@ import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { CONTINUE, visit } from 'unist-util-visit'
 import type { CommentMarkerNode } from '../mdat/parse'
-import type { NormalizedRules, RuleContext, Rules } from '../mdat/rules'
+import type { NormalizedRule, NormalizedRules, RuleContext, Rules } from '../mdat/rules'
 import { saveLog } from '../mdat/mdat-log'
 import { parseCommentNode } from '../mdat/parse'
 import { getRuleContent, isNormalized, normalizeRules } from '../mdat/rules'
@@ -34,8 +34,8 @@ export async function mdatExpand(tree: Root, file: VFile, rules: NormalizedRules
 	const filePath = file.history.length > 0 ? file.path : undefined
 	const context: RuleContext = { filePath, frontmatter, tree }
 
-	// Get all valid comment markers from the tree
-	const commentMarkers: CommentMarkerNode[] = []
+	// Get all valid comment markers from the tree, paired with their rules
+	const commentMarkers: Array<{ marker: CommentMarkerNode; rule: NormalizedRule }> = []
 	visit(tree, 'html', (node, index, parent) => {
 		if (parent === undefined || index === undefined) {
 			return CONTINUE
@@ -48,27 +48,27 @@ export async function mdatExpand(tree: Root, file: VFile, rules: NormalizedRules
 			return CONTINUE
 		}
 
-		// eslint-disable-next-line ts/no-unnecessary-condition
-		if (normalizedRules[commentMarker.keyword] === undefined) {
+		const rule = normalizedRules[commentMarker.keyword]
+		if (rule === undefined) {
 			saveLog(file, 'warn', 'expand', `Missing rule for: ${commentMarker.html}`, node)
 			return CONTINUE
 		}
 
-		commentMarkers.push(commentMarker)
+		commentMarkers.push({ marker: commentMarker, rule })
+		return CONTINUE
 	})
 
 	// Sort by order
-	commentMarkers.sort((a, b) => normalizedRules[a.keyword].order - normalizedRules[b.keyword].order)
+	commentMarkers.sort((a, b) => a.rule.order - b.rule.order)
 
 	// Reuse a single parser for all comment expansions
 	const parser = remark().use(remarkGfm)
 
 	// Expand the rules
-	for (const comment of commentMarkers) {
-		const { html, keyword, node, options, parent } = comment
-		const rule = normalizedRules[keyword]
+	for (const { marker, rule } of commentMarkers) {
+		const { html, keyword, node, options, parent } = marker
 
-		let newMarkdownString = ''
+		let newMarkdownString: string
 		try {
 			// Handle compound rules
 			newMarkdownString = await getRuleContent(rule, options, context, (warning) => {

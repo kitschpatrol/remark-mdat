@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/prefer-export-from */
-
 import { mdatCollapse } from './mdast-util-mdat-collapse'
 
 /**
