@@ -59,11 +59,11 @@
 		"gray-matter-es": "^0.2.1",
 		"hast-util-from-html": "^2.0.3",
 		"json5": "^2.2.3",
-		"lognow": "^0.6.2",
+		"lognow": "^0.7.1",
 		"picocolors": "^1.1.1",
 		"remark": "^15.0.1",
 		"remark-gfm": "^4.0.1",
-		"type-fest": "^5.7.0",
+		"type-fest": "^5.8.0",
 		"unified": "^11.0.5",
 		"unist-util-visit": "^5.1.0",
 		"vfile": "^6.0.3",
@@ -71,25 +71,19 @@
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {
-		"@arethetypeswrong/core": "^0.18.3",
-		"@kitschpatrol/shared-config": "^7.6.3",
-		"@types/node": "~20.19.41",
-		"@vitest/coverage-v8": "^4.1.8",
-		"bumpp": "^11.1.0",
-		"publint": "^0.3.21",
+		"@arethetypeswrong/core": "^0.18.5",
+		"@kitschpatrol/shared-config": "^8.4.0",
+		"@types/node": "~24.13.3",
+		"@vitest/coverage-v8": "^4.1.10",
+		"bumpp": "^12.0.0",
+		"publint": "^0.3.22",
 		"shx": "^0.4.0",
-		"tsdown": "^0.22.2",
-		"typescript": "~5.9.3",
-		"vitest": "^4.1.8"
+		"tsdown": "^0.22.14",
+		"typescript": "~6.0.3",
+		"vitest": "^4.1.10"
 	},
-	"packageManager": "pnpm@11.5.1",
+	"packageManager": "pnpm@11.15.1",
 	"engines": {
-		"node": ">=20.19.6"
-	},
-	"devEngines": {
-		"runtime": {
-			"name": "node",
-			"version": ">=22.22.2"
-		}
+		"node": ">=24.16.0"
 	}
 }
