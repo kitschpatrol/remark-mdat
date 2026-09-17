@@ -4,11 +4,19 @@
 
 <!-- /title -->
 
-<!-- badges -->
+<!-- badges({
+  custom: {
+    "Bundle Size": {
+      image: "https://img.shields.io/bundlephobia/minzip/remark-mdat?label=Size",
+      link: "https://bundlephobia.com/package/remark-mdat",
+    },
+  }
+}) -->
 
 [![NPM Package remark-mdat](https://img.shields.io/npm/v/remark-mdat.svg)](https://www.npmjs.com/package/remark-mdat)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/mit)
 [![CI](https://github.com/kitschpatrol/remark-mdat/actions/workflows/ci.yml/badge.svg)](https://github.com/kitschpatrol/remark-mdat/actions/workflows/ci.yml)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/remark-mdat?label=Size)](https://bundlephobia.com/package/remark-mdat)
 
 <!-- /badges -->
 

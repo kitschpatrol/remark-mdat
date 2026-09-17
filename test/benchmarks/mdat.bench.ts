@@ -1,10 +1,14 @@
 /* eslint-disable unicorn/prefer-single-call */
+/* eslint-disable test/expect-expect, test/valid-title -- Benchmarks measure performance using the Vitest 5 fixture API. */
 
 import type { Root } from 'mdast'
+import type { BenchFn, BenchRunOptions } from 'vitest'
+import type { JsonTestResults } from 'vitest/node'
+import { readFile } from 'node:fs/promises'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
 import { VFile } from 'vfile'
-import { bench, describe } from 'vitest'
+import { describe, test } from 'vitest'
 import type { Rules } from '../../src'
 import remarkMdat, { mdatCollapse, mdatDiff, mdatSplit, mdatStrip } from '../../src'
 import { splitHtmlIntoMdastNodes } from '../../src/lib/mdast-utils/mdast-util-mdat-split'
@@ -14,6 +18,36 @@ import { normalizeRules } from '../../src/lib/mdat/rules'
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+// The baseline script writes a fresh JSON report without reading or comparing the old one.
+const baselineReport =
+	process.env.npm_lifecycle_event === 'bench:baseline'
+		? undefined
+		: (JSON.parse(
+				await readFile(new URL('baseline.json', import.meta.url), 'utf8'),
+			) as JsonTestResults)
+const baselines = new Map(
+	baselineReport?.testResults
+		.flatMap((file) => file.assertionResults)
+		.flatMap((result) => result.benchmarks)
+		.map((group) => [group.name, group.tasks.find((task) => task.name === 'current')]),
+)
+
+function benchmark(name: string, fn: BenchFn, options: BenchRunOptions = {}): void {
+	test(name, async ({ bench, task }) => {
+		const current = bench('current', fn)
+		const baseline = baselines.get(task.fullTestName)
+		if (baseline) {
+			await bench.compare(
+				current,
+				bench.from('baseline', () => baseline),
+				options,
+			)
+		} else {
+			await current.run(options)
+		}
+	})
+}
 
 function makeRules(n: number): Rules {
 	const rules: Rules = {}
@@ -158,51 +192,54 @@ try {
 // ---------------------------------------------------------------------------
 
 describe('parseComment', () => {
-	bench('simple keyword', () => {
-		parseComment('<!-- basic -->')
+	// Resolve the import once so Vite's export getter is outside the measured loop.
+	const parse = parseComment
+
+	benchmark('simple keyword', () => {
+		parse('<!-- basic -->')
 	})
 
-	bench('keyword with JSON5 options', () => {
-		parseComment('<!-- keyword({prefix: "hello", suffix: "world", nested: {a: 1}}) -->')
+	benchmark('keyword with JSON5 options', () => {
+		parse('<!-- keyword({prefix: "hello", suffix: "world", nested: {a: 1}}) -->')
 	})
 
-	bench('close tag', () => {
-		parseComment('/basic')
+	benchmark('close tag', () => {
+		parse('/basic')
 	})
 
-	bench('non-comment passthrough', () => {
-		parseComment('// this is not an HTML comment')
+	benchmark('non-comment passthrough', () => {
+		parse('// this is not an HTML comment')
 	})
 
-	bench('code-style comment in HTML', () => {
-		parseComment('<!-- // code comment -->')
+	benchmark('code-style comment in HTML', () => {
+		parse('<!-- // code comment -->')
 	})
 
-	bench('triple-dash comment', () => {
-		parseComment('<!--- basic-options({prefix: "x", suffix: "y"}) -->')
+	benchmark('triple-dash comment', () => {
+		parse('<!--- basic-options({prefix: "x", suffix: "y"}) -->')
 	})
 })
 
 describe('splitHtmlIntoMdastNodes', () => {
-	bench('single comment (no split needed)', () => {
+	benchmark('single comment (no split needed)', () => {
 		splitHtmlIntoMdastNodes({ type: 'html', value: '<!-- basic -->' })
 	})
 
-	bench('three adjacent comments', () => {
+	benchmark('three adjacent comments', () => {
 		splitHtmlIntoMdastNodes({
 			type: 'html',
 			value: '<!-- a --><!-- b --><!-- c -->',
 		})
 	})
 
-	bench('comment with interleaved text', () => {
+	benchmark('comment with interleaved text', () => {
 		splitHtmlIntoMdastNodes({
 			type: 'html',
 			value: '<!-- a --><b>text</b><!-- b -->',
 		})
 	})
 
-	bench('ten adjacent comments', () => {
+	benchmark('ten adjacent comments', () => {
 		splitHtmlIntoMdastNodes({
 			type: 'html',
 			value: Array.from({ length: 10 }, (_, i) => `<!-- rule-${String(i)} -->`).join(''),
@@ -211,53 +248,55 @@ describe('splitHtmlIntoMdastNodes', () => {
 })
 
 describe('normalizeRules', () => {
-	bench('small ruleset (3 rules)', () => {
-		normalizeRules(smallRules)
+	const normalize = normalizeRules
+
+	benchmark('small ruleset (3 rules)', () => {
+		normalize(smallRules)
 	})
 
-	bench('medium ruleset (15 rules)', () => {
-		normalizeRules(mediumRules)
+	benchmark('medium ruleset (15 rules)', () => {
+		normalize(mediumRules)
 	})
 
-	bench('large ruleset (50 rules)', () => {
-		normalizeRules(largeRules)
+	benchmark('large ruleset (50 rules)', () => {
+		normalize(largeRules)
 	})
 
-	bench('dynamic function rules (15)', () => {
-		normalizeRules(dynamicRules)
+	benchmark('dynamic function rules (15)', () => {
+		normalize(dynamicRules)
 	})
 })
 
 describe('collapse (split + collapse expanded content)', () => {
-	bench('small expanded document (3 pairs)', async () => {
+	benchmark('small expanded document (3 pairs)', async () => {
 		await collapseString(smallExpandedDoc)
 	})
 
-	bench('large expanded document (50 pairs)', async () => {
+	benchmark('large expanded document (50 pairs)', async () => {
 		await collapseString(largeExpandedDoc)
 	})
 })
 
 describe('strip (split + strip mdat comments)', () => {
-	bench('small expanded document (3 pairs)', async () => {
+	benchmark('small expanded document (3 pairs)', async () => {
 		await stripString(smallExpandedDoc)
 	})
 
-	bench('large expanded document (50 pairs)', async () => {
+	benchmark('large expanded document (50 pairs)', async () => {
 		await stripString(largeExpandedDoc)
 	})
 })
 
 describe('full pipeline', () => {
-	bench('small document (3 comments)', async () => {
+	benchmark('small document (3 comments)', async () => {
 		await processString(smallDoc, smallRules)
 	})
 
-	bench('medium document (15 comments)', async () => {
+	benchmark('medium document (15 comments)', async () => {
 		await processString(mediumDoc, mediumRules)
 	})
 
-	bench(
+	benchmark(
 		'large document (50 comments)',
 		async () => {
 			await processString(largeDoc, largeRules)
@@ -265,29 +304,29 @@ describe('full pipeline', () => {
 		{ iterations: 20, warmupIterations: 2 },
 	)
 
-	bench('medium document with dynamic rules', async () => {
+	benchmark('medium document with dynamic rules', async () => {
 		await processString(mediumDoc, dynamicRules)
 	})
 
-	bench('medium document with JSON5 options', async () => {
+	benchmark('medium document with JSON5 options', async () => {
 		await processString(optionsDoc, dynamicRules)
 	})
 
-	bench('medium document with frontmatter', async () => {
+	benchmark('medium document with frontmatter', async () => {
 		await processString(frontmatterDoc, mediumRules)
 	})
 
-	bench('idempotent re-expansion (already expanded)', async () => {
+	benchmark('idempotent re-expansion (already expanded)', async () => {
 		await processString(mediumExpandedDoc, mediumRules)
 	})
 
-	bench('adjacent comments (10 in one node)', async () => {
+	benchmark('adjacent comments (10 in one node)', async () => {
 		await processString(adjacentDoc, makeRules(10))
 	})
 })
 
 describe('diff (compare original vs expanded)', () => {
-	bench('small document (3 pairs)', () => {
+	benchmark('small document (3 pairs)', () => {
 		const parser = remark().use(remarkGfm)
 		const originalTree = parser.parse(smallDoc)
 		const originalFile = new VFile(smallDoc)
@@ -298,7 +337,7 @@ describe('diff (compare original vs expanded)', () => {
 		mdatDiff(originalTree, originalFile, expandedTree, expandedFile)
 	})
 
-	bench('large document (50 pairs)', () => {
+	benchmark('large document (50 pairs)', () => {
 		const parser = remark().use(remarkGfm)
 		const originalTree = parser.parse(largeDoc)
 		const originalFile = new VFile(largeDoc)
@@ -309,7 +348,7 @@ describe('diff (compare original vs expanded)', () => {
 		mdatDiff(originalTree, originalFile, expandedTree, expandedFile)
 	})
 
-	bench('identical documents (no diff)', () => {
+	benchmark('identical documents (no diff)', () => {
 		const parser = remark().use(remarkGfm)
 		const tree1 = parser.parse(smallExpandedDoc)
 		const file1 = new VFile(smallExpandedDoc)

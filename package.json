@@ -41,16 +41,15 @@
 		"dist/*"
 	],
 	"scripts": {
-		"bench": "vitest bench --run --no-file-parallelism --compare test/benchmarks/baseline.json",
-		"bench:baseline": "vitest bench --run --no-file-parallelism --outputJson test/benchmarks/baseline.json",
+		"bench": "vitest bench --run",
+		"bench:baseline": "vitest bench --run --reporter=default --reporter=json --outputFile=test/benchmarks/baseline.json",
 		"build": "tsdown",
-		"clean": "shx rm -f pnpm-lock.yaml && git clean -fdX -e !.claude/",
+		"clean-deep": "shx rm -f pnpm-lock.yaml && git clean -fdX -e !.claude/",
 		"coverage": "vitest --coverage --run",
 		"dev": "pnpm test",
 		"fix": "ksc fix",
 		"lint": "ksc lint",
-		"release": "bumpp --commit 'Release: %s' && pnpm build && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') pnpm publish",
-		"release-preview": "bumpp --preid preview --commit 'Release: %s' && pnpm build && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') pnpm publish --tag preview",
+		"release": "bumpp --commit 'Release: %s' && pnpm build && pnpm publish --otp $(op item get npm --otp)",
 		"test": "vitest run"
 	},
 	"dependencies": {
@@ -59,30 +58,30 @@
 		"gray-matter-es": "^0.2.1",
 		"hast-util-from-html": "^2.0.3",
 		"json5": "^2.2.3",
-		"lognow": "^0.8.0",
+		"lognow": "^0.8.2",
 		"picocolors": "^1.1.1",
 		"remark": "^15.0.1",
 		"remark-gfm": "^4.0.1",
-		"type-fest": "^5.8.0",
+		"type-fest": "^5.9.0",
 		"unified": "^11.0.5",
 		"unist-util-visit": "^5.1.0",
 		"vfile": "^6.0.3",
 		"vfile-message": "^4.0.3",
-		"zod": "^4.4.3"
+		"zod": "^4.6.5"
 	},
 	"devDependencies": {
 		"@arethetypeswrong/core": "^0.18.5",
-		"@kitschpatrol/shared-config": "^8.6.0",
-		"@types/node": "~24.13.3",
-		"@vitest/coverage-v8": "^4.1.10",
-		"bumpp": "^12.1.1",
-		"publint": "^0.3.22",
+		"@kitschpatrol/shared-config": "^8.8.0",
+		"@types/node": "~24.13.4",
+		"@vitest/coverage-v8": "^5.0.1",
+		"bumpp": "^12.3.0",
+		"publint": "^0.3.24",
 		"shx": "^0.4.0",
-		"tsdown": "^0.22.14",
+		"tsdown": "^0.23.0",
 		"typescript": "~6.0.3",
-		"vitest": "^4.1.10"
+		"vitest": "^5.0.1"
 	},
-	"packageManager": "pnpm@11.18.0",
+	"packageManager": "pnpm@12.4.0",
 	"engines": {
 		"node": ">=24.16.0"
 	}
