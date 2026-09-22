@@ -465,11 +465,9 @@ describe('rule context', () => {
 		},
 		'frontmatter-tags'(_options: unknown, context: RuleContext) {
 			const tags = context.frontmatter?.tags
-			if (!Array.isArray(tags)) {
-				return 'No tags'
-			}
-
-			return tags.map((tag: unknown) => `- ${String(tag)}`).join('\n')
+			return Array.isArray(tags)
+				? tags.map((tag: unknown) => `- ${String(tag)}`).join('\n')
+				: 'No tags'
 		},
 		'frontmatter-title'(_options: unknown, context: RuleContext) {
 			const title = context.frontmatter?.title

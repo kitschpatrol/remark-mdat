@@ -103,7 +103,7 @@ export function saveLog(
 	}
 
 	const vFileMessage = file.message(message, options)
-	vFileMessage.fatal = level === 'error' ? true : level === 'warn' ? false : undefined
+	vFileMessage.fatal = level === 'info' ? undefined : level === 'error'
 }
 
 function vFileMessageToMdatMessage(vFileMessage: VFileMessage): MdatMessage {
