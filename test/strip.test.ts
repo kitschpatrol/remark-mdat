@@ -199,6 +199,27 @@ Footer text.
 		expect(result.trim()).toBe('')
 	})
 
+	it('should preserve comments that are not mdat keywords', async () => {
+		const input = `# Title
+
+<!--[![CI Status](https://example.com/badge.svg)](https://example.com/ci)
+[![Version](https://example.com/version.svg)](https://example.com)-->
+
+<!-- + warning + -->
+
+<!-- greet -->
+
+Content.
+`
+		const result = await stripString(input)
+		expect(result).toContain(
+			'<!--[![CI Status](https://example.com/badge.svg)](https://example.com/ci)',
+		)
+		expect(result).toContain('<!-- + warning + -->')
+		expect(result).toContain('Content.')
+		expect(result).not.toContain('<!-- greet -->')
+	})
+
 	it('should handle document with no mdat comments', async () => {
 		const input = `# Just markdown\n\nSome content.\n`
 		const result = await stripString(input)

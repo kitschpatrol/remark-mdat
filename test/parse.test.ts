@@ -330,6 +330,55 @@ describe('comment option parse errors', () => {
 	})
 })
 
+describe('non-keyword comment ignoring', () => {
+	it('should ignore commented-out markdown', () => {
+		expect(
+			parseComment('<!--[![CI Status](https://example.com/badge.svg)](https://example.com/ci)-->'),
+		).toBeUndefined()
+		expect(parseComment('<!-- [link](https://example.com) -->')).toBeUndefined()
+		expect(parseComment('<!-- ![image](image.png) -->')).toBeUndefined()
+		expect(parseComment('<!-- **bold** text -->')).toBeUndefined()
+	})
+
+	it('should ignore commented-out markdown spanning multiple lines', () => {
+		expect(
+			parseComment(
+				'<!--[![CI Status](https://example.com/badge.svg)](https://example.com/ci)\n[![Version](https://example.com/version.svg)](https://example.com)-->',
+			),
+		).toBeUndefined()
+	})
+
+	it('should ignore comments starting with punctuation', () => {
+		expect(parseComment('<!-- + warning + -->')).toBeUndefined()
+		expect(parseComment('<!-- <div> -->')).toBeUndefined()
+		expect(parseComment('<!-- -keyword -->')).toBeUndefined()
+		expect(parseComment('<!-- .keyword -->')).toBeUndefined()
+	})
+
+	it('should ignore empty comments', () => {
+		expect(parseComment('<!-- -->')).toBeUndefined()
+		expect(parseComment('<!---->')).toBeUndefined()
+	})
+
+	it('should ignore tool directives with a colon after the first word', () => {
+		expect(parseComment('<!-- spell-checker: disable -->')).toBeUndefined()
+	})
+
+	it('should still parse keywords containing hyphens, dots, dollars, and digits', () => {
+		expect(parseComment('<!-- cli-help -->')?.keyword).toBe('cli-help')
+		expect(parseComment('<!-- rule.v2 -->')?.keyword).toBe('rule.v2')
+		expect(parseComment('<!-- $special -->')?.keyword).toBe('$special')
+		expect(parseComment('<!-- _private -->')?.keyword).toBe('_private')
+		expect(parseComment('<!-- 2fa -->')?.keyword).toBe('2fa')
+		expect(parseComment('<!-- /cli-help -->')).toEqual({
+			html: '<!-- /cli-help -->',
+			keyword: 'cli-help',
+			options: {},
+			type: 'close',
+		})
+	})
+})
+
 describe('code-style comment ignoring', () => {
 	it('should ignore double-slash line comments', () => {
 		expect(parseComment('<!-- // line comment -->')).toBeUndefined()

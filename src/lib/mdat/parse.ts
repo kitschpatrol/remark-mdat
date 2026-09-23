@@ -78,9 +78,14 @@ const HTML_COMMENT_OPEN_REGEX = /^\s*<!-{2,}\s*/v
 const HTML_COMMENT_CLOSE_REGEX = /\s*-{2,}>\s*$/v
 const WHITESPACE_REGEX = /\s/v
 
+// A keyword is an identifier-like token: letters, numbers, `_`, `$`, `-`, and
+// `.`, not starting with a hyphen or dot
+const KEYWORD_REGEX = /^[\p{L}\p{N}_$][\p{L}\p{N}_$.\-]*$/v
+
 /**
  * Parse any comment string into structured data. Comments using code-style
- * notation (`//`, `#`, `/*`) are ignored and return `undefined`.
+ * notation (`//`, `#`, `/*`) and comments whose first word is not a valid
+ * keyword (e.g. commented-out Markdown) are ignored and return `undefined`.
  *
  * @returns A CommentMarker or undefined if the node is not a recognized
  *   comment.
@@ -115,6 +120,11 @@ export function parseComment(text: string): CommentMarker | undefined {
 	let keyword = rawKeyword
 	if (type === 'close') {
 		keyword = keyword.slice(closingPrefix.length)
+	}
+
+	// Anything else is an ordinary HTML comment, not an mdat comment
+	if (!KEYWORD_REGEX.test(keyword)) {
+		return undefined
 	}
 
 	// Parse arguments from function-call syntax: keyword(...)

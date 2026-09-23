@@ -118,7 +118,11 @@ remark().use(remarkMdat)
 
 The plugin accepts an optional `Options` object with a `rules` field. `Rules` is a `Record<string, Rule>` where each key is a keyword matching an HTML comment in the Markdown file (e.g. `title` matches `<!-- title -->`).
 
-HTML comments using code-style notation (`<!-- // ... -->`, `<!-- # ... -->`, `<!-- /* ... */ -->`) are ignored and will not be treated as mdat keywords. Rule keywords cannot start with `/`, `*`, or `#`.
+HTML comments using code-style notation (`<!-- // ... -->`, `<!-- # ... -->`, `<!-- /* ... */ -->`) are ignored and will not be treated as mdat keywords.
+
+Comments whose first word is not a valid mdat rule in the context of the loaded configuration are also ignored.
+
+A keyword consists of letters, numbers, `_`, `$`, `-`, and `.`, and cannot start with `/`, `*`, `#`, `-`, or `.`.
 
 A `Rule` value can take several forms:
 
