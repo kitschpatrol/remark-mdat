@@ -71,7 +71,7 @@ export function saveLog(
 	source: string,
 	message: string,
 	lineOrNode?: Node | number,
-	maybeColumn?: number,
+	maybeColumn = 0,
 ): void {
 	let line: number
 	let column: number
@@ -80,7 +80,7 @@ export function saveLog(
 		// Handle the case where lineOrNode is a number
 		// Defensive: nullish defines, and both overloads tested
 		line = lineOrNode ?? 0
-		column = maybeColumn ?? 0 // Use the provided column or default to 0
+		column = maybeColumn
 	} else {
 		// Handle the case where lineOrNode is a Node
 		// defensive: nodes from parser always have positions
@@ -151,8 +151,7 @@ function getMdatReport(file: VFile): MdatFileReport {
 /** Logs a human-readable processing report for each VFile to the library logger. */
 export function reporterMdat(files: VFile[]): void {
 	for (const file of files) {
-		const mdatFileReport = getMdatReport(file)
-		const { destinationPath, errors, infos, sourcePath, warnings } = mdatFileReport
+		const { destinationPath, errors, infos, sourcePath, warnings } = getMdatReport(file)
 
 		log.debug(picocolors.bold('MDAT Report:'))
 		log.debug(`\tFrom: ${picocolors.blue(picocolors.bold(sourcePath))}`)

@@ -2,7 +2,7 @@ import { eslintConfig } from '@kitschpatrol/eslint-config'
 
 export default eslintConfig(
 	{
-		ignores: ['test/assets/', '__snapshots__/'],
+		ignores: ['test/assets/'],
 		ts: {
 			overrides: {
 				'ts/no-deprecated': 'off',

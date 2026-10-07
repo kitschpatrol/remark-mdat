@@ -4,25 +4,18 @@
 
 <!-- /title -->
 
-<!-- badges({
-  custom: {
-    "Bundle Size": {
-      image: "https://img.shields.io/bundlephobia/minzip/remark-mdat?label=Size",
-      link: "https://bundlephobia.com/package/remark-mdat",
-    },
-  }
-}) -->
+<!-- badges({ bundleSize: true }) -->
 
 [![NPM Package remark-mdat](https://img.shields.io/npm/v/remark-mdat.svg)](https://www.npmjs.com/package/remark-mdat)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/mit)
 [![CI](https://github.com/kitschpatrol/remark-mdat/actions/workflows/ci.yml/badge.svg)](https://github.com/kitschpatrol/remark-mdat/actions/workflows/ci.yml)
-[![Bundle Size](https://img.shields.io/bundlephobia/minzip/remark-mdat?label=Size)](https://bundlephobia.com/package/remark-mdat)
+[![Bundle Size remark-mdat](https://img.shields.io/bundlephobia/minzip/remark-mdat?label=Size)](https://bundlephobia.com/package/remark-mdat)
 
 <!-- /badges -->
 
 <!-- description -->
 
-**A remark plugin implementing the Markdown Autophagic Template (MDAT) system.**
+**Remark plugin implementing the Markdown Autophagic Template (MDAT) system.**
 
 <!-- /description -->
 
@@ -87,15 +80,27 @@ This plugin powers the higher-level [`mdat` package](https://github.com/kitschpa
 
 ## Getting started
 
+<!-- dependencies -->
+
 ### Dependencies
 
-This library is ESM only and requires Node 24.16.0+. It's designed to work with Remark 15. `remark-mdat` is implemented in TypeScript and bundles a complete set of type definitions.
+- [Node.js](https://nodejs.org/) 24.16.0 or newer (specifically `^24.16.0 || >=26.3.0`)
+
+<!-- /dependencies -->
+
+This library is ESM only. It's designed to work with Remark 15. `remark-mdat` is implemented in TypeScript and bundles a complete set of type definitions.
+
+<!-- install -->
 
 ### Installation
 
+Add it to your project:
+
 ```sh
-pnpm add remark-mdat
+npm install remark-mdat
 ```
+
+<!-- /install -->
 
 ## Usage
 
