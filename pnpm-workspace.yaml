@@ -6,6 +6,9 @@ peerDependencyRules:
     # https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/issues/1075
     # https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/pull/1081
     eslint-plugin-jsx-a11y@6>eslint: ^10.0.0
+permissions:
+  '@kitschpatrol/shared-config':
+    skills: true
 publicHoistPattern:
   - '@kitschpatrol/repo-config'
   - '@kitschpatrol/typescript-config'
@@ -17,3 +20,7 @@ publicHoistPattern:
   - '*remark*'
   - '*stylelint*'
   - 'case-police'
+skills:
+  dirs:
+    - .agents/skills
+    - .claude/skills

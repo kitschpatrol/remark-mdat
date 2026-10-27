@@ -39,7 +39,7 @@
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
-		"dist/*"
+		"dist"
 	],
 	"scripts": {
 		"bench": "vitest bench --run",
@@ -50,7 +50,6 @@
 		"dev": "pnpm test",
 		"fix": "ksc fix",
 		"lint": "ksc lint",
-		"prepare": "skills experimental_sync -y -f",
 		"release": "bumpp --commit 'Release: %s' && pnpm build && pnpm publish --otp $(op item get npm --otp)",
 		"test": "vitest run"
 	},
@@ -79,12 +78,11 @@
 		"bumpp": "^12.3.0",
 		"publint": "^0.3.25",
 		"shx": "^0.4.0",
-		"skills": "^1.7.2",
 		"tsdown": "^0.23.1",
 		"typescript": "~6.0.3",
 		"vitest": "^5.0.3"
 	},
-	"packageManager": "pnpm@12.11.2",
+	"packageManager": "pnpm@12.15.0",
 	"engines": {
 		"node": "^24.16.0 || >=26.3.0"
 	}
