@@ -72,7 +72,7 @@
 	},
 	"devDependencies": {
 		"@arethetypeswrong/core": "^0.18.5",
-		"@kitschpatrol/shared-config": "^8.13.1",
+		"@kitschpatrol/shared-config": "^8.14.0",
 		"@types/node": "~24.13.6",
 		"@vitest/coverage-v8": "^5.0.5",
 		"bumpp": "^12.3.0",

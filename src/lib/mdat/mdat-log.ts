@@ -183,7 +183,7 @@ function mdatMessageToLogString(sourcePath: string, mdatMessage: MdatMessage): s
 	const { column, level, line, message, source } = mdatMessage
 
 	const resolvedSource =
-		source !== undefined && source !== '' ? picocolors.gray(`[${source}] `) : ''
+		source === undefined || source === '' ? '' : picocolors.gray(`[${source}] `)
 	const hasPlace = line !== undefined && line !== 0 && column !== undefined && column !== 0
 	const lineColumn = hasPlace ? `:${line}:${column}` : ''
 

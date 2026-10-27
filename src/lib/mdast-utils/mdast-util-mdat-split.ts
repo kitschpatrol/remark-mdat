@@ -105,9 +105,9 @@ function addStartPoint(
 			line: startLine,
 			// Defensive: offsets always present from parser
 			offset:
-				position.start.offset !== undefined && start.offset !== undefined
-					? position.start.offset + start.offset
-					: undefined,
+				position.start.offset === undefined || start.offset === undefined
+					? undefined
+					: position.start.offset + start.offset,
 		},
 		end: {
 			column:
@@ -115,9 +115,9 @@ function addStartPoint(
 			line: endLine,
 			// Defensive: offsets always present from parser
 			offset:
-				position.end.offset !== undefined && start.offset !== undefined
-					? position.end.offset + start.offset
-					: undefined,
+				position.end.offset === undefined || start.offset === undefined
+					? undefined
+					: position.end.offset + start.offset,
 		},
 	}
 }
