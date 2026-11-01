@@ -65,7 +65,7 @@ The plugin finds placeholder comments in a Markdown file like this:
 <!-- title -->
 ```
 
-And expands them with the data of your choosing. In this case, it reads the `title` field a nearby `package.json`:
+And expands them with the data of your choosing. In this case, it reads the `name` field from a nearby `package.json`:
 
 ```md
 <!-- title -->
