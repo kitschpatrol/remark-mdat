@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 (Node.js support requirements have sometimes increased in minor or patch releases.)
 
+Entries are drafted with LLM assistance via [Chagent](https://github.com/kitschpatrol/chagent).
+
+## [3.1.4] - 2026-11-19
+
+### Documentation
+
+- Add a project changelog covering previous releases.
+
+### Maintenance
+
+- Generate changelog entries with `chagent` 0.8 during version bumps, include them in release commits, and update the GitHub release-notes action to v3.
+- Upgrade type-fest to v6 and update hast-util-from-html, lognow, and vfile-message.
+- Update pnpm, shared configuration, tsdown, and Vitest.
+- Update the GitHub Actions that install pnpm in CI, sync repository metadata, and open dependency-update pull requests.
+- Enable pnpm to link tsdown’s agent skills and limit skill installation to `.agents/skills`.
+
 ## [3.1.3] - 2026-11-01
 
 ### Documentation
@@ -819,3 +835,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [3.1.1]: https://github.com/kitschpatrol/remark-mdat/compare/v3.1.0...v3.1.1
 [3.1.2]: https://github.com/kitschpatrol/remark-mdat/compare/v3.1.1...v3.1.2
 [3.1.3]: https://github.com/kitschpatrol/remark-mdat/compare/v3.1.2...v3.1.3
+[3.1.4]: https://github.com/kitschpatrol/remark-mdat/compare/v3.1.3...v3.1.4
